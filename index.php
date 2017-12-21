@@ -28,6 +28,8 @@
     }, E_ALL);
 
     header ("Cache-control: no-cache, must-revalidate");
+
+	// I put a comment here
     
     $libs = scandir (BASE_DIR . "lib");
     foreach ($libs as $lib) {

@@ -2,4 +2,6 @@ lib/vendor/*
 lib/src/*
 logs/*
 .sass-cache/*
-
+*.LOG
+*.WARN
+*.ERR
