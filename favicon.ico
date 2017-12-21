@@ -1,0 +1,29 @@
+<?php
+	header_remove("Content-type");
+	header ("Content-type: image/png");
+	
+	require_once ("config.php");
+	require_once (BASE_DIR."lib/Account.php");
+	require_once (BASE_DIR."lib/Registry.php");
+	require_once (BASE_DIR."lib/File.php");
+	require_once (BASE_DIR."lib/Member.php");
+
+	$_ACCOUNT = null;
+
+	$acc = explode(".", $_SERVER['SERVER_NAME']);
+	if (count ($acc) == 2) {
+		$_ACCOUNT = new Account("www");
+	} else if (count($acc) == 3) {
+		if ($acc[0] == 'capeventmanager') {
+            $acc[0] = 'mdx89';
+		}
+		$_ACCOUNT = new Account($acc[0]);
+	} else {
+		exit(255);
+	}
+
+	Registry::Initialize();
+
+	$f = File::Get(Registry::Get("Website.Logo"))->Data;
+
+	echo imagepng(imagecreatefromstring($f));

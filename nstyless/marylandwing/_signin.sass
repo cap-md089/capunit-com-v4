@@ -1,0 +1,38 @@
+#cover
+	position: fixed
+	top: 0
+	left: 0
+	right: 0
+	bottom: 0
+	z-index: 5
+	color: black
+	animation: flash 0.5s ease-out
+
+#signIn_box
+	display: inline-block
+	vertical-align: middle
+	background-color: white
+	color: black
+	box-sizing: border-box
+	padding: 20px
+	border-radius: 20px
+	animation: flash 0.5s ease-out
+	box-shadow: 0 0 1em black
+	display: none
+
+	h2
+		text-align: center
+		border-bottom: 1px solid $secondary-color
+		padding-bottom: 5px
+
+@keyframes flash
+	from
+		opacity: 0
+	to
+		opacity: 1
+
+@-webkit-keyframes flash
+	from
+		opacity: 0
+	to
+		opacity: 1

@@ -1,0 +1,1 @@
+find $1 -type f -print0 | xargs -0 stat -f%z | awk '{b+=$1} END {print b/1024/1024/8}'

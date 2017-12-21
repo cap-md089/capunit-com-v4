@@ -1,0 +1,53 @@
+#body
+    .pagenav
+        border-bottom: 1px solid yellow
+        margin: 0
+        padding: 0
+        list-style-type: none
+        margin-bottom: 20px
+
+        li
+            margin: 0
+            padding: 0
+            display: inline-block
+            width: 90px
+            height: 40px
+
+            a
+                display: block
+                margin: 8px auto
+                font-size: 18px
+                color: $secondary-color
+                text-align: center
+                text-decoration: none
+                transition: color 0.25s linear
+
+                &:hover
+                    color: $white
+
+                &:visited
+                    color: $secondary-color
+
+    .page
+        position: absolute
+        transition: opacity 0.25s ease
+        width: 100%
+        margin: 0
+        padding: 0 20px
+        top: 0
+
+        &.active
+            opacity: 1
+            z-index: 1
+
+        &.inactive
+            opacity: 0
+            z-index: 0
+            height: 0
+            overflow: hidden
+
+    .pages
+        width: 100%
+        margin: 0
+        padding: 0
+        position: relative

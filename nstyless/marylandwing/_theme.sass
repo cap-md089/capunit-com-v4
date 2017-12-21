@@ -1,0 +1,41 @@
+@import _mixins
+
+// Edit these colors to get the desired colors
+$primary-color:         #28497e
+$lighter-primary-color: #248eea
+$light-primary-color:   #1476cc
+$dark-primary-color:    #3c9aec
+$secondary-color:       #fed80e
+$tertiary-color:        #c4131a
+$white:                 #efefef
+$gray:                  #a1a1a1
+$link-color:            #76cae9
+
+// HOST_SUB_DIR, must match the value in config.php
+
+// Header images
+$header-image:      url("/<?php echo HOST_SUB_DIR; ?>images/header.png")
+
+// Main banner
+$banner-url:        url("/<?php echo HOST_SUB_DIR; ?>images/banner.jpg")
+$display-banner:    false
+$banner-height:     432px
+
+// Shadows
+$display-shadows:   true
+$shadow-x:          0px
+$shadow-y:          2px
+$shadow-blur:       3px
+$shadow-spread:     -1px
+
+// Body sizings
+$max-width: 1200px
+$width:     80%
+
+@include keyframes(flash)
+    0%
+        opacity: 0
+    100%
+        opacity: 1
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i')

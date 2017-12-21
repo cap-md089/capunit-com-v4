@@ -1,0 +1,73 @@
+<?php
+	header("Content-type: text/xml");
+
+	require("config.php");
+	require_once("lib/Account.php");
+	require_once("lib/Registry.php");
+	require_once("lib/Member.php");
+
+	$_ACCOUNT = null;
+
+    $acc = explode('.', $_SERVER['SERVER_NAME']);
+    if (count($acc) == 2) {
+        $_ACCOUNT = new Account("www");
+    } else if (count($acc) == 3) {
+		if ($acc[0] == 'capeventmanager') {
+			$acc[0] = 'mdx89';
+		}
+        $_ACCOUNT = new Account($acc[0]);
+    } else {
+        exit(255);
+    }
+
+    Registry::Initialize();
+
+	$website = Registry::Get("Website");
+	$title = $website->Name;
+
+?>
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+
+	<channel>
+		<title><?php echo $title; ?></title>
+		<atom:link href="https://<?php echo $_ACCOUNT->id; ?>.capunit.com/rss" rel="self" type="application/rss+xml" />
+		<link>https://<?php echo $_ACCOUNT->id; ?>.capunit.com/</link>
+		<description>The United States Air Force Auxiliary</description>
+		<language>en-US</language>
+		<generator>https://capunit.com</generator>
+
+		<image>
+			<url>https://<?php echo $_ACCOUNT->id; ?>.capunit.com/filedownloader/<?php echo Registry::Get('Website.Logo'); ?>?ajax=true</url>
+			<title><?php echo $title; ?></title>
+			<link>https://<?php echo $_ACCOUNT->id; ?>.capunit.com/</link>
+			<width>64</width>
+			<height>64</height>
+		</image>
+<?php
+	$pdo = DBUtils::CreateConnection();
+	$stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['Blog']." WHERE AccountID = :aid ORDER BY posted DESC LIMIT 10;");
+	$stmt->bindValue(':aid', $_ACCOUNT->id);
+	$data = DBUtils::ExecutePDOStatement($stmt);
+	foreach ($data as $post) {
+		?>
+		
+		<item>
+			<title><?php echo $post['title']; ?></title>
+			<link>https://<?php echo $_ACCOUNT->id; ?>.capunit.com/blog/view/<?php echo $post['id'] ?></link>
+			<guid>https://<?php echo $_ACCOUNT->id; ?>.capunit.com/blog/view/<?php echo $post['id'] ?></guid>
+			<pubDate><?php echo date('r', $post['posted']); ?></pubDate>
+			<dc:creator><![CDATA[<?php $mem = Member::Estimate($post['acapid']); echo $mem->memberRank . ' ' . $mem->memberName; ?>]]></dc:creator>
+			<description><![CDATA[<?php echo $post['content'] ?>]]></description>
+		</item>
+<?php
+	}
+?>
+	</channel>
+</rss>

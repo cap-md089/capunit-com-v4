@@ -1,0 +1,13 @@
+<?php
+	header_remove("Content-type");
+	header("Content-type: image/jpg");
+
+	$jpgs = scandir(BASE_DIR.'images/banner-images');
+
+	unset($jpgs[0]);
+	unset($jpgs[1]);
+	$jpgs = array_values($jpgs);
+
+	$image = $jpgs[rand(0, count($jpgs)-1)];
+
+	readfile(BASE_DIR."images/banner-images/$image");

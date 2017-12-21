@@ -1,0 +1,24 @@
+<FilesMatch "\.appcache$">
+    ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "favicon\.ico$">
+    ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "rss">
+    ForceType application/x-httpd-php
+</FilesMatch>
+
+RewriteEngine on
+RewriteRule !((images|scripts|nstyles)\/.*|(filemanager|index|500|400)\.php|manifest\.appcache|favicon\.ico|rss$) index.php [nocase,last]
+#RewriteRule !/[a-zA-Z0-9]{5}/((images|scripts|styles).*|(filemanager|index|500|400)\.php|manifest\.appcache|favicon\.ico) index.php [nocase,last]
+RewriteRule  ((images|scripts|nstyles).*) filemanager.php [nocase,last]
+#RewriteRule  /[a-zA-Z0-9]{5}/((images|scripts|styles).*) filemanager.php [nocase,last]
+
+
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip include file .*
+</ifModule>

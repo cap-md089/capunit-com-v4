@@ -1,0 +1,206 @@
+.stuck
+    position: fixed !important
+    left: 0 !important
+    right: 0 !important
+    top: 0 !important
+    margin-top: 0 !important
+
+
+html
+    z-index: -20
+    body
+        z-index: -20
+        header.desktop
+            z-index: -20
+            +reset()
+
+            #banner
+                @if $display-banner
+                    display: block
+                @else
+                    display: none
+                width: 100%
+                height: $banner-height
+                background-size: cover
+                background-image: $banner-url
+                background-position: 0px 50%
+                border-bottom: 1px solid $secondary-color
+                z-index: -20
+
+            .bars
+                background-color: $primary-color
+                position: static
+                height: 54px
+                display: inline-block
+                left: 0
+                right: 0
+                margin: 0
+                padding: 0
+                outline: 0
+                width: 100%
+                z-index: 20
+
+                &.stuck .top
+                    display: inline-block
+                    float: right
+
+                .aligner
+                    display: block
+                    margin: 0 auto
+                    padding: 0
+                    max-width: $max-width
+                    width: $width
+                    background-color: $primary-color
+                ul
+                    list-style-type: none
+                    margin: 0
+                    padding: 0
+                    background-color: $primary-color
+
+
+                    &.signedout
+                        #signIn_linkli
+                            position: relative
+                            visibility: visibile
+                        #signOut_linkli
+                            position: absolute
+                            visibility: hidden
+                    &.signedin
+                        #signIn_linkli
+                            visibility: hidden
+                            position: absolute
+                        #signOut_linkli
+                            visibility: visible
+                            position: relative
+
+                    .top
+                        display: none
+
+                    li
+                        box-sizing: border-box
+                        margin: 0
+                        padding: 0 15px
+                        display: inline-block
+                        min-width: 90px
+                        height: 54px
+                        position: relative
+                        background-color: $primary-color
+                        white-space: nowrap
+
+                        &:hover > ul.submenu
+                            max-height: 500px
+                            z-index: 6
+                            border-width: 1px
+                            overflow: visible
+                            transition: max-height 0.5s ease-out 0s, border-width 0s ease-out 0s
+
+                            a, li
+                                z-index: 6
+                                
+
+                        .submenu
+                            box-sizing: border-box
+                            display: block
+                            position: absolute
+                            background: black
+                            border: 0px solid $secondary-color
+                            left: -5px
+                            top: 100%
+                            width: auto
+                            max-height: 0
+                            transition: max-height 0.5s ease-out 0s, border-width 0s ease-out 0.5s
+                            z-index: 5
+                            overflow: hidden
+
+                            .submenu
+                                top: -14.5px
+                                left: 100%
+
+                            a
+                                background-color: black
+                                text-align: center
+                                z-index: 5
+                                width: auto
+                                font-family: 0.8em
+
+                            li
+                                z-index: 5
+                                background-color: black
+                                display: block
+
+                        &.close
+                            display: none
+
+                        &.menu-button
+                            display: none
+
+                        &.head-link
+                            float: left !important
+                            width: 33.333% !important
+
+                            a
+                                font-size: 16px
+
+                        .menu-button
+                            display: none
+
+                        a
+                            display: block
+                            margin: 14px auto
+                            font-size: 20px
+                            color: $secondary-color
+                            text-align: center
+                            text-decoration: none
+                            +transitions(color 0.25s linear)
+
+                            &:hover
+                                color: $white
+                &#navbar
+                    border-bottom: 1px solid $secondary-color
+                    height: auto
+                    min-height: 54px
+                    @if $display-shadows
+                        box-shadow: $shadow-x $shadow-y $shadow-blur $shadow-spread black
+
+                    .stuck
+                        position:   fixed !important
+                        left:       0 !important
+                        right:      0 !important
+                        top:        0 !important
+
+                        .top
+                            display: inline-block
+                            float: right
+
+
+            #head
+                z-index: 0
+                position: static
+                background-color: $tertiary-color
+                width: 100%
+                padding: 0
+                margin: 0
+                height: 216px
+                outline: 0
+                display: block
+                z-index: 20
+                box-shadow: 0px 0px 4px 0px black
+                border-bottom: 1px outset black
+                border-top: 1px outset black
+
+                #headcontent
+                    z-index: 0
+                    max-width: $max-width
+                    width: $width
+                    margin-left: auto
+                    margin-right: auto
+                    padding: 0
+                    outline: 0
+                    display: block
+                    height: 216px
+                    background-image: $header-image
+                    background-size: 100% auto
+                    background-repeat: no-repeat
+                    background-position: center
+                    z-index: 20
+

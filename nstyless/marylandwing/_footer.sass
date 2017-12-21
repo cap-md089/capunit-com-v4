@@ -1,0 +1,39 @@
+html
+    body
+        footer
+            clear: both
+            z-index: -1
+            width: 100%
+            padding: 0
+            margin:  0
+            height: 145px
+            border-top: 1px solid $secondary-color
+            background-color: $primary-color
+            @if $display-shadows
+                box-shadow: $shadow-x (-1*$shadow-y) $shadow-blur $shadow-spread black
+
+            #footer
+                margin: 0 auto
+                max-width: $max-width
+                width: $width
+                padding: 0
+                height: 100%
+
+                .footerdivider
+                    padding-top: 10px
+                    margin: 0
+                    width: 49.999%
+                    display: inline-block
+                    float: left
+                    height: 100%
+                    font-size: 1.2em
+
+                    strong
+                        color: $secondary-color
+
+                a
+                    color: $gray
+                    text-decoration: underline
+
+                    &:hover
+                        color: $link-color

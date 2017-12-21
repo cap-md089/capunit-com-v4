@@ -1,0 +1,252 @@
+// Font faces taken from CAP Wing Website
+@font-face
+	font-family: 'wicons'
+	src: url(http://cdn2.editmysite.com/fonts/wIcons/wicons.eot?buildTime=1472254498)
+	src: url(http://cdn2.editmysite.com/fonts/wIcons/wicons.eot?buildTime=1472254498#iefix) format('embedded-opentype'), url(http://cdn2.editmysite.com/fonts/wIcons/wicons.woff?buildTime=1472254498) format('woff'), url(http://cdn2.editmysite.com/fonts/wIcons/wicons.ttf?buildTime=1472254498) format('truetype'), url(http://cdn2.editmysite.com/fonts/wIcons/wicons.svg?buildTime=1472254498#wicons) format('svg')
+	font-weight: normal
+	font-style: normal
+
+@media screen and (-webkit-min-device-pixel-ratio: 0)
+	@font-face
+		font-family: 'wicons'
+		src: url(http://cdn2.editmysite.com/fonts/wIcons/wicons.svg?buildTime=1472254498#wicons) format('svg')
+
+.hide
+	display: none !important
+
+@include keyframes ('rotate')
+	from
+		@include transform(rotateY(0deg))
+	to
+		@include transform(rotateY(360deg))
+
+@media only screen and (max-width: 480px)
+	section
+		&.half, &.third
+			width: 99% !important
+			min-width: 0px !important
+
+html
+	padding: 0
+	margin: 0
+	background-color: $primary-color
+	outline: 0
+	color: $white
+	width: 100%
+	height: 100%
+	font-family: "Montserrat"
+
+	body
+		@extend html
+
+		div#body
+			z-index: -1
+			display: block
+			margin: 40px auto
+			max-width: $max-width
+			color: $white
+			width: $width
+			text-decoration: none
+
+			p:empty
+				content: " "
+
+			.rightFloat
+				float: right
+
+			.width600px
+				width: 400px
+				display: block
+
+			.section
+				margin: 20px 0
+
+			div.image-box
+				background: white
+				width: $max-width / 8.57
+				float: left
+				margin: $max-width / (8.57 * 100)
+				padding: 0
+				height: $max-width / 8.57
+				line-height: $max-width / 8.57
+				text-align: center
+				border-radius: 5px
+				display: flex
+				align-items: center
+				justify-content: center
+
+				img.image
+					max-width: 95%
+					max-height: 95%
+					vertical-align: middle
+
+			h2.title
+				border-bottom: 1px solid $secondary-color
+
+			hr.hr-divider
+				background-color: #333
+				background-color: rgba(255, 255, 255, 0.13)
+				border: 0pt none
+				color: #333
+				color: rgba(255, 255, 255, 0.13)
+				height: 1px
+				margin: 20px auto
+				width: 100%
+				text-align: center
+				display: inline-block
+				box-shadow: 1px -1px 1px rgba(0,0,0,0.3)
+
+			section.third
+				float: left
+				box-sizing: border-box
+				width: 32%
+				margin: 0.5%
+				min-width: 320px
+				position: relative
+
+			section.third, section.half
+				div
+					padding: 0
+					margin: 0
+					
+					form
+						padding: 0
+						margin: 0
+						width: 100%
+
+						.formbar
+							width: 100%
+							margin: 0
+							padding: 0
+
+							.formbox
+								margin: 0 !important
+								padding: 0 !important
+								position: relative
+								width: 100%
+
+								.mainSearch
+									position: relative
+									width: 98%
+									box-sizing: border-box
+									margin: 1%
+									background-color: $primary-color
+									border-radius: 0
+									border: 1px solid $light-primary-color
+									font-size: 1.1em
+									padding: 10px
+
+									&::placeholder
+										color: $white
+
+			section.half
+				float: left
+				box-sizing: border-box
+				width: 49%
+				margin: 0.5%
+				min-width: 320px
+
+			.tbd
+				width: 280px
+				margin: 0 auto
+				font-size: 2.4em
+				height: 140px
+				color: $light-primary-color
+				text-align: center
+				background-color: darken($primary-color, 5%)
+				border: 1px solid $light-primary-color
+
+			.date
+				font-style: italic
+				color: $gray
+				float: right
+				font-size: 1em
+
+			.author
+				font-style: italic
+				color: $gray
+				float: left
+				font-size: 1em
+
+			.blog-title
+				border-bottom: 1px solid $secondary-color
+
+			h1, h2, h3, h4, h5, h6
+				color: $secondary-color
+
+			a
+				color: $link-color
+
+				&:hover
+					text-decoration: underline
+					color: $gray !important
+
+				&:visited
+					color: $link-color
+
+			#dialog_modal
+				position: fixed
+				left: 0
+				right: 0
+				top: 0
+				right: 0
+				z-index: 4
+				background-color: rgba(100, 100, 100, 100)
+
+			#dialog
+				position: fixed
+				z-index: 5
+				right: 50%
+				top: 50%
+
+		.bigfatred
+			color: red !important
+
+		#alert_box
+			display: inline-block
+			vertical-align: middle
+			background-color: $white
+			color: $gray
+			box-sizing: border-box
+			padding: 20px
+			border-radius: 20px
+			@include animation (flash 0.5s ease-out)
+			box-shadow: 0 0 1em black
+			min-width: $max-width/2
+			max-width: 90%
+			max-height: 80%			
+
+			h2
+				text-align: center
+				border-bottom: 1px solid $secondary-color
+				padding-bottom: 5px
+
+			#ok
+				color: $white
+				display: inline-block
+				height: 40px
+				background-color: $lighter-primary-color
+				border: 1px solid $light-primary-color
+				box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0
+				line-height: 40px
+				cursor: pointer
+				border-radius: 4px
+				text-align: center
+				display: inline-block
+				box-sizing: content-box
+				min-width: 74px
+				font-size: 15px
+
+				&:hover
+					background-color: $dark-primary-color
+
+				&::after
+					font-family: wicons
+					content: "\f176"
+
+				&.left_arrow::before
+					content: ""
+
+				&.left_arrow::after
+					font-family: wicons
+					content: "\f176"

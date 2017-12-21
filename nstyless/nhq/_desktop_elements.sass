@@ -1,0 +1,209 @@
+.detailedlistplus
+	list-style-type: none
+	margin: 0
+	padding: 0
+	clear: both
+	overflow: auto
+
+	.detailedlistplustitle
+		font-size: 2em
+		color: $secondary-color
+		margin: 0
+		margin-bottom: 5px
+
+	li
+		margin: 0
+		clear: both
+		width: 100%
+		padding-bottom: 5px
+	
+	.detailedlistplusrow
+		width: 100%
+		margin: 0
+		height: 30px
+		padding: 5px
+		box-sizing: border-box
+		position: relative
+	
+		.detailedlistplusarrow
+			position: absolute
+			display: inline-block
+			width: 0
+			height: 0
+			border-top: 7px solid transparent
+			border-left: 10px solid #aaaaaa
+			border-bottom: 7px solid transparent
+			transition: transform 0.25s ease-out
+			left: 10px
+			top: 9px
+			transform: rotate(0deg)
+			cursor: pointer
+
+			&.down
+				transform: rotate(450deg)
+				
+	.detailedlistplusname
+		margin: 0
+		padding: 0
+		display: inline-block
+		width: 50%
+		float: left
+		box-sizing: border-box
+		padding-left: 25px
+		cursor: pointer
+
+	.detailedlistpluslink
+		margin: 0
+		padding: 0
+		display: inline-block
+		width: 49.999%
+		float: right
+		text-align: left
+		
+	.detailedlistplusdesc
+		margin: 0
+		font-style: italic
+		display: none
+		float: left
+		padding: 5px
+		box-sizing: border-box
+		font-size: 0.8em
+		width: 100%
+		padding-left: 15px
+
+#memberSelect, #fileSelect
+	padding: 0
+	margin: 20px auto
+
+	input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="url"]
+		font-family: "Montserrat"
+		box-sizing: border-box
+		border: 1px solid black
+		border-radius: 10px
+		padding: 5px
+		display: inline-block
+		margin: 2%
+		width: 96%
+
+	input[type="checkbox"], input[type="radio"]
+		visibility: hidden
+		position: absolute
+
+		&:checked + label
+			background-color: #4278ba
+
+	label
+		background-color: transparent
+		display: none
+		border-top: 1px solid #999999
+		border-bottom: 1px solid #999999
+		padding: 10px
+		cursor: pointer
+
+		&.shown
+			display: block
+			margin-top: -1px
+
+#templateAdder
+	display: none
+
+.warning
+	color: red
+
+	&::before, &::after
+		content: " !! "
+
+.red
+	color: red
+
+
+#filelist
+
+	div.file
+		background: #ffffff
+		border-radius: 25px
+		clear: both
+		padding: 20px
+		margin: 20px
+		box-sizing: border-box
+		display: flex
+
+		div.img
+			flex: 0 0 300px
+			width: 300px
+			padding: 0
+			margin: 0
+
+			img
+				width: 300px
+
+		div.desc
+			flex: 1
+			box-sizing: border-box
+			padding: 20px
+			color: #999999
+			position: relative
+
+			div#_box
+				width: 100%
+			
+			h2
+				margin-top: 0
+
+#cover
+	position: fixed
+	top: 0
+	left: 0
+	right: 0
+	bottom: 0
+	z-index: 5005
+	color: black
+	animation: flash 0.5s ease-out
+
+#signin_box
+	display: inline-block
+	vertical-align: middle
+	background-color: white
+	color: black
+	box-sizing: border-box
+	padding: 20px
+	border-radius: 20px
+	animation: flash 0.5s ease-out
+	box-shadow: 0 0 1em black
+	display: none
+	z-index: 5006
+
+	h2
+		text-align: center
+		border-bottom: 1px solid $secondary-color
+		padding-bottom: 5px
+
+@keyframes flash
+	from
+		opacity: 0
+	to
+		opacity: 1
+
+@-webkit-keyframes flash
+	from
+		opacity: 0
+	to
+		opacity: 1
+
+#templateAdder
+	display: none
+
+.warning
+	color: red
+
+	&::before, &::after
+		content: " !! "
+
+.red
+	color: red
+
+#photoLibraryBox
+	.image-box
+		padding-bottom: 100%
+		margin: 10px
+		width: calc(14.285% - 20px)

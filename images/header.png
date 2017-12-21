@@ -1,0 +1,78 @@
+<?php
+	header_remove('Content-type');
+	header ("Content-type: image/png");
+    header ("Cache-control: no-cache, must-revalidate");
+
+	require_once (BASE_DIR."lib/Account.php");
+	require_once (BASE_DIR."lib/Registry.php");
+	require_once (BASE_DIR."lib/File.php");
+	require_once (BASE_DIR."lib/Member.php");
+
+    $_ACCOUNT = null;
+
+    $acc = explode('.', $_SERVER['SERVER_NAME']);
+    if (count($acc) == 2) {
+        $_ACCOUNT = new Account("www");
+    } else if (count($acc) == 3) {
+		if ($acc[0] == 'capeventmanager') {
+            $acc[0] = 'md089';
+		}
+        $_ACCOUNT = new Account($acc[0]);
+    } else {
+        exit(255);
+    }
+
+    Registry::Initialize();
+
+	function ImageTTFCenter($image, $text, $font, $size, $angle = 0) {
+		$xi = imagesx($image);
+		$yi = imagesy($image);
+
+		$box = imagettfbbox($size, $angle, $font, $text);
+
+		$xr = $box[2]-$box[0];
+		$yr = $box[7]-$box[1];
+
+		$x = intval($xi/2 - $xr/2);
+		$y = intval($yi/2 - $yr/2);
+
+		return array($x, $y);
+	}
+
+	$img = imagecreatetruecolor(1200, 216);
+	imagesavealpha($img, true);
+	$trans_color = imagecolorallocatealpha($img, 0, 0, 0, 127);
+	imagefill($img, 0, 0, $trans_color);
+
+	$white = imagecolorallocate($img, 255, 255, 255);
+
+	$rimg = File::Get(Registry::get("Header.RightImage")); // CAP Logo
+	$limg = File::Get(Registry::get("Header.LeftImage")); // Squadron Logo
+
+	$limg = imagecreatefromstring($limg->Data);
+	$rimg = imagecreatefromstring($rimg->Data);
+
+	$font = BASE_DIR."styles/Montserrat.ttf";
+	$fontSize = 28;
+
+	imagecopyresized($img, $limg, 0,0,        0,0, 216,216, imagesx($limg),imagesy($limg));
+	imagecopyresized($img, $rimg, 1200-216,0, 0,0, 216,216, imagesx($rimg),imagesy($rimg));
+
+	$header = Registry::get("Header");
+
+	$text = [
+		$header->TopText,
+		$header->MiddleText,
+		$header->BottomText
+	];
+
+	list($x1,$y1) = ImageTTFCenter($img, $text[0], $font, $fontSize);
+	list($x2,$y2) = ImageTTFCenter($img, $text[1], $font, $fontSize);
+	list($x3,$y3) = ImageTTFCenter($img, $text[2], $font, $fontSize);
+
+	imagettftext($img, $fontSize, 0, $x1, $y1*(2/5),  $white, $font, $text[0]);
+	imagettftext($img, $fontSize, 0, $x2, $y2*(1/1), $white, $font, $text[1]);
+	imagettftext($img, $fontSize, 0, $x3, $y3*(3/2), $white, $font, $text[2]);
+
+	imagepng($img);
+	imagedestroy($img);

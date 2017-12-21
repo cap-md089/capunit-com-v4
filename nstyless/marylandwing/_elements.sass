@@ -1,0 +1,75 @@
+#memberSelect, #fileSelect
+	padding: 0
+	margin: 20px auto
+
+	input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="url"]
+		font-family: "Montserrat"
+		box-sizing: border-box
+		border: 1px solid black
+		border-radius: 10px
+		padding: 5px
+		display: inline-block
+		margin: 2%
+		width: 96%
+
+	input[type="checkbox"], input[type="radio"]
+		visibility: hidden
+		position: absolute
+
+		&:checked + label
+			background-color: $light-primary-color
+
+	label
+		background-color: transparent
+		display: none
+		border-top: 1px solid $gray
+		border-bottom: 1px solid $gray
+		padding: 10px
+		cursor: pointer
+
+		&.shown
+			display: block
+			margin-top: -1px
+
+#templateAdder
+	display: none
+
+.warning
+	color: red
+
+	&::before, &::after
+		content: " !! "
+
+.red
+	color: red
+
+
+#filelist
+	div.file
+		background: $white
+		border-radius: 25px
+		clear: both
+		padding: 20px
+		margin: 20px
+		box-sizing: border-box
+		display: flex
+
+		img
+			width: 300px
+			height: auto
+			padding: 0
+			margin: 0
+			flex: 0 0 300px
+
+		div.desc
+			flex: 1
+			box-sizing: border-box
+			padding: 20px
+			color: $gray
+			position: relative
+
+			div#_box
+				width: 100%
+			
+			h2
+				margin-top: 0
