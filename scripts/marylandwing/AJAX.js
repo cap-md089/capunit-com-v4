@@ -80,7 +80,8 @@ window.loaded.push(function() {
                 $(this).css("display", "none");
             }
             scback = scback || function(data, status, xhr) {
-                data = parseReturn(data);
+                $form.find("input[type=submit]").prop("disabled", false);
+		data = parseReturn(data);
                 $form.find("input[type=submit]").prop("disabled", false);
                 if (xhr.getResponseHeader("X-User-Error")) {
                     displayErrorMsg(xhr.getResponseHeader("X-User-Error"));
