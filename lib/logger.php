@@ -31,6 +31,9 @@
          * @return Logger
          */
         public function __construct ($name) {
+			if (!file_exists('logs')) {
+				mkdir ('logs', 0775);
+			}
             $this->name = $name;
         }
         /**
