@@ -60,7 +60,8 @@
 			}
 
 			$file->save();
-			
-			return $file->ID;
+			$id = $file->ID;
+			unset($file);
+			return $id;
 		}
 	}
