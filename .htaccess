@@ -11,7 +11,7 @@
 </FilesMatch>
 
 RewriteEngine on
-RewriteRule !((images|scripts|nstyles)\/.*|(filemanager|index|500|400)\.php|manifest\.appcache|favicon\.ico|rss$) index.php [nocase,last]
+RewriteRule !((images|scripts|nstyles|.well-known)\/.*|(filemanager|index|500|400)\.php|manifest\.appcache|favicon\.ico|rss$) index.php [nocase,last]
 #RewriteRule !/[a-zA-Z0-9]{5}/((images|scripts|styles).*|(filemanager|index|500|400)\.php|manifest\.appcache|favicon\.ico) index.php [nocase,last]
 RewriteRule  ((images|scripts|nstyles).*) filemanager.php [nocase,last]
 #RewriteRule  /[a-zA-Z0-9]{5}/((images|scripts|styles).*) filemanager.php [nocase,last]

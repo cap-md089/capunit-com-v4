@@ -81,7 +81,7 @@ window.loaded.push(function() {
             }
             scback = scback || function(data, status, xhr) {
                 $form.find("input[type=submit]").prop("disabled", false);
-		data = parseReturn(data);
+				data = parseReturn(data);
                 $form.find("input[type=submit]").prop("disabled", false);
                 if (xhr.getResponseHeader("X-User-Error")) {
                     displayErrorMsg(xhr.getResponseHeader("X-User-Error"));
@@ -106,7 +106,10 @@ window.loaded.push(function() {
                     var thing = xhr.getResponseHeader('X-UserLogin') == 'false' ? $(".signedin").addClass("signedout").removeClass("signedin") : $(".signedout").addClass("signedin").removeClass("signedout");
                 }
             };
-            console.log(form.getAttribute("data-form-beforesend"));
+			fcback = function (xhr, stat, err) {
+				
+			}
+			console.log(form.getAttribute("data-form-beforesend"));
             if (form.getAttribute("data-form-beforesend") != '') {
                 var _func = window[form.getAttribute("data-form-beforesend")];
                 console.log(_func);
