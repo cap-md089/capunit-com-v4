@@ -1,1 +1,1645 @@
 
+[1] {2017-Dec-22 09:12:18} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 09:12:19} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 12:12:03} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 12:12:03} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 12:12:11} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 12:12:11} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:54} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:55} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:45} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 13:12:45} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:03} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:03} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:03} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:03} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968303 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:03} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:03} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 13:12:03} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:04} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:06} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:06} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968306 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:06} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:10} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:10} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968310 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:10} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:12} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:12} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968312 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:12} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:20} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:20} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:20} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 13:12:20} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:20} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:20} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968320 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:20} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:20} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:27} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:27} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968327 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:27} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:01} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:01} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:01} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:01} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 13:12:01} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:01} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:01} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968361 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:01} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:52} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:52} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968592 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:52} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:53} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:53} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968593 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:53} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:55} [8]: Session ID: 3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw
+[2] {2017-Dec-22 13:12:55} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968595 AND sessionid = '3390552319303585a3c336fba8d87.60383293has3AB19wK2Jw';: 
+[3] {2017-Dec-22 13:12:55} [8]: 339055 has 0 session IDs stored
+[1] {2017-Dec-22 13:12:18} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[2] {2017-Dec-22 13:12:18} [4]: 339055 trying to check session IDs
+[3] {2017-Dec-22 13:12:18} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969878)
+[4] {2017-Dec-22 13:12:18} [4]: 339055 set session ID 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[5] {2017-Dec-22 13:12:18} [8]: Current SID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[1] {2017-Dec-22 13:12:19} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:19} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968679 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:19} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:19} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:19} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:19} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969879)
+[1] {2017-Dec-22 13:12:36} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:36} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968696 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:36} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:36} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:36} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:36} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969896)
+[8] {2017-Dec-22 13:12:36} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[9] {2017-Dec-22 13:12:36} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[10] {2017-Dec-22 13:12:36} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:37} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:37} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:37} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 13:12:39} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:39} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968699 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:39} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:39} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:39} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:39} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969899)
+[1] {2017-Dec-22 13:12:41} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:41} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968701 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:41} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:41} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:41} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:41} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969901)
+[1] {2017-Dec-22 13:12:43} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:43} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968703 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:43} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:43} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:43} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:43} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969903)
+[1] {2017-Dec-22 13:12:43} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:43} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968703 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:43} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:43} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:43} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:43} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969903)
+[1] {2017-Dec-22 13:12:46} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:46} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968706 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:46} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:46} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:46} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:46} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969906)
+[1] {2017-Dec-22 13:12:48} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:48} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968708 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:48} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:48} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:48} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:48} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969908)
+[1] {2017-Dec-22 13:12:49} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:49} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968709 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:49} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:49} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:49} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:49} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969909)
+[1] {2017-Dec-22 13:12:56} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:56} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968716 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:56} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:56} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:56} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:56} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969916)
+[1] {2017-Dec-22 13:12:58} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:58} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968718 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:58} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:58} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:58} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:58} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969918)
+[1] {2017-Dec-22 13:12:58} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:58} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968718 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:58} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:58} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:58} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:58} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969918)
+[1] {2017-Dec-22 13:12:58} [8]: Session ID: 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw
+[2] {2017-Dec-22 13:12:58} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513968718 AND sessionid = '33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw';: 
+[3] {2017-Dec-22 13:12:58} [8]: 339055 has 1 session IDs stored
+[4] {2017-Dec-22 13:12:58} [4]: 339055 (David M Trick) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 0
+    [DownloadCAPWATCH] => 0
+    [RegistryEdit] => 0
+    [Developer] => 0
+)
+[5] {2017-Dec-22 13:12:58} [4]: 339055 trying to check session IDs
+[6] {2017-Dec-22 13:12:58} [8]: 339055 inserting with SQL `INSERT INTO MemberSessions VALUES (:mid, :sid, :time, :contacts, :cdata, :mname, :mrank);`, values (339055, 33905515318747625a3d5426b59c20.32229859haDp37VfWLrjw, 1513969918)
+[1] {2017-Dec-22 14:12:13} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 14:12:13} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 14:12:13} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[2] {2017-Dec-22 14:12:13} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 14:12:13} [8]: Session ID: 54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI
+[2] {2017-Dec-22 14:12:13} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513971253 AND sessionid = '54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI';: 
+[3] {2017-Dec-22 14:12:13} [8]: 542488 has 0 session IDs stored
+[1] {2017-Dec-22 14:12:13} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 14:12:14} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 14:12:14} [8]: Session ID: 54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI
+[2] {2017-Dec-22 14:12:14} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513971254 AND sessionid = '54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI';: 
+[3] {2017-Dec-22 14:12:14} [8]: 542488 has 0 session IDs stored
+[1] {2017-Dec-22 14:12:16} [8]: Session ID: 54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI
+[2] {2017-Dec-22 14:12:16} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513971256 AND sessionid = '54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI';: 
+[3] {2017-Dec-22 14:12:16} [8]: 542488 has 0 session IDs stored
+[1] {2017-Dec-22 14:12:18} [8]: Session ID: 54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI
+[2] {2017-Dec-22 14:12:18} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513971258 AND sessionid = '54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI';: 
+[3] {2017-Dec-22 14:12:18} [8]: 542488 has 0 session IDs stored
+[1] {2017-Dec-22 14:12:14} [8]: Session ID: 54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI
+[2] {2017-Dec-22 14:12:14} [8]: SQL Statement: SELECT * FROM MemberSessions WHERE `time` > 1513971434 AND sessionid = '54248811656596415a3d00ede45a02.55075615hasz0/DWRZNlI';: 
+[3] {2017-Dec-22 14:12:14} [8]: 542488 has 0 session IDs stored
