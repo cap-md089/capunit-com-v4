@@ -1,0 +1,60 @@
+[1] {2017-Dec-21 16:12:36} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
+[1] {2017-Dec-22 07:12:38} [4]: 542488 (Andrew D Rioux ) tried to log in, got permissions Array
+(
+    [EventSignup] => 1
+    [ViewEventSignup] => 1
+    [FlightAssign] => 1
+    [MusterSheet] => 1
+    [PTSheet] => 1
+    [PromotionManagement] => 1
+    [AssignTasks] => 1
+    [AdministerPT] => 1
+    [FileManagement] => 1
+    [DownloadStaffGuide] => 1
+    [AddEvent] => 2
+    [EditEvent] => 1
+    [EventContactSheet] => 1
+    [SignUpEdit] => 1
+    [CopyEvent] => 1
+    [ORMOPORD] => 1
+    [DeleteEvent] => 1
+    [AssignPosition] => 1
+    [EventStatusPage] => 1
+    [ProspectiveMemberManagement] => 1
+    [EventLinkList] => 1
+    [AddTeam] => 1
+    [EditTeam] => 1
+    [PermissionsManagement] => 1
+    [DownloadCAPWATCH] => 1
+    [RegistryEdit] => 1
+    [Developer] => 1
+)
