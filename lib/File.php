@@ -111,10 +111,11 @@
 		public static function Get ($fid, $readonly=false) {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['FileData']." WHERE ID = :id AND (".DB_TABLES['FileData'].".AccountID=:aid OR ".DB_TABLES['FileData'].".AccountID='www');");
+			$stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['FileData']." WHERE ID = :id AND (AccountID=:aid OR AccountID='www');");
 			$stmt->bindValue(':id', $fid);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
 			$data = DB_Utils::ExecutePDOStatement($stmt);
+			
 			if (count($data) != 1) {
 				return false;
 			}
