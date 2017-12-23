@@ -125,7 +125,7 @@
 				$html .= new Link ('eventform', 'Add an event'). "<br />";
 			}
 
-			$html .= "<table id=\"calendar\">";
+			$html .= "<table id=\"eventCalendar\">";
 			$nextM = $nextMonth->format('n');
 			$nextY = $nextMonth->format('Y');
 			$lastM = getDateTime($thisMonth->getTimestamp()-1)->format('n');
