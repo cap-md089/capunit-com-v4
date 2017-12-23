@@ -50,8 +50,7 @@
          * @var int $uname Contains username, converted to a CAPID if in text form, e.g. lastname + firstinitial + middleinitial
          * @var int $capid CAPID
          */
-        public $uname = 0,
-                $capid = 0;
+        public $uname = 0, $capid = 0;
 
         /**
          * @var bool Whether or not this is a valid user, though a programmer never gets to use something invalid
