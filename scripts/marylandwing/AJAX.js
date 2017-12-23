@@ -20,6 +20,7 @@ window.loaded.push(function() {
             url += "&func=" + func;
         }
         url += "&cookies=" + encodeURIComponent(JSON.stringify(getCookies()));
+        url += "&mobile=" + window.mobile;
         if (!remove) {
             $("#body").html("");
             $("#loader").css({
@@ -80,8 +81,7 @@ window.loaded.push(function() {
                 $(this).css("display", "none");
             }
             scback = scback || function(data, status, xhr) {
-                $form.find("input[type=submit]").prop("disabled", false);
-				data = parseReturn(data);
+                data = parseReturn(data);
                 $form.find("input[type=submit]").prop("disabled", false);
                 if (xhr.getResponseHeader("X-User-Error")) {
                     displayErrorMsg(xhr.getResponseHeader("X-User-Error"));
@@ -106,10 +106,7 @@ window.loaded.push(function() {
                     var thing = xhr.getResponseHeader('X-UserLogin') == 'false' ? $(".signedin").addClass("signedout").removeClass("signedin") : $(".signedout").addClass("signedin").removeClass("signedout");
                 }
             };
-			fcback = function (xhr, stat, err) {
-				
-			}
-			console.log(form.getAttribute("data-form-beforesend"));
+            console.log(form.getAttribute("data-form-beforesend"));
             if (form.getAttribute("data-form-beforesend") != '') {
                 var _func = window[form.getAttribute("data-form-beforesend")];
                 console.log(_func);
@@ -227,6 +224,7 @@ window.loaded.push(function() {
                     formd.append("cookies", JSON.stringify(getCookies()));
                     formd.append("ajax", "true");
                     formd.append("form", "true");
+                    formd.append("mobile", window.mobile ? "true" : "false");
                     Promise.all(filep).then(function(values) {
                         for (var i = 0; i < values.length; i++) {
                             formd.append(values[i].name, values[i].id);
@@ -307,6 +305,7 @@ window.loaded.push(function() {
                     $(form).find('textarea').each(function(i) {
                         query += "&" + encodeURIComponent($(this).attr("name")) + "=" + encodeURIComponent($(this).val());
                     });
+                    query += "&mobile=" + window.mobile;
                     $.ajax({
                         url: url,
                         data: query,
@@ -389,6 +388,7 @@ window.loaded.push(function() {
             }
 
             url += "&method=" + encodeURIComponent(a.attr("data-http-func"));
+            url += "&mobile=" + window.mobile;
 
             push = true;
             if (typeof window[cbackn + "_prepush"] !== 'undefined') {

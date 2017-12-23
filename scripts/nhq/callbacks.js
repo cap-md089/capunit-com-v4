@@ -364,3 +364,11 @@ function pageLink_prepush (a, data) {
     }, 'slow');
     return false;
 }
+
+addFunction (function () {
+    $('#nav a').on('click', function () {
+        if (mobile) {
+            closemenu();
+        }
+    });
+});

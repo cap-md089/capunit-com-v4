@@ -293,7 +293,6 @@
 				@extend .buttonHover
 
 	div.image-box
-		background: white
 		width: 89.148px
 		float: left
 		margin: 0.89148px
@@ -311,20 +310,21 @@
 			max-height: 95%
 			vertical-align: middle
 
-	#mother .popupimagecontainer
+	.popupimagecontainer
 		position: relative
 
 		.popupimage
+			background: white
 			z-index: 10
 			display: none
 			position: absolute
-			top: 1.2em
-			left: 0
+			top: 20px
+			left: 10px
 
 		&:hover .popupimage
 			display: block
 
-	#mother .popupimagecontainer2
+	.popupimagecontainer2
 		position: static
 
 	.image-view
@@ -365,3 +365,13 @@
 		text-align: center
 		display: inline-block
 		box-shadow: 1px -1px 1px rgba(0,0,0,0.3)
+
+	.bigfatred
+		color: red
+
+	.rightFloat
+		float: right
+
+	.width600px
+		display: block
+		width: 450px

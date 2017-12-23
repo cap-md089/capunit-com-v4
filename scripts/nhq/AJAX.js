@@ -20,6 +20,7 @@ window.loaded.push(function() {
             url += "&func=" + func;
         }
         url += "&cookies=" + encodeURIComponent(JSON.stringify(getCookies()));
+        url += "&mobile=" + (window.mobile ? "true" : "false");
         if (!remove) {
             $("#pageblock").html("");
             $("#sidenav").html("");
@@ -112,6 +113,9 @@ window.loaded.push(function() {
                 }
                 if (xhr.getResponseHeader('X-UserLogin')) {
                     var thing = xhr.getResponseHeader('X-UserLogin') == 'false' ? $(".signedin").addClass("signedout").removeClass("signedin") : $(".signedout").addClass("signedin").removeClass("signedout");
+                }
+                if ($(form).attr("id") == 'search' && mobile) {
+                    closemenu();
                 }
             };
             if (form.getAttribute("data-form-beforesend") != '') {
@@ -230,6 +234,7 @@ window.loaded.push(function() {
                     formd.append("cookies", JSON.stringify(getCookies()));
                     formd.append("ajax", "true");
                     formd.append("form", "true");
+                    formd.append("mobile", (window.mobile ? "true" : "false"));
                     Promise.all(filep).then(function(values) {
                         for (var i = 0; i < values.length; i++) {
                             formd.append(values[i].name, values[i].id);
@@ -314,6 +319,7 @@ window.loaded.push(function() {
                     $(form).find('textarea').each(function(i) {
                         query += "&" + encodeURIComponent($(this).attr("name")) + "=" + encodeURIComponent($(this).val());
                     });
+                    query += "$mobile="+(window.mobile ? "true" : "false");
                     $.ajax({
                         url: url,
                         data: query,
@@ -372,8 +378,9 @@ window.loaded.push(function() {
     this.AJAXLinkClick = function(linkElement) {
         var a = linkElement;
         url = a.href;
+        console.log('click');
 
-        if ($(a).parent().parent().attr("id") == '#menu' && $(window).outerWidth() < 800) {
+        if (mobile) {
             closemenu();
         }
 
@@ -402,6 +409,7 @@ window.loaded.push(function() {
             }
 
             url += "&method=" + encodeURIComponent(a.attr("data-http-func"));
+            url += "&mobile=" + (window.mobile ? "true" : "false");
 
             push = true;
             if (typeof window[cbackn + "_prepush"] !== 'undefined') {
