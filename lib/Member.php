@@ -44,7 +44,7 @@
      */
     class Member {
         const TestMode = true; // Should just be left at true
-        const SkipNHQ = (HOST_OS == 'Windows NT'); // Whether to return an admin Member object when creating a member
+        const SkipNHQ = false; // Whether to return an admin Member object when creating a member
 
         /**
          * @var int $uname Contains username, converted to a CAPID if in text form, e.g. lastname + firstinitial + middleinitial

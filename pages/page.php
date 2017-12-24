@@ -272,15 +272,11 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					$v1 = true;
 					foreach ($e['form-data']['photos'] as $file) {
 						$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileBlogAssignments']." VALUES (:fid, :bid, :aid);");
-<<<<<<< HEAD
 						$stmt->bindValue(':fid', $file);
 						$data = File::Get($file);
 						$data->IsPhoto = true;
 						$data->save();
 						unset($data);
-=======
-						$stmt->bindValue(':fid', $file);	
->>>>>>> 1ec14cfd54c33e8ce2caab07f65c470c924d81b1
 						$stmt->bindValue(':bid', $id);
 						$stmt->bindvalue(':aid', $a->id);
 						$v1 = $stmt->execute() && $v1;
