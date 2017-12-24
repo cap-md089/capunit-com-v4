@@ -1,7 +1,0 @@
-{
-"version": 3,
-"mappings": "AAAA,WAAW,CACP,MAAM,CAAE,MAAM",
-"sources": ["../styles-source/embed.sass"],
-"names": [],
-"file": "embed.css"
-}
