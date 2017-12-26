@@ -6,8 +6,8 @@ logs/*
 *.WARN
 *.ERR
 .vscode/*
-*.css
 *.css.map
 .DS_Store
-!nstyles/multirange.css
-!nstyles/jquery.simple-dtpicker.css
+.gitignore
+config.php
+styles/*.css
