@@ -8,6 +8,5 @@ logs/*
 .vscode/*
 *.css.map
 .DS_Store
-.gitignore
 config.php
 styles/*.css
