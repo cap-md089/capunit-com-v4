@@ -1,0 +1,2 @@
+config.php merge=ours
+*.css -diff

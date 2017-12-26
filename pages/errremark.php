@@ -66,7 +66,7 @@ Time: $time<br />
 Error type: $enumber ({$errname})<br />
 Error: $message<br />
 File: {$badfile}:{$badline}<br />
-People with problems:<br />
+People experiencing this problem:<br />
 <p style="margin: 15px">
 $capids
 </p>
