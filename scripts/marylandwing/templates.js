@@ -120,12 +120,12 @@ window.loaded.push(function() {
 
         $("input[type=datetime-local]").each(function() {
             var mint = 5 * 60 * 1000;
-            if (!$(this).val()) {
-                var t = new Date();
-                var timestamp = t.getTime();
-                t = new Date(Math.round(timestamp / mint) * mint);
-                $(this).val(t.getFullYear() + "-" + (parseInt(t.getMonth(), 10)+1).toString() + "-" + t.getDate() + "T" + t.getHours() + ":" + t.getMinutes());
-            }
+            // if (!$(this).val()) {
+            //     var t = new Date();
+            //     var timestamp = t.getTime();
+            //     t = new Date(Math.round(timestamp / mint) * mint);
+            //     $(this).val(t.getFullYear() + "-" + (parseInt(t.getMonth(), 10)+1).toString() + "-" + t.getDate() + "T" + t.getHours() + ":" + t.getMinutes());
+            // }
             $(this).appendDtpicker({
                 "dateFormat": "YYYY-MM-DDThh:mm",
                 "current": $(this).val(),

@@ -2,7 +2,11 @@
 	define ("USER_REQUIRED", true);
 	
 	function mdate ($time) {
-		return date('Y-m-d\TH:i:s', $time);
+		if ($time>0) {
+			return date('Y-m-d\TH:i:s', $time);
+		} else {
+			return 0;
+		}
 	}
 
     class Output {
@@ -37,7 +41,7 @@
 					->addField ('', 'Activity Information', 'label')
 					->addField ('comments', 'Comments', 'textarea', Null, Null, $event->Comments)
 					->addField ('activity', 'Activity Type', 'multcheckbox', Null, [
-						'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					], explode(', ', $event->Activity))
 					->addField ('lodging', 'Lodging Arrangements', 'multcheckbox', Null, [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -47,7 +51,7 @@
 					->addField ('', 'Logistics Information', 'label')
 					->addField ('uniform', 'Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					], explode(', ', $event->Uniform))
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
@@ -61,6 +65,7 @@
 					], explode(', ', $event->RequiredForms))
 					->addField ('requiredEquipment', 'Required Equipment', 'text', Null, Null, $event->RequiredEquipment)
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, mdate($event->RegistrationDeadline))
+					->addField ('registrationInformation', 'Registration Information', 'textarea', Null, Null, $event->RegistrationInformation)
 					->addField ('participationFee', 'Participation Fee', 'text', Null, Null, 0)
 					->addField ('participationFeeDeadline', 'Participation Fee Due', 'datetime-local', Null, Null, mdate($event->ParticipationFeeDue))
 					->addField ('meals', 'Meals', 'multcheckbox', Null, [
@@ -127,7 +132,7 @@
 					->addField ('', 'Activity Information', 'label')
 					->addField ('comments', 'Comments', 'textarea')
 					->addField ('activity', 'Activity Type', 'multcheckbox', Null, [
-						'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					])
 					->addField ('lodging', 'Lodging Arrangements', 'multcheckbox', Null, [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -137,7 +142,7 @@
 					->addField ('', 'Logistics Information', 'label')
 					->addField ('uniform', 'Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					])
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
@@ -151,6 +156,7 @@
 					])
 					->addField ('requiredEquipment', 'Required Equipment', 'text')
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, 0)
+					->addField ('registrationInformation', 'Registration Information', 'textarea')
 					->addField ('participationFee', 'Participation Fee', 'text', Null, Null, 0)
 					->addField ('participationFeeDeadline', 'Participation Fee Due', 'datetime-local', Null, Null, 0)
 					->addField ('meals', 'Meals', 'multcheckbox', Null, [
@@ -230,6 +236,7 @@
 					'EndDateTime' => $eventdata['form-data']['endDate'],
 					'PickupDateTime' => $eventdata['form-data']['pickupDate'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
+					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
 					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
 					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
 					'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
@@ -239,7 +246,7 @@
 					'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
 					'Administration' => $eventdata['form-data']['adminComments'],
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -252,7 +259,7 @@
 					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					]),
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
@@ -344,6 +351,7 @@
 					'EndDateTime' => $eventdata['form-data']['endDate'],
 					'PickupDateTime' => $eventdata['form-data']['pickupDate'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
+					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
 					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
 					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
 					'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
@@ -353,7 +361,7 @@
 					'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
 					'Administration' => $eventdata['form-data']['adminComments'],
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -366,7 +374,7 @@
 					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					]),
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
