@@ -21,8 +21,6 @@
 	
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
-			$css = file_get_contents(BASE_DIR."styles/calendar.css");
-
 			$months = [
 				'January',
 				'February',
@@ -201,7 +199,7 @@
 
 			return [
 				'title' => 'Calendar',
-				'body' => $html . "<style>".$css."</style>"
+				'body' => $html
 			];
 		}
 
