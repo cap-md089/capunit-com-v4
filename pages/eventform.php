@@ -27,7 +27,8 @@
 				if (!($member->hasPermission("EditEvent") || $event->isPOC($member))) {return ['error' => 402];}
 				$form = new AsyncForm ('eventform', 'Edit Event', Null, 'eventForm');
 
-				$form->addField ('eventName', 'Event Name', 'text', Null, Null, $event->EventName)
+				$form->addField('', '(* Indicates Required Field)', 'textread')
+					->addField ('eventName', 'Event Name', 'text', Null, Null, $event->EventName)
 					->addField ('', 'Calendar Information', 'label')
 					->addField ('meetDate', 'Meet Date and Time', 'datetime-local', Null, Null, mdate($event->MeetDateTime))
 					->addField ('meetLocation', 'Meet Location', 'text', Null, Null, $event->MeetLocation)
@@ -75,15 +76,21 @@
 					->addField ('CAPPOC1ID', 'First CAP POC ID ('.(new AsyncButton(Null, 'Select', 'selectCAPIDForEventForm'))->getHtml('1').')', 'text', 'capPOC1', Null, $event->CAPPOC1ID)
 					->addField ('CAPPOC1Phone', 'First CAP POC Phone', 'text', 'capPOCPHONE1', Null, $event->CAPPOC1Phone)
 					->addField ('CAPPOC1Email', 'First CAP POC Email', 'text', 'capPOCEMAIL1', Null, $event->CAPPOC1Email)
+					->addField ('CAPPOC1EUpdates', 'Send Update Emails', 'checkbox', Null, Null, $event->CAPPOC1ReceiveEventUpdates)
+					->addField ('CAPPOC1SUpdates', 'Send SignUp Emails', 'checkbox', Null, Null, $event->CAPPOC1ReceiveSignUpUpdates)
 					->addField ('CAPPOC2ID', 'Second CAP POC ID ('.(new AsyncButton(Null, 'Select', 'selectCAPIDForEventForm'))->getHtml('2').')', 'text', 'capPOC2', Null, $event->CAPPOC2ID)
 					->addField ('CAPPOC2Phone', 'Second CAP POC Phone', 'text', 'capPOCPHONE2', Null, $event->CAPPOC2Phone)
 					->addField ('CAPPOC2Email', 'Second CAP POC Email', 'text', 'capPOCEMAIL2', Null, $event->CAPPOC2Email)
+					->addField ('CAPPOC2EUpdates', 'Send Update Emails', 'checkbox', Null, Null, $event->CAPPOC2ReceiveEventUpdates)
+					->addField ('CAPPOC2SUpdates', 'Send SignUp Emails', 'checkbox', Null, Null, $event->CAPPOC2ReceiveSignUpUpdates)
+					->addField ('additionalEmailAddresses', 'Additional Email Addresses', 'text', Null, Null, $event->AdditionalEmailAddresses)
 					->addField ('ExtPOCName', 'External POC Name', 'text', Null, Null, $event->ExtPOCName)
 					->addField ('ExtPOCPhone', 'External POC Phone', 'text', Null, Null, $event->ExtPOCPhone)
 					->addField ('ExtPOCEmail', 'External POC Email', 'text', Null, Null, $event->ExtPOCEmail)
+					->addField ('ExtPOCEUpdates', 'Send Update Emails', 'checkbox', Null, Null, $event->ExtPOCReceiveEventUpdates)
 					->addField ('', 'Administrative Information', 'label')
-					->addField ('acceptSignups', 'Accept Sign-Ups','checkbox', Null, Null, $event->AcceptSignups)
-					->addField ('signUpDeny', 'Sign-Up Deny Message', 'textarea', Null, Null, $event->SignUpDenyMessage)
+					// ->addField ('acceptSignups', 'Accept Sign-Ups','checkbox', Null, Null, $event->AcceptSignups)
+					// ->addField ('signUpDeny', 'Sign-Up Deny Message', 'textarea', Null, Null, $event->SignUpDenyMessage)
 					->addField ('desiredParticipants', 'Desired Number of Participants', 'range', Null, [
 						'value' => $event->DesiredNumParticipants,
 						'min' => 0,
@@ -97,6 +104,7 @@
 					], $event->Status)
 					->addField ('entryComplete', 'Entry Complete', 'checkbox', Null, Null, $event->Complete)
 					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, $event->PublishToWingCalendar)
+					->addField ('showUpcoming', 'Show in Upcoming Events', 'checkbox', Null, Null, $event->ShowUpcoming)
 					->addField ('adminComments', 'Administrative Comments', 'textarea', Null, Null, $event->Administration)
 					->addField ('TeamID', 'Team ID', 'text', Null, Null, $event->TeamID)
 					->addField ('', 'Debrief information', 'label')
@@ -118,15 +126,16 @@
 			} else {
 				$form = new AsyncForm ('eventform', 'Create an Event', Null, 'eventForm');
 
-				$form->addField ('eventName', 'Event Name', 'text')
+				$form->addField('', '(* Indicates Required Field)', 'textread')
+					->addField ('eventName', 'Event Name*', 'text')
 					->addField ('', 'Calendar Information', 'label')
-					->addField ('meetDate', 'Meet Date and Time', 'datetime-local')
-					->addField ('meetLocation', 'Meet Location', 'text')
-					->addField ('startDate', 'Start Date and Time', 'datetime-local')
-					->addField ('eventLocation', 'Event Location', 'text')
-					->addField ('endDate', 'End Date and Time', 'datetime-local')
-					->addField ('pickupDate', 'Pickup Date and Time', 'datetime-local')
-					->addField ('pickupLocation', 'Pickup Location', 'text')
+					->addField ('meetDate', 'Meet Date and Time*', 'datetime-local')
+					->addField ('meetLocation', 'Meet Location*', 'text')
+					->addField ('startDate', 'Start Date and Time*', 'datetime-local')
+					->addField ('eventLocation', 'Event Location*', 'text')
+					->addField ('endDate', 'End Date and Time*', 'datetime-local')
+					->addField ('pickupDate', 'Pickup Date and Time*', 'datetime-local')
+					->addField ('pickupLocation', 'Pickup Location*', 'text')
 					->addField ('transportationProvided', 'Transportation Provided', 'checkbox')
 					->addField ('transportationDescription', 'Transportation Description', 'text')
 					->addField ('', 'Activity Information', 'label')
@@ -140,7 +149,7 @@
 					->addField ('eventWebsite', 'Event Website', 'url')
 					->addField ('highAdventureDescription', 'High Adventure Description', 'textarea')
 					->addField ('', 'Logistics Information', 'label')
-					->addField ('uniform', 'Uniform', 'multcheckbox', Null, [
+					->addField ('uniform', 'Uniform*', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
 						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					])
@@ -166,15 +175,21 @@
 					->addField ('CAPPOC1ID', 'First CAP POC ID ('.(new AsyncButton(Null, 'Select', 'selectCAPIDForEventForm'))->getHtml('1').')', 'text', 'capPOC1')
 					->addField ('CAPPOC1Phone', 'First CAP POC Phone', 'text', 'capPOCPHONE1')
 					->addField ('CAPPOC1Email', 'First CAP POC Email', 'text', 'capPOCEMAIL1')
+					->addField ('CAPPOC1EUpdates', 'Send Update Emails', 'checkbox', 'capPOCEUpdates1')
+					->addField ('CAPPOC1SUpdates', 'Send SignUp Emails', 'checkbox', 'capPOCEUpdates1')
 					->addField ('CAPPOC2ID', 'Second CAP POC ID ('.(new AsyncButton(Null, 'Select', 'selectCAPIDForEventForm'))->getHtml('2').')', 'text', 'capPOC2')
 					->addField ('CAPPOC2Phone', 'Second CAP POC Phone', 'text', 'capPOCPHONE2')
 					->addField ('CAPPOC2Email', 'Second CAP POC Email', 'text', 'capPOCEMAIL2')
+					->addField ('CAPPOC2EUpdates', 'Send Update Emails', 'checkbox', 'capPOCEUpdates2')
+					->addField ('CAPPOC2SUpdates', 'Send SignUp Emails', 'checkbox', 'capPOCEUpdates2')
+					->addField ('additionalEmailAddresses', 'Additional Email Addresses', 'text')
 					->addField ('ExtPOCName', 'External POC Name', 'text')
 					->addField ('ExtPOCPhone', 'External POC Phone', 'text')
 					->addField ('ExtPOCEmail', 'External POC Email', 'text')
+					->addField ('ExtPOCEUpdates', 'Send Update Emails', 'checkbox')
 					->addField ('', 'Administrative Information', 'label')
-					->addField ('acceptSignups', 'Accept Sign-Ups','checkbox')
-					->addField ('signUpDeny', 'Sign-Up Deny Message', 'textarea')
+					// ->addField ('acceptSignups', 'Accept Sign-Ups','checkbox', Null, Null, '1')
+					// ->addField ('signUpDeny', 'Sign-Up Deny Message', 'textarea')
 					->addField ('desiredParticipants', 'Desired Number of Participants', 'range', Null, [
 						'value' => 8,
 						'min' => 0,
@@ -187,7 +202,8 @@
 						'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only', 'Draft'
 					])
 					->addField ('entryComplete', 'Entry Complete', 'checkbox')
-					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox')
+					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, '1')
+					->addField ('showUpcoming', 'Show in Upcoming Events', 'checkbox', Null, Null, '1')
 					->addField ('adminComments', 'Administrative Comments', 'textarea')
 					->addField ('TeamID', 'Team ID', 'text')
 					->addField ('Debrief', 'Debrief', 'textarea')
@@ -239,11 +255,14 @@
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
 					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
 					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
-					'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
+					// 'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
+					'AcceptSignups' => true,
 					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
+					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
 					'Comments' => $eventdata['form-data']['comments'],
 					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
-					'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
+					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
+					'SignUpDenyMessage' => '',
 					'Administration' => $eventdata['form-data']['adminComments'],
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
 						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
@@ -277,13 +296,19 @@
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
 					'CAPPOC1Email' => $eventdata['form-data']['CAPPOC1Email'],
+					'CAPPOC1EUpdates' => $eventdata['form-data']['CAPPOC1ReceiveEventUpdates'],
+					'CAPPOC1SUpdates' => $eventdata['form-data']['CAPPOC1ReceiveSighUpUpdates'],
 					'CAPPOC2ID' => $eventdata['form-data']['CAPPOC2ID'],
 					'CAPPOC2Name' => !!$poc2 ? $poc2->memberRank . ' ' . $poc2->memberName : '',
 					'CAPPOC2Phone' => $eventdata['form-data']['CAPPOC2Phone'],
 					'CAPPOC2Email' => $eventdata['form-data']['CAPPOC2Email'],
+					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2ReceiveEventUpdates'],
+					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2ReceiveSighUpUpdates'],
+					'additionalEmailAddresses' => $eventdata['form-data']['AdditionalEmailAddresses'],
 					'ExtPOCName' => $eventdata['form-data']['ExtPOCName'],
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
+					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCReceiveEventUpdates'],
 					'TeamID' => $eventdata['form-data']['TeamID'],
 					'Debrief' => $eventdata['form-data']['Debrief']
 				), Null, $member);
@@ -332,11 +357,12 @@
 				$poc1 = Member::Estimate($eventdata['form-data']['CAPPOC1ID']);
 				$poc2 = Member::Estimate($eventdata['form-data']['CAPPOC2ID']);
 
-				if ($eventdata['form-data']['Debrief'] != '') {
-					$debrief = rtrim($event->Debrief . "\n\n$member->RankName\n\n" . $eventdata['form-data']['Debrief'], "\n");
- 				} else {
-					$debrief = $event->Debrief;
-				}
+				// if ($eventdata['form-data']['Debrief'] != '') {
+				// 	$debrief = rtrim($event->Debrief . "\n\n$member->RankName\n\n" . $eventdata['form-data']['Debrief'], "\n");
+ 				// } else {
+				// 	$debrief = $event->Debrief;
+				// }
+
 
 				$event->set(array (
 					'EventName' => $eventdata['form-data']['eventName'],
@@ -354,11 +380,14 @@
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
 					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
 					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
-					'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
+					// 'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
+					'AcceptSignups' => true,
 					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
+					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
 					'Comments' => $eventdata['form-data']['comments'],
 					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
-					'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
+					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
+					'SignUpDenyMessage' => '',
 					'Administration' => $eventdata['form-data']['adminComments'],
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
 						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
@@ -392,16 +421,22 @@
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
 					'CAPPOC1Email' => $eventdata['form-data']['CAPPOC1Email'],
+					'CAPPOC1EUpdates' => $eventdata['form-data']['CAPPOC1ReceiveEventUpdates'],
+					'CAPPOC1SUpdates' => $eventdata['form-data']['CAPPOC1ReceiveSighUpUpdates'],
 					'CAPPOC2ID' => $eventdata['form-data']['CAPPOC2ID'],
 					'CAPPOC2Name' => !!$poc2 ? $poc2->memberRank . ' ' . $poc2->memberName : '',
 					'CAPPOC2Phone' => $eventdata['form-data']['CAPPOC2Phone'],
 					'CAPPOC2Email' => $eventdata['form-data']['CAPPOC2Email'],
+					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2ReceiveEventUpdates'],
+					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2ReceiveSighUpUpdates'],
+					'additionalEmailAddresses' => $eventdata['form-data']['AdditionalEmailAddresses'],
 					'ExtPOCName' => $eventdata['form-data']['ExtPOCName'],
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
+					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCReceiveEventUpdates'],
 					'Author' => $member->uname,
 					'TeamID' => $eventdata['form-data']['TeamID'],
-					'Debrief' =>$debrief
+					'Debrief' => $eventdata['form-data']['Debrief']
 				));
 
 
