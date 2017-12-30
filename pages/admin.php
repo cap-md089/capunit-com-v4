@@ -32,7 +32,17 @@
 				'title' => 'Administration',
 				'body' => [
 					'MainBody' => $html,
-					'SideNavigation' => UtilCollection::GenerateSideNavigation($links)
+					'SideNavigation' => UtilCollection::GenerateSideNavigation($links),
+					'Breadcrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Text' => 'Home',
+							'Target' => '/'
+						],
+						[
+							'Text' => 'Administration',
+							'Target' => '/admin'
+						]
+					])
 				]
 			];
 		}

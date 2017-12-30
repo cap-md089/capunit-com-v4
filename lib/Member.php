@@ -454,14 +454,24 @@
          *
          * Cannot go onto NHQ for advanced things, due to lack of cookies
          *
-         * @param int CAP ID
+         * @param int $capid CAP ID
+         * @param bool $global Whether or not to search entire database or account, false for just looking at the account
+         * @param \Account $account Account to use if global is false, defaults to account of current webpage
          *
          * @return \Member A member
          */
-        public static function Estimate ($capid) {
+        public static function Estimate ($capid, $global=false, $account=null) {
             $pdo = DB_Utils::CreateConnection();
 
-            $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
+            if ($global) {
+                $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
+            } else {
+                if (!isset($account)) {
+                    global $_ACCOUNT;
+                    $account = $_ACCOUNT;
+                }
+                $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
+            }
             $stmt->bindValue(':cid', $capid);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) != 1) return false;

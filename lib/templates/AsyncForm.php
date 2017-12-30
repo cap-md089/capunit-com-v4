@@ -148,7 +148,7 @@
 		 * @param str $type Type attribute, custom autocomplete is included
 		 * @param str $class CSS class
 		 * @param mixed $data Data for different elements, this is for things such as select and autocomplete. If it has the 'value' key set, the value becomes the default value
-		 * @param str $default Default value for field
+		 * @param str|str[] $default Default value for field
 		 * @param str $rowid The HTML ID for the row of the field
 		 *
 		 * @return self Useful for chaining, e.g. $form->addField ()->addField ()->addField()...->getHtml();

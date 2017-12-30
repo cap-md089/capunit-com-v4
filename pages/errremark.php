@@ -25,6 +25,8 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 
 			$butt = new AsyncButton ('errremark', 'Issue resolved?', 'reload', 'rightFloat');
 
+			$links = [];
+
 			foreach ($data as $datum) {
 				$stmt = $pdo->prepare("select capid from ".DB_TABLES['ErrorMessages']." where message = :msg;");
 				$stmt->bindValue(':msg', $datum['message']);
@@ -60,7 +62,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 				$remark = $datum['remarks'];
 				$html .= <<<EOD
 <div style="clear:both">
-<h2 class="title" style="border-bottom: 1px solid #2b357b">Issue #$id $butth</h4>
+<h2 class="title" style="border-bottom: 1px solid #2b357b" id="error$id">Issue #$id $butth</h4>
 <section>
 Time: $time<br />
 Error type: $enumber ({$errname})<br />
@@ -82,6 +84,13 @@ $details
 </section>
 </div>
 EOD;
+				$file = explode('/', implode('/', explode('\\', $badfile)));
+				$file = $file[count($file)-1];
+				$links[] = [
+					'Type' => 'ref',
+					'Target' => "error$id",
+					'Text' => "Error #$id: $file"
+				];
 			}
 
 $body = '';
@@ -103,7 +112,24 @@ EOD;
 			}
 
 			return [
-				'body' => $body.$html,
+				'body' => [
+					'MainBody' => $body.$html,
+					'SideNavigation' => UtilCollection::GenerateSideNavigation($links),
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Text' => 'Home',
+							'Target' => '/'
+						],
+						[
+							'Text' => 'Administration',
+							'Target' => '/admin'
+						],
+						[
+							'Text' => 'Errors',
+							'Target' => '/errremark'
+						]
+					])
+				],
 				'title' => 'Errors'
 			];
 		}

@@ -64,6 +64,8 @@
 
     Registry::Initialize();
 
+    Event::SetAccount($_ACCOUNT);
+
     if (!$_AJAX && !in_array($path[count(explode('/', HOST_SUB_DIR))], ['images', 'scripts', 'styles', 'user-uploads'])) {
         header("Cache-control: no-cache,must-revalidate");
         $title = Registry::get("Website.Name");

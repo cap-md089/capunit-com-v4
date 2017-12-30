@@ -253,7 +253,19 @@
          * @var bool So it doesn't save after being removed on GBC
          */
         private $destroyed = false;
+
+        /*
+         * @var \Account Account to use instead of default account, defaults to default accoutn
+         */
+        private static $account;
         
+        /**
+         * 
+         */
+        public static function SetAccount (\Account $account) {
+            self::$account = $account;
+        }
+
         /**
          * Gets an event based on the event number
          *
