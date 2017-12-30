@@ -41,7 +41,7 @@
 					->addField ('', 'Activity Information', 'label')
 					->addField ('comments', 'Comments', 'textarea', Null, Null, $event->Comments)
 					->addField ('activity', 'Activity Type', 'multcheckbox', Null, [
-						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					], explode(', ', $event->Activity))
 					->addField ('lodging', 'Lodging Arrangements', 'multcheckbox', Null, [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -132,7 +132,7 @@
 					->addField ('', 'Activity Information', 'label')
 					->addField ('comments', 'Comments', 'textarea')
 					->addField ('activity', 'Activity Type', 'multcheckbox', Null, [
-						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					])
 					->addField ('lodging', 'Lodging Arrangements', 'multcheckbox', Null, [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -246,9 +246,9 @@
 					'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
 					'Administration' => $eventdata['form-data']['adminComments'],
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
-					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
+					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
 					]),
 					'Meals' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['meals'], [
@@ -361,9 +361,9 @@
 					'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
 					'Administration' => $eventdata['form-data']['adminComments'],
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Weekly Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
-					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
+					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
 					]),
 					'Meals' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['meals'], [
