@@ -219,6 +219,14 @@
                $CAPPOC2RxRoster = 0;
 
         /**
+         * @var int $CAPPOC1ReceiveEventUpdates 
+         * @var int $CAPPOC1ReceiveEventUpdates 
+         * @var int $CAPPOC2ReceiveSignUpUpdates 
+         * @var int $CAPPOC2ReceiveSignUpUpdates 
+         * @var int $ExtPOCReceiveSignUpUpdates 
+         */
+
+        /**
          * @var string $ExtPOCName Name of external POC
          * @var string $ExtPOCPhone Phone number of external POC
          * @var string $ExtPOCEmail Email of external POC

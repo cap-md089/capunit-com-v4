@@ -89,7 +89,7 @@ EOD;
 				$links[] = [
 					'Type' => 'ref',
 					'Target' => "error$id",
-					'Text' => "Error #$id: $file"
+					'Text' => "Error #$id: $file:$badline"
 				];
 			}
 

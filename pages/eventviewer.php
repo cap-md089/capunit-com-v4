@@ -128,7 +128,23 @@
 			}
 
 			return [
-				'body' => $html,
+				'body' => [
+					'MainBody' => $html,
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home',
+						],
+						[
+							'Target' => '/calendar',
+							'Text' => 'Calendar'
+						],
+						[
+							'Target' => '/eventviewer/'.$ev,
+							'Text' => "View '$event->EventName'"
+						]
+					])
+				],
 				'title' => $event->EventName
 			];
 		}

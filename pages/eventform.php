@@ -219,7 +219,23 @@
 
 				return [
 					'title' => 'Create Event',
-					'body' => $form.''
+					'body' => [
+						'MainBody' => $form.'',
+						'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+							[
+								'Target' => '/',
+								'Text' => 'Home'
+							],
+							[
+								'Target' => '/calendar',
+								'Text' => 'Calendar'
+							],
+							[
+								'Target' => '/eventform',
+								'Text' => 'Create an event'
+							]
+						])
+					]
 				];
 			}
         }
