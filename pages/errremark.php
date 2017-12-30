@@ -26,6 +26,28 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 			$butt = new AsyncButton ('errremark', 'Issue resolved?', 'reload', 'rightFloat');
 
 			foreach ($data as $datum) {
+				$stmt = $pdo->prepare("select capid from ".DB_TABLES['ErrorMessages']." where message = :msg;");
+				$stmt->bindValue(':msg', $datum['message']);
+				$cdata = DBUtils::ExecutePDOStatement($stmt);
+				$ncdata = [];
+				foreach ($cdata as $c) {
+					if (array_search($c['capid'], $ncdata)) continue;
+					if ($c['capid'] == '') continue;
+					$ncdata[] = $c['capid'];
+				}
+				$ncdata = array_unique($ncdata);
+				asort($ncdata);
+				$capids = '';
+				foreach ($ncdata as $capid) {
+					if ($capid == '0' || !isset($capid) || $capid == '') continue;
+					$mem = Member::Estimate($capid);
+					if ($mem) {
+						$capids .= "$capid: $mem->RankName, ";
+					} else {
+						$capids .= "$capid, ";
+					}
+				}
+				$capids = rtrim($capids, ', ');
 				$butth = $butt->getHtml($datum['message']);
 				$id = $datum['id'];
 				$time = date('D, d M Y H:i:s', $datum['timestamp']);
@@ -44,6 +66,10 @@ Time: $time<br />
 Error type: $enumber ({$errname})<br />
 Error: $message<br />
 File: {$badfile}:{$badline}<br />
+People experiencing this problem:<br />
+<p style="margin: 15px">
+$capids
+</p>
 User remarks:<br />
 <p style="margin: 15px">
 $remark

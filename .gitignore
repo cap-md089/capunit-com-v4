@@ -6,5 +6,7 @@ logs/*
 *.WARN
 *.ERR
 .vscode/*
-.DS_Store
 *.css.map
+.DS_Store
+config.php
+styles/*.css
