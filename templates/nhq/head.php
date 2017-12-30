@@ -33,7 +33,7 @@
 		<!-- Client metadata -->
 		<meta name="description" content="" class="descriptions" />
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<!-- <meta name="viewport" content="width=400, initial-scale=1" /> -->
+		<meta name="viewport" content="width=400, initial-scale=1" />
 
 		<meta name="ROBOTS" content="INDEX, FOLLOW" />
 		
