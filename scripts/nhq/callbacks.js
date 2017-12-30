@@ -54,6 +54,36 @@ function createDate(string) { // Date.parse is inconsistent
 function checkInputs($form) {
     ins = [];
 
+    let eventName = $("input[name=eventName]").val();
+    if(!eventName) {
+        customDialog("Form Input Error", "The Event Name field cannot be blank");
+        return false;
+    }
+
+    let meetLocation = $("input[name=meetLocation]").val();
+    if(!meetLocation) {
+        customDialog("Form Input Error", "The Meet Location field cannot be blank");
+        return false;
+    }
+
+    let eventLocation = $("input[name=eventLocation]").val();
+    if(!eventLocation) {
+        customDialog("Form Input Error", "The Event Location field cannot be blank");
+        return false;
+    }
+
+    let pickupLocation = $("input[name=pickupLocation]").val();
+    if(!pickupLocation) {
+        customDialog("Form Input Error", "The Pickup Location field cannot be blank");
+        return false;
+    }
+
+    let uniform = $("input[name=uniform\\[\\]]:checked").length;
+    if(!uniform) {
+        customDialog("Form Input Error", "A uniform must be selected to submit this form");
+        return false;
+    }
+
     $('#eventForm input[type="datetime-local"]:lt(4)').each(function() {
         ins.push($(this).val());
     });

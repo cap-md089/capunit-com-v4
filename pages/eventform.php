@@ -162,7 +162,7 @@
 						'CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication',
 						'CAP Identification Card',
 						'Other'
-					])
+					], ['CAP Identification Card'])
 					->addField ('requiredEquipment', 'Required Equipment', 'text')
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, 0)
 					->addField ('registrationInformation', 'Registration Information', 'textarea')
