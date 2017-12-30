@@ -69,7 +69,19 @@ SCRIPT;
 			}
 
 			return [
-				'body' => $html,
+				'body' => [
+					'MainBody' => $html,
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/photolibrary',
+							'Text' => 'Photo Library'
+						]
+					])
+				],
 				'title' => 'View photos'
 			];
 		}

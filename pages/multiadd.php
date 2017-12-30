@@ -26,7 +26,27 @@
 			$form->setSubmitInfo('Submit', null, null, null, true);
 
 			return [
-				'body' => $form.'',
+				'body' => [
+					'MainBody' => $form.'',
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/calendar',
+							'Text' => 'Calendar'
+						],
+						[
+							'Target' => '/eventviewer/'.$ev,
+							'Text' => "View '$event->EventName'"
+						],
+						[
+							'Target' => '/multiadd/'.$ev,
+							'Text' => 'Add attendance'
+						]
+					])
+				],
 				'title' => "Multi-Add for event $ev"
 			];
 		}

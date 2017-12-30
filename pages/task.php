@@ -54,7 +54,23 @@
 			$html .= $form;
 
 			return [
-				'body' => $html,
+				'body' => [
+					'MainBody' => $html,
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/task',
+							'Text' => !!$task ? "Edit task '$task->Name'" : 'Assign Task'
+						]
+					])
+				],
 				'title' => $title
 			];
 		}

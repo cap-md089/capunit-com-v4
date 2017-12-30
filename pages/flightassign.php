@@ -42,7 +42,23 @@
 			}
 
 			return [
-				'body' => $pager.'',
+				'body' => [
+					'MainBody' => $pager.'',
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Text' => 'Home',
+							'Target' => '/',
+						],
+						[
+							'Text' => 'Administratoin',
+							'Target' => '/admin'
+						],
+						[
+							'Text' => 'Flight Assignment',
+							'Target' => '/flightassign'
+						]
+					])
+				],
 				'title' => 'Flight assignments'
 			];
 		}

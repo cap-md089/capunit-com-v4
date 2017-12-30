@@ -102,7 +102,19 @@
 
 
             return [
-                'body' => $html,
+                'body' => [
+                    'MainBody' => $html,
+                    'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+                        [
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/teamlist',
+							'Text' => 'View teams'
+						]
+                    ])
+                ],
                 'title' => 'Teams'
             ];
         }

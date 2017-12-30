@@ -60,7 +60,19 @@
 			$html = $form . $html;
 
             return [
-                'body' => $html,
+                'body' => [
+					'MainBody' => $html,
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/search',
+							'Text' => 'Search'
+						]
+					])
+				],
                 'title' => 'Search'
 			];
 		}

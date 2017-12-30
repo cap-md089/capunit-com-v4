@@ -20,7 +20,23 @@
 			if (!($m->hasPermission('RegistryEdit') || $m->hasPermission('Developer'))) return ['error' => 401];
 
 			return [
-				'body' => treeView(Registry::$_data, '')->getHtml(),
+				'body' => [
+					'MainBody' => treeView(Registry::$_data, '')->getHtml(),
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/regedit',
+							'Text' => 'Edit Site Configuration'
+						]
+					])
+				],
 				'title' => 'Site Configuration'
 			];
 		}

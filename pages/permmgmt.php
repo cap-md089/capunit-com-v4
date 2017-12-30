@@ -27,7 +27,26 @@
 
 			$form->addField("", (new AsyncButton(Null, "Add user", "memberPermissionsAddAUser")).'', "textread");
 
-			return ['body' => $form.'', 'title' => 'Permissions management'];
+			return [
+				'body' => [
+					'MainBody' => $form.'',
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/permmgmt',
+							'Text' => 'Permission Mamagement'
+						]
+					])
+				],
+				'title' => 'Permissions management'
+			];
 		}
 
 		public static function doPost ($e, $c, $l, $m, $a) {

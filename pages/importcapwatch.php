@@ -38,7 +38,26 @@
 
 			$form->reload = false;
 
-			return $form.'';
+			return [
+				'body' => [
+					'MainBody' => $form.'',
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/importcapwatch',
+							'Text' => 'Import CAPWATCH Files'
+						]
+					])
+				],
+				'title' => 'Import CAPWATCH Files'
+			];
         }
 
 		public static function doPost ($e, $c, $l, $m, $a) {

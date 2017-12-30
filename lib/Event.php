@@ -152,16 +152,6 @@
         public $SignUpDenyMessage = '';
 
         /**
-         * @var bool Whether or not to receive daily emails about updates to the event
-         */
-        public $ReceiveEventUpdates = false;
-
-        /**
-         * @var bool Whether or not to receive email updates whenever someone signs up
-         */
-        public $ReceiveSignUpUpdates = false;
-
-        /**
          * @var bool Whether or not this should be on the wing calendar
          */
         public $PublishToWingCalendar = false;
@@ -225,6 +215,11 @@
          * @var int $CAPPOC2ReceiveSignUpUpdates 
          * @var int $ExtPOCReceiveSignUpUpdates 
          */
+        public $CAPPOC1ReceiveEventUpdates = false,
+               $CAPPOC1ReceiveSignUpUpdates = false, 
+               $CAPPOC2ReceiveEventUpdates = false, 
+               $CAPPOC2ReceiveSignUpUpdates = false, 
+               $ExtPOCReceiveEventUpdates = false;
 
         /**
          * @var string $ExtPOCName Name of external POC
@@ -336,8 +331,9 @@
 					PublishToWingCalendar, Comments, HighAdventureDescription, SignUpDenyMessage, Administration,
 					Activity, Meals, GroupEventNumber, Status, EventWebsite, Uniform,
 					RequiredForms, DesiredNumParticipants, Debrief, CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email,
-                    CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, ExtPOCName, ExtPOCPhone,
-                    ExtPOCEmail, AccountID, Author, PartTime, TeamID
+                    CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email,
+                    CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, ExtPOCName, ExtPOCPhone,
+                    ExtPOCEmail, ExtPOCReceiveEventUpdates, AccountID, Author, PartTime, TeamID
 				) VALUES (
 					:eventnumber,
                     :eventName,
@@ -348,8 +344,8 @@
 					:publishToWing, :comments, :highAdventureDescription, :signUpDeny, :adminComments,
 					:activity, :meals, :groupEventNumber, :eventStatus, :eventWebsite, :uniform,
 					:requiredForms, :desiredParticipants, :debrief, :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email,
-                    :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :ExtPOCName, :ExtPOCPhone,
-                    :ExtPOCEmail, :accountid, :author, :parttime, :teamid
+                    :CAPPOC1REU, :CAPPOC1RSU, :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
+                    :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU :accountid, :author, :parttime, :teamid
 				);");
 
             $stmt->bindValue(':eventnumber', $event->EventNumber);
@@ -387,13 +383,18 @@
             $stmt->bindValue(':CAPPOC1Name', $event->CAPPOC1Name);
             $stmt->bindValue(':CAPPOC1Phone', $event->CAPPOC1Phone);
             $stmt->bindValue(':CAPPOC1Email', $event->CAPPOC1Email);
+            $stmt->bindValue(':CAPPOC1REU', $event->CAPPOC1ReceiveEventUpdates);
+            $stmt->bindValue(':CAPPOC1RSU', $event->CAPPOC1ReceiveSignUpUpdates);
             $stmt->bindValue(':CAPPOC2ID', $event->CAPPOC2ID);
             $stmt->bindValue(':CAPPOC2Name', $event->CAPPOC2Name);
             $stmt->bindValue(':CAPPOC2Phone', $event->CAPPOC2Phone);
             $stmt->bindValue(':CAPPOC2Email', $event->CAPPOC2Email);
+            $stmt->bindValue(':CAPPOC2REU', $event->CAPPOC2ReceiveEventUpdates);
+            $stmt->bindValue(':CAPPOC2RSU', $event->CAPPOC2ReceiveSignUpUpdates);
             $stmt->bindValue(':ExtPOCName', $event->ExtPOCName);
             $stmt->bindValue(':ExtPOCPhone', $event->ExtPOCPhone);
             $stmt->bindValue(':ExtPOCEmail', $event->ExtPOCEmail);
+            $stmt->bindValue(':ExtPOCREU', $event->ExtPOCReceiveEventUpdates);
             $stmt->bindValue(':accountid', $_ACCOUNT->id);
             $stmt->bindValue(":author", isset($member)?$member->uname:0);
             $stmt->bindValue(':parttime', $event->PartTime ? 1 : 0);
@@ -432,11 +433,14 @@
             $boolvars = [
                 "TransportationProvided",
                 "AcceptSignups",
-                "ReceiveEventUpdates",
-                "ReceiveSignUpUpdates",
                 "PublishToWingCalendar",
                 "Complete",
-                "PartTime"
+                "PartTime",
+                "CAPPOC1ReceiveEventUpdates",
+                "CAPPOC1ReceiveSignUpUpdates",
+                "CAPPOC2ReceiveEventUpdates",
+                "CAPPOC2ReceiveSignUpUpdates",
+                "ExtPOCReceiveEventUpdates"
             ];
             foreach ($boolvars as $bool) {
                 $this->$bool = (gettype($this->$bool) == 'boolean' ? $this->$bool : ($this->$bool == 1));
@@ -489,12 +493,14 @@
                 HighAdventureDescription = :highAdventureDescription, RequiredEquipment = :requiredEquipment,
                 EventWebsite = :eventWebsite, RequiredForms = :requiredForms, Comments = :comments,
                 AcceptSignUps = :acceptSignups, SignUpDenyMessage = :signUpDeny,
-                ReceiveEventUpdates = :receiveEventUpdates, ReceiveSignUpUpdates = :receiveSignUpUpdates,
                 PublishToWingCalendar = :publishToWing, GroupEventNumber = :groupEventNumber,
                 complete = :entryComplete, Administration = :adminComments, Status = :eventStatus,
                 Debrief = :debrief, CAPPOC1ID = :CAPPOC1ID, CAPPOC1Name = :CAPPOC1Name, CAPPOC1Phone = :CAPPOC1Phone, CAPPOC1Email = :CAPPOC1Email,
                 CAPPOC2ID = :CAPPOC2ID, CAPPOC2Name = :CAPPOC2Name, CAPPOC2Phone = :CAPPOC2Phone, CAPPOC2Email = :CAPPOC2Email,ExtPOCName = :ExtPOCName,ExtPOCPhone = :ExtPOCPhone,
-                ExtPOCEmail = :ExtPOCEmail, Author = :author, PartTime = :parttime, TeamID = :teamid
+                ExtPOCEmail = :ExtPOCEmail, Author = :author, PartTime = :parttime, TeamID = :teamid,
+                CAPPOC1ReceiveEventUpdates = :POC1REU, CAPPOC1ReceiveSignUpUpdates = :POC1RSU,
+                CAPPOC2ReceiveEventUpdates = :POC2RSU, CAPPOC2ReceiveSignUpUpdates = :POC2RSU,
+                ExtPOCReceiveEventUpdates = :ExtREU
                 WHERE EventNumber = :ev AND AccountID = :aid;');            
 
             $stmt->bindValue(':eventName', $this->EventName);
@@ -514,8 +520,6 @@
             $stmt->bindValue(':acceptSignups', $this->AcceptSignups ? 1 : 0);
             $stmt->bindValue(':entryComplete', $this->Complete ? 1 : 0);
             $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
-            $stmt->bindValue(':receiveEventUpdates', $this->ReceiveEventUpdates ? 1 : 0);
-            $stmt->bindValue(':receiveSignUpUpdates', $this->ReceiveSignUpUpdates ? 1 : 0);
             $stmt->bindValue(':comments', $this->Comments);
             $stmt->bindValue(':highAdventureDescription', $this->HighAdventureDescription);
             $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
@@ -533,13 +537,18 @@
             $stmt->bindValue(':CAPPOC1Name', $this->CAPPOC1Name);
             $stmt->bindValue(':CAPPOC1Phone', $this->CAPPOC1Phone);
             $stmt->bindValue(':CAPPOC1Email', $this->CAPPOC1Email);
+            $stmt->bindValue(':POC1REU', $this->CAPPOC1ReceiveEventUpdates ? 1 : 0);
+            $stmt->bindValue(':POC1RSU', $this->CAPPOC1ReceiveSignUpUpdates ? 1 : 0);
             $stmt->bindValue(':CAPPOC2ID', $this->CAPPOC2ID);
             $stmt->bindValue(':CAPPOC2Name', $this->CAPPOC2Name);
             $stmt->bindValue(':CAPPOC2Phone', $this->CAPPOC2Phone);
             $stmt->bindValue(':CAPPOC2Email', $this->CAPPOC2Email);
+            $stmt->bindValue(':POC2REU', $this->CAPPOC2ReceiveEventUpdates ? 1 : 0);
+            $stmt->bindValue(':POC2RSU', $this->CAPPOC2ReceiveSignUpUpdates ? 1 : 0);
             $stmt->bindValue(':ExtPOCName', $this->ExtPOCName);
             $stmt->bindValue(':ExtPOCPhone', $this->ExtPOCPhone);
             $stmt->bindValue(':ExtPOCEmail', $this->ExtPOCEmail);
+            $stmt->bindValue(':ExtREU', $this->ExtPOCReceiveEventUpdates ? 1 : 0);
             $stmt->bindValue(':author', $this->Author);
             $stmt->bindValue(':parttime', $this->PartTime ? 1 : 0);
             $stmt->bindValue(':teamid', $this->TeamID);
@@ -607,11 +616,14 @@
             $boolvars = [
                 "TransportationProvided",
                 "AcceptSignups",
-                "ReceiveEventUpdates",
-                "ReceiveSignUpUpdates",
                 "PublishToWingCalendar",
                 "Complete",
-                "PartTime"
+                "PartTime",
+                "CAPPOC1ReceiveEventUpdates",
+                "CAPPOC1ReceiveSignUpUpdates",
+                "CAPPOC2ReceiveEventUpdates",
+                "CAPPOC2ReceiveSignUpUpdates",
+                "ExtPOCReceiveEventUpdates"
             ];
             $stringvars = [
                 "EventName",

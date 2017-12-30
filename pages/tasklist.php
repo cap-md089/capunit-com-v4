@@ -53,7 +53,23 @@
 			}
 
 			return [
-				'body' => $rhtml.$html,
+				'body' => [
+					'MainBody' => $rhtml.$html,
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/tasklist',
+							'Text' => 'View tasks'
+						]
+					])
+				],
 				'title' => 'User tasks'
 			];
 		}

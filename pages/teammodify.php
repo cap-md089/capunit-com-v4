@@ -32,7 +32,23 @@
             $form->reload = false;
 
             return [
-                'body' => $form.'',
+                'body' => [
+                    'MainBody' => $form.'',
+                    'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+                        [
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/teammodify',
+							'Text' => 'Modify team'
+						]
+                    ])
+                ],
                 'title' => "Add a team"
             ];
         }

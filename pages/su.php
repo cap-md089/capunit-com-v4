@@ -4,7 +4,25 @@
 			if (!$l) {return ['error' => 411];}
 			if (!$m->hasPermission('Developer')) {return ['error' => 402];}
 
-			return (new AsyncButton(Null, 'Pick someone', 'su')).'';
+			return [
+				'body' => [
+					'MainBody' => (new AsyncButton(Null, 'Pick someone', 'su')).'',
+					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+						[
+							'Target' => '/',
+							'Text' => 'Home'
+						],
+						[
+							'Target' => '/admin',
+							'Text' => 'Administration'
+						],
+						[
+							'Target' => '/su',
+							'Text' => 'Su'
+						]
+					])
+				]
+			];
 		}
 
 		public static function doPut ($e, $c, $l, $m, $a) {
