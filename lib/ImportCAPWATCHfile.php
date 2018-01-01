@@ -29,9 +29,10 @@
 
 		//Import Member.txt file
 		flog ("Processing Member");
-		if(!system("unzip -op $fname Member.txt > $dir/$id-$member->capid-Member.txt")) {
-			ErrorMSG::Log("Member unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "Member unzip error";
+		$retval=system("unzip -op $fname Member.txt > $dir/$id-$member->capid-Member.txt");
+		if(!$retval) {
+			ErrorMSG::Log("Member unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "Member unzip error.  Return value: ".$retval.".  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-Member.txt"));
 		$titleRow = str_getcsv($members[0]);
