@@ -24,6 +24,7 @@
 			mkdir(sys_get_temp_dir()."/capwatch_unpack");
 		}
 		$dir = sys_get_temp_dir()."/capwatch_unpack";
+		system("rm -f $dir/*.txt");
 
 		$pdo = DB_Utils::CreateConnection();
 
