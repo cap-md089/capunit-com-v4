@@ -31,7 +31,7 @@ var initializeMobile = function () {
     });
     $($("#sidenav")[0]).detach().prependTo($("#mobilemenu"));
     $($(".search")[0]).detach().prependTo($("#mobilemenu"));
-    $($("#breadcrumbs")[0]).detach().prependTo($("#mobilemenu"));
+    // $($("#breadcrumbs")[0]).detach().prependTo($("#mobilemenu"));
 
     window.offset = $("#mobilemenublock").offset().top;
 
@@ -60,8 +60,6 @@ var initializeMobile = function () {
     })
 }
 
-window.mobile = true;
-
 var undoMobile = function () {
     window.mobile = false;
     $(".mobile").addClass("desktop").removeClass("mobile");
@@ -82,13 +80,24 @@ window.loaded.push(function() {
         $(this).blur();
         $("#mother").append('<div id="cover"></div>');
         $("#signin_box").css({
-            "z-index": 5006,
-            "position": "fixed",
-            "left": '50%',
-            'top': '50%',
-            'margin-left': function() { return -$(this).outerWidth() / 2 },
-            'margin-top': function() { return -$(this).outerHeight() / 2 }
+            "z-index": 5020,
+            "position": "fixed"
         });
+        if (!window.mobile) {
+            $("#signin_box").css({
+                'left': '50%',
+                'top': '50%',
+                'margin-left': function() { return -$(this).outerWidth() / 2 },
+                'margin-top': function() { return -$(this).outerHeight() / 2 }
+            });
+        } else {
+            $("#signin_box").css({
+                'left':'0px',
+                'right':'0px',
+                'top':'0px',
+                'bottom':'0px'
+            });
+        }
         $("#cover").click(function() {
             $("#signin_box").fadeOut(400, function() {
                 $("#signin_box").css({
@@ -112,9 +121,9 @@ window.loaded.push(function() {
 
     this.customDialog = function(title, message, callback) {
         $("#mother").append('<div id="cover"></div>');
-        var html = '<div id="alert_box">' + (title ? '<h2>' + title + '</h2>' : '') + '<div>' + message + '</div><button style="float:right;" id="ok">Close</button></div>';
+        var html = '<div id="alert_box">' + (title ? '<h2>' + title + '</h2>' : '') + '<div class="content">' + message + '</div><div class="closeButton"><a style="float:right;" class="primaryButton" id="ok">Close</a></div></div>';
         $("#mother").append(html);
-        $("#alert_box button#ok").click(function() {
+        $("#alert_box #ok").click(function() {
             if (callback) callback();
             $("#cover").remove();
             $("#alert_box").fadeOut(400, function() {
@@ -137,12 +146,23 @@ window.loaded.push(function() {
         });
         $('#alert_box').css({
             'z-index': 5010,
-            'position': 'fixed',
-            'left': '50%',
-            'top': '50%',
-            'margin-left': function() { return -$(this).outerWidth() / 2 },
-            'margin-top': function() { return -$(this).outerHeight() / 2 }
+            'position': 'fixed'
         });
+        if (!window.mobile) {
+            $("#alert_box").css({
+                'left': '50%',
+                'top': '50%',
+                'margin-left': function() { return -$(this).outerWidth() / 2 },
+                'margin-top': function() { return -$(this).outerHeight() / 2 }
+            });
+        } else {
+            $("#alert_box").css({
+                'left':'0px',
+                'right':'0px',
+                'top':'0px',
+                'bottom':'0px'
+            });
+        }
         $("input[type=datetime-local]").each(function() {
             $(this).appendDtpicker({
                 "dateFormat": "YYYY-MM-DDThh:mm",

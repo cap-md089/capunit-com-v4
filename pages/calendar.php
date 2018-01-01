@@ -211,6 +211,10 @@
 			$html .= "</tbody>";
 			$html .= "</table>";
 
+			if (count($data) == 0 && $e['parameter']['mobile']) {
+				$html .= "<div class=\"sorry\">Sorry, no events for this month</div>";
+			}
+
 			return [
 				'title' => 'Calendar',
 				'body' => $html

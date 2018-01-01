@@ -734,13 +734,17 @@
                 
             }
             $pdo = DB_Utils::CreateConnection();
-            $stmt = $pdo->prepare('DELETE FROM '.DB_TABLES['EventInformation'].' WHERE EventNumber = :ev AND AccountID = :aid;');
+            if (Registry::get('Administration.ArchiveDeleteEvents')) {
+                $stmt = $pdo->prepare("UPDATE ".DB_TABLES['EventInformation']." SET Status='Deleted' WHERE EventNumber = :ev AND AccoutnID = :aid;");
+            } else {
+                $stmt = $pdo->prepare('DELETE FROM '.DB_TABLES['EventInformation'].' WHERE EventNumber = :ev AND AccountID = :aid;');
+                foreach ($this->attendance as $id => $mem) {
+                    $this->attendance->remove(Member::Estimate($id));
+                }
+                $this->destroyed = true;
+            }
             $stmt->bindValue(':ev', $this->EventNumber);
             $stmt->bindValue(':aid', $_ACCOUNT->id);
-            foreach ($this->attendance as $id => $mem) {
-                $this->attendance->remove(Member::Estimate($id));
-            }
-            $this->destroyed = true;
             // unset($this);
             $stmt->execute();
         }
