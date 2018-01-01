@@ -17,6 +17,12 @@
 
 			$form = new AsyncForm ();
 			$i = 0;
+			$form->addField('','The download and import process takes several minutes.  Results will be displayed when the process is complete.','textRead');
+			if ($member->capid == 546319) {
+				$form->addField('importOrgs','Import Organization Files','checkbox',Null,Null,'1');
+			} else {
+				$form->addHiddenField('importOrgs','true');
+			}
 			foreach ($organizations as $org => $name) {
 				$form->addField("orgs".$i."[]", $name, 'checkbox');
 				$form->addHiddenField("orgids[]", $org);
@@ -78,7 +84,7 @@
 			$errors = 0;
 			$counter = 0;
 			foreach ($ids as $id) {
-				$errs[] = ImportCAPWATCH($m, $id);
+				$errs[] = ImportCAPWATCH($m, $id, $e['form-data']['importOrgs']);
 				if ($errs[$counter]) {
 					$errors = 1;
 				}

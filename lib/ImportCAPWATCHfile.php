@@ -3,14 +3,14 @@
 		static $vals = [];
 		static $header = [];
 		static function g ($id) {
-			if (!isset($header[$id])) {
+			if (!isset(self::$header[$id])) {
 				return null;
 			}
-			return $vals[$header[$id]];
+			return self::$vals[self::$header[$id]];
 		}
 	}
 
-	function ImportCAPWATCH ($member, $id) {
+	function ImportCAPWATCH ($member, $id, $importOrgs) {
 		if (!function_exists("flog")) {
 			function flog ($a) {}
 		}
@@ -18,6 +18,7 @@
 		//Retrieve zip file
 		flog ("Retrieving CAPWATCH zip file");
 		$fname = $member->getCAPWATCHFile($id, tempnam(sys_get_temp_dir(), 'capwatch'));
+		//$fname = "/tmp/capwatchaPZo6g";
 		// file_exists: Checks whether a file or directory exists
 		if (!file_exists(sys_get_temp_dir()."/capwatch_unpack")){
 			// This also checks for directories, weird naming convention
@@ -30,13 +31,12 @@
 		//Import Member.txt file
 		flog ("Processing Member");
 		$last_line=system("unzip -op $fname Member.txt > $dir/$id-$member->capid-Member.txt",$retval);
-		if(!$last_line) {
+		if($retval > 0) {
 			ErrorMSG::Log("Member unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
-			return "Member unzip error.  Return value: ".$retval.".  Please contact helpdesk@capunit.com";
+			return "Member unzip error.  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-Member.txt"));
 		$titleRow = str_getcsv($members[0]);
-		print_r($titleRow);
 		$colIDs = array();
 		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
@@ -100,7 +100,10 @@
 			$stmt->bindValue(':waiv', VN::g('CdtWaiver'));
 
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
 				return "Member Insert error: ".$stmt->errorInfo()[2];
 			}
 		}
@@ -108,9 +111,10 @@
 	
 		//Import MbrContact.txt file
 		flog ("Processing MbrContact");
-		if(!system("unzip -op $fname MbrContact.txt > $dir/$id-$member->capid-MbrContact.txt")) {
-			ErrorMSG::Log("MbrContact unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "MbrContact unzip error";
+		$last_line=system("unzip -op $fname MbrContact.txt > $dir/$id-$member->capid-MbrContact.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("MbrContact unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "MbrContact unzip error.  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-MbrContact.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -118,7 +122,7 @@
 		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
-		foreach (['CAPID','Type','Priority','Contact','DoNotContact','ORGID'] as $value) {
+		foreach (['CAPID','Type','Priority','Contact','DoNotContact'] as $value) {
 			if (!isset($colIDs[$value])) {
 				ErrorMSG::Log("MbrContact.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 				$message = "A required column identifier, ".$value.", was not identified as present ";
@@ -134,7 +138,8 @@
 			ErrorMSG::Log("MbrContact Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "MbrContact Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
-		for ($i = 1, $m = fgetcsv($fmem); $i < count($members)-1; $i++, $m = fgetcsv($fmem)) {
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
 
 			$stmt = $pdo->prepare("DELETE FROM Import_MbrContact WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -155,10 +160,13 @@
 			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
 			$stmt->bindValue(':dncontact', VN::g('DoNotContact') == "True" ? 1 : 0);
 			$stmt->bindValue(':contactname', VN::g('ContactName'));
-			$stmt->bindValue(':orgid', VN::g('ORGID'));
+			$stmt->bindValue(':orgid', $id);
 
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("MbrContact Insert ORGID: ".$id." CAPID ".$m[0]." Contact ".$m[3]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
 				return "MbrContact Insert: ".$stmt->errorInfo()[2];
 			}
 		}
@@ -166,9 +174,10 @@
 	
 		//Import CadetDutyPositions.txt file
 		flog ("Processing CadetDutyPositions");
-		if(!system("unzip -op $fname CadetDutyPositions.txt > $dir/$id-$member->capid-CadetDutyPositions.txt")) {
-			ErrorMSG::Log("CadetDutyPositions unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "CadetDutyPositions unzip error";
+		$last_line=system("unzip -op $fname CadetDutyPositions.txt > $dir/$id-$member->capid-CadetDutyPositions.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("CadetDutyPositions unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "CadetDutyPositions unzip error.  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-CadetDutyPositions.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -192,7 +201,8 @@
 			ErrorMSG::Log("CadetDutyPositions Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "CadetDutyPositions Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
 
 			$stmt = $pdo->prepare("DELETE FROM Data_CadetDutyPositions WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -215,7 +225,10 @@
 			$stmt->bindValue(':orgid', VN::g('ORGID'));
 
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("CadetDutyPositions Insert ORGID: ".$id." CAPID ".$m[0]." Duty ".$m[1]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
 				return "CadetDutyPositions Insert error: ".$stmt->errorInfo()[2];
 			}
 		}
@@ -223,9 +236,10 @@
 
 		//Import DutyPosition.txt file
 		flog ("Processing DutyPosition");
-		if(!system("unzip -op $fname DutyPosition.txt > $dir/$id-$member->capid-DutyPosition.txt")) {
-			ErrorMSG::Log("DutyPosition unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "DutyPosition unzip error";
+		$last_line=system("unzip -op $fname DutyPosition.txt > $dir/$id-$member->capid-DutyPosition.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("DutyPosition unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "DutyPosition unzip error.  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-DutyPosition.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -249,7 +263,8 @@
 			ErrorMSG::Log("DutyPositions Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "DutyPositions Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
 
 			$stmt = $pdo->prepare("DELETE FROM Data_DutyPosition WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -272,7 +287,10 @@
 			$stmt->bindValue(':orgid', VN::g('ORGID'));
 
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("DutyPositions Insert ORGID: ".$id." CAPID ".$m[0]." Duty ".$m[1]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
 				return "DutyPositions Insert error: ".$stmt->errorInfo()[2];
 			}
 		}
@@ -280,9 +298,10 @@
 
 		//Import CadetAchv.txt file
 		flog ("Processing CadetAchv");
-		if(!system("unzip -op $fname CadetAchv.txt > $dir/$id-$member->capid-CadetAchv.txt")) {
-			ErrorMSG::Log("CadetAchv unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "CadetAchv unzip error";
+		$last_line=system("unzip -op $fname CadetAchv.txt > $dir/$id-$member->capid-CadetAchv.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("CadetAchv unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "CadetAchv unzip error.  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-CadetAchv.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -306,7 +325,8 @@
 			ErrorMSG::Log("CadetAchv Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "CadetAchv Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
 
 			$stmt = $pdo->prepare("DELETE FROM Data_CadetAchv WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -322,7 +342,7 @@
 			:pushups, :curlups, :orgid);");
 
 			$stmt->bindValue(':cid', VN::g('CAPID'));
-			$stmt->bindValue(':cachvid', VN::g('CadetAchivID'));
+			$stmt->bindValue(':cachvid', VN::g('CadetAchvID'));
 			$stmt->bindValue(':phfitdte', UtilCollection::GetTimestamp(VN::g('PhyFitTest')));
 			$stmt->bindValue(':lldte', UtilCollection::GetTimestamp(VN::g('LeadLabDateP')));
 			$stmt->bindValue(':llscore', VN::g('LeadLabScore'));
@@ -351,7 +371,10 @@
 			$stmt->bindValue(':orgid', $id);
 
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("CadetAchv Insert ORGID: ".$id." CAPID ".$m[0]." Achv ".$m[1]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
 				return "CadetAchievement Insert error: ".$stmt->errorInfo()[2];
 			}
 		}
@@ -359,9 +382,10 @@
 
 		//Import CadetAchvAprs.txt file
 		flog ("Processing CadetAchvAprs");
-		if(!system("unzip -op $fname CadetAchvAprs.txt > $dir/$id-$member->capid-CadetAchvAprs.txt")) {
-			ErrorMSG::Log("CadetAchvAprs unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "CadetAchvAprs unzip error";
+		$last_line=system("unzip -op $fname CadetAchvAprs.txt > $dir/$id-$member->capid-CadetAchvAprs.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("CadetAchvAprs unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "CadetAchvAprs unzip error.  Please contact helpdesk@capunit.com";
 		}
 		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-CadetAchvAprs.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -385,7 +409,8 @@
 			ErrorMSG::Log("CadetAchvAprs Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "CadetAchvAprs Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
 
 			$stmt = $pdo->prepare("DELETE FROM Data_CadetAchvAprs WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -413,167 +438,192 @@
 			$stmt->bindValue(':orgid', $id);
 
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("CadetAchvAprs Insert ORGID: ".$id." CAPID ".$m[0]." Achv ".$m[1]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
 				return "CadetAchvAprs Insert error: ".$stmt->errorInfo()[2];
 			}
 		}
 		unlink("$dir/$id-$member->capid-CadetAchvAprs.txt");
 
-		//Import Organization.txt file
-		flog ("Processing Organization");
-		if(!system("unzip -op $fname Organization.txt > $dir/$id-$member->capid-Organization.txt")) {
-			ErrorMSG::Log("Organization unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "Organization unzip error";
-		}
-		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-Organization.txt"));
-		$titleRow = str_getcsv($members[0]);
-		$colIDs = array();
-		foreach ($titleRow as $k => $v) {
-			$colIDs[$v] = $k;
-		}
-		foreach (['ORGID','Region','Wing','Unit','NextLevel','Name','Type','Status','Scope'] as $value) {
-			if (!isset($colIDs[$value])) {
-				ErrorMSG::Log("Organization.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-				$message = "A required column identifier, ".$value.", was not identified as present ";
-				$message .= "in the Organization.txt file.  The CAPWATCH import cannot continue and will halt.";
-				errorMailer($member, $message);
-				return "Error parsing Organization.txt.  Please contact helpdesk@capunit.com";
+		
+		//only import the organization files if the form checkbox is set
+		if($importOrgs == "true") {
+			//Import Organization.txt file
+			flog ("Processing Organization");
+			$last_line=system("unzip -op $fname Organization.txt > $dir/$id-$member->capid-Organization.txt",$retval);
+			if($retval > 0) {
+				ErrorMSG::Log("Organization unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+				return "Organization unzip error.  Please contact helpdesk@capunit.com";
 			}
-		}
-		VN::$header = $colIDs;
-		$stmt = $pdo->prepare("DELETE FROM Data_Organization;");
-		if (!$stmt->execute()) {
-			ErrorMSG::Log("Organization Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Organization Delete ORGID error: ".$stmt->errorInfo()[2];
-		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-			$stmt = $pdo->prepare("INSERT INTO Data_Organization VALUES (:orgid, :region, :wing, :unit, 
-			:nextlevel, :uname, :utype, :charterdte, :status, :scope, :uid, :moddte, :firstusr, :createdte, 
-			:recvddte, :orgnotes);");
-
-			$stmt->bindValue(':orgid', VN::g('ORGID'));
-			$stmt->bindValue(':region', VN::g('Region'));
-			$stmt->bindValue(':wing', VN::g('Wing'));
-			$stmt->bindValue(':unit', VN::g('Unit'));
-			$stmt->bindValue(':nextlevel', VN::g('NextLevel'));
-			$stmt->bindValue(':uname', VN::g('Name'));
-			$stmt->bindValue(':utype', VN::g('Type'));
-			$stmt->bindValue(':charterdte', UtilCollection::GetTimestamp(VN::g('DateChartered')));
-			$stmt->bindValue(':status', VN::g('Status'));
-			$stmt->bindValue(':scope', VN::g('Scope'));
-			$stmt->bindValue(':uid', VN::g('UsrID'));
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
-			$stmt->bindValue(':firstusr', VN::g('FirstUsr'));
-			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp(VN::g('DateCreated')));
-			$stmt->bindValue(':recvddte', UtilCollection::GetTimestamp(VN::g('DateReceived')));
-			$stmt->bindValue(':orgnotes', VN::g('OrgNotes'));
-
+			$members = explode("\n", file_get_contents("$dir/$id-$member->capid-Organization.txt"));
+			$titleRow = str_getcsv($members[0]);
+			$colIDs = array();
+			foreach ($titleRow as $k => $v) {
+				$colIDs[$v] = $k;
+			}
+			foreach (['ORGID','Region','Wing','Unit','NextLevel','Name','Type','Status','Scope'] as $value) {
+				if (!isset($colIDs[$value])) {
+					ErrorMSG::Log("Organization.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+					$message = "A required column identifier, ".$value.", was not identified as present ";
+					$message .= "in the Organization.txt file.  The CAPWATCH import cannot continue and will halt.";
+					errorMailer($member, $message);
+					return "Error parsing Organization.txt.  Please contact helpdesk@capunit.com";
+				}
+			}
+			VN::$header = $colIDs;
+			$stmt = $pdo->prepare("DELETE FROM Data_Organization;");
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("Organization Insert ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-				return "Organization Insert error: ".$stmt->errorInfo()[2];
+				ErrorMSG::Log("Organization Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "Organization Delete ORGID error: ".$stmt->errorInfo()[2];
 			}
-		}
-		unlink("$dir/$id-$member->capid-Organization.txt");
+			for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+				VN::$vals = $m; 
 
-		//Import OrgAddresses.txt file
-		flog ("Processing Organization Addresses");
-		if(!system("unzip -op $fname OrgAddresses.txt > $dir/$id-$member->capid-OrgAddresses.txt")) {
-			ErrorMSG::Log("OrgAddresses unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "OrgAddresses unzip error";
-		}
-		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-OrgAddresses.txt"));
-		$titleRow = str_getcsv($members[0]);
-		$colIDs = array();
-		foreach ($titleRow as $k => $v) {
-			$colIDs[$v] = $k;
-		}
-		foreach (['ORGID','Type','Priority','Addr1','Addr2','City','State','Zip'] as $value) {
-			if (!isset($colIDs[$value])) {
-				ErrorMSG::Log("OrgAddresses.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-				$message = "A required column identifier, ".$value.", was not identified as present ";
-				$message .= "in the OrgAddresses.txt file.  The CAPWATCH import cannot continue and will halt.";
-				errorMailer($member, $message);
-				return "Error parsing OrgAddresses.txt.  Please contact helpdesk@capunit.com";
+				$stmt = $pdo->prepare("INSERT INTO Data_Organization VALUES (:orgid, :region, :wing, :unit, 
+				:nextlevel, :uname, :utype, :charterdte, :status, :scope, :uid, :moddte, :firstusr, :createdte, 
+				:recvddte, :orgnotes);");
+
+				$stmt->bindValue(':orgid', VN::g('ORGID'));
+				$stmt->bindValue(':region', VN::g('Region'));
+				$stmt->bindValue(':wing', VN::g('Wing'));
+				$stmt->bindValue(':unit', VN::g('Unit'));
+				$stmt->bindValue(':nextlevel', VN::g('NextLevel'));
+				$stmt->bindValue(':uname', VN::g('Name'));
+				$stmt->bindValue(':utype', VN::g('Type'));
+				$stmt->bindValue(':charterdte', UtilCollection::GetTimestamp(VN::g('DateChartered')));
+				$stmt->bindValue(':status', VN::g('Status'));
+				$stmt->bindValue(':scope', VN::g('Scope'));
+				$stmt->bindValue(':uid', VN::g('UsrID'));
+				$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+				$stmt->bindValue(':firstusr', VN::g('FirstUsr'));
+				$stmt->bindValue(':createdte', UtilCollection::GetTimestamp(VN::g('DateCreated')));
+				$stmt->bindValue(':recvddte', UtilCollection::GetTimestamp(VN::g('DateReceived')));
+				$stmt->bindValue(':orgnotes', VN::g('OrgNotes'));
+
+				if (!$stmt->execute()) {
+					$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+					$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+					$message .= VN::g('CAPID')." row: ".$i;
+					ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+					return "Organization Insert error: ".$stmt->errorInfo()[2];
+				}
 			}
-		}
-		VN::$header = $colIDs;
-		$stmt = $pdo->prepare("DELETE FROM Data_OrgAddresses;");
-		if (!$stmt->execute()) {
-			ErrorMSG::Log("OrgAddresses Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "OrgAddresses Delete ORGID error: ".$stmt->errorInfo()[2];
-		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-			$stmt = $pdo->prepare("INSERT INTO Data_OrgAddresses VALUES (:orgid, :wing, :unit, :type, :pri,
-			:addr1, :addr2, :city, :state, :zip, :lat, :long, :usrid, :moddte);");
+			unlink("$dir/$id-$member->capid-Organization.txt");
 
-			$stmt->bindValue(':orgid', VN::g('ORGID'));
-			$stmt->bindValue(':wing', VN::g('Wing'));
-			$stmt->bindValue(':unit', VN::g('Unit'));
-			$stmt->bindValue(':type', VN::g('Type'));
-			$stmt->bindValue(':pri', VN::g('Priority'));
-			$stmt->bindValue(':addr1', VN::g('Addr1'));
-			$stmt->bindValue(':addr2', VN::g('Addr2'));
-			$stmt->bindValue(':city', VN::g('City'));
-			$stmt->bindValue(':state', VN::g('State'));
-			$stmt->bindValue(':zip', VN::g('Zip'));
-			$stmt->bindValue(':lat', VN::g('Latitude'));
-			$stmt->bindValue(':long', VN::g('Longitude'));
-			$stmt->bindValue(':usrid', VN::g('UsrID'));
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
-
+			//Import OrgAddresses.txt file
+			flog ("Processing Organization Addresses");
+			$last_line=system("unzip -op $fname OrgAddresses.txt > $dir/$id-$member->capid-OrgAddresses.txt",$retval);
+			if($retval > 0) {
+				ErrorMSG::Log("OrgAddresses unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+				return "OrgAddresses unzip error.  Please contact helpdesk@capunit.com";
+			}
+			$members = explode("\n", file_get_contents("$dir/$id-$member->capid-OrgAddresses.txt"));
+			$titleRow = str_getcsv($members[0]);
+			$colIDs = array();
+			foreach ($titleRow as $k => $v) {
+				$colIDs[$v] = $k;
+			}
+			foreach (['ORGID','Type','Priority','Addr1','Addr2','City','State','Zip'] as $value) {
+				if (!isset($colIDs[$value])) {
+					ErrorMSG::Log("OrgAddresses.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+					$message = "A required column identifier, ".$value.", was not identified as present ";
+					$message .= "in the OrgAddresses.txt file.  The CAPWATCH import cannot continue and will halt.";
+					errorMailer($member, $message);
+					return "Error parsing OrgAddresses.txt.  Please contact helpdesk@capunit.com";
+				}
+			}
+			VN::$header = $colIDs;
+			$stmt = $pdo->prepare("DELETE FROM Data_OrgAddresses;");
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("OrgAddresses Insert ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-				return "OrgAddresses Insert error: ".$stmt->errorInfo()[2];
+				ErrorMSG::Log("OrgAddresses Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "OrgAddresses Delete ORGID error: ".$stmt->errorInfo()[2];
 			}
-		}
-		unlink("$dir/$id-$member->capid-OrgAddresses.txt");
+			for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+				VN::$vals = $m; 
 
-		//Import OrgContacts.txt file
-		flog ("Processing Organization Contacts");
-		if(!system("unzip -op $fname OrgContact.txt > $dir/$id-$member->capid-OrgContact.txt")) {
-			ErrorMSG::Log("OrgContact unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "OrgContact unzip error";
-		}
-		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-OrgContact.txt"));
-		$titleRow = str_getcsv($members[0]);
-		$colIDs = array();
-		foreach ($titleRow as $k => $v) {
-			$colIDs[$v] = $k;
-		}
-		foreach (['ORGID','Type','Priority','Contact'] as $value) {
-			if (!isset($colIDs[$value])) {
-				ErrorMSG::Log("OrgContact.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-				$message = "A required column identifier, ".$value.", was not identified as present ";
-				$message .= "in the OrgContact.txt file.  The CAPWATCH import cannot continue and will halt.";
-				errorMailer($member, $message);
-				return "Error parsing OrgContact.txt.  Please contact helpdesk@capunit.com";
+				$stmt = $pdo->prepare("INSERT INTO Data_OrgAddresses VALUES (:orgid, :wing, :unit, :type, :pri,
+				:addr1, :addr2, :city, :state, :zip, :lat, :long, :usrid, :moddte);");
+
+				$stmt->bindValue(':orgid', VN::g('ORGID'));
+				$stmt->bindValue(':wing', VN::g('Wing'));
+				$stmt->bindValue(':unit', VN::g('Unit'));
+				$stmt->bindValue(':type', VN::g('Type'));
+				$stmt->bindValue(':pri', VN::g('Priority'));
+				$stmt->bindValue(':addr1', VN::g('Addr1'));
+				$stmt->bindValue(':addr2', VN::g('Addr2'));
+				$stmt->bindValue(':city', VN::g('City'));
+				$stmt->bindValue(':state', VN::g('State'));
+				$stmt->bindValue(':zip', VN::g('Zip'));
+				$stmt->bindValue(':lat', VN::g('Latitude'));
+				$stmt->bindValue(':long', VN::g('Longitude'));
+				$stmt->bindValue(':usrid', VN::g('UsrID'));
+				$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+
+				if (!$stmt->execute()) {
+					$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+					$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+					$message .= VN::g('CAPID')." row: ".$i;
+					ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+					return "OrgAddresses Insert error: ".$stmt->errorInfo()[2];
+				}
 			}
-		}
-		VN::$header = $colIDs;
-		$stmt = $pdo->prepare("DELETE FROM Data_OrgContact;");
-		if (!$stmt->execute()) {
-			ErrorMSG::Log("OrgContact Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "OrgContact Delete ORGID error: ".$stmt->errorInfo()[2];
-		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-			$stmt = $pdo->prepare("INSERT INTO Data_OrgContact VALUES (:orgid, :wing, :unit, :ctype, :pri, 
-				:contact, :uid, :dtemod);");
+			unlink("$dir/$id-$member->capid-OrgAddresses.txt");
 
-			$stmt->bindValue(':orgid', VN::g('ORGID'));
-			$stmt->bindValue(':wing', VN::g('Wing'));
-			$stmt->bindValue(':unit', VN::g('Unit'));
-			$stmt->bindValue(':ctype', VN::g('Type'));
-			$stmt->bindValue(':pri', VN::g('Priority'));
-			$stmt->bindValue(':contact', VN::g('Contact'));
-			$stmt->bindValue(':uid', VN::g('UsrID'));
-			$stmt->bindValue(':dtemod', UtilCollection::GetTimestamp(VN::g('DateMod')));
-
+			//Import OrgContacts.txt file
+			flog ("Processing Organization Contacts");
+			$last_line=system("unzip -op $fname OrgContact.txt > $dir/$id-$member->capid-OrgContact.txt",$retval);
+			if($retval > 0) {
+				ErrorMSG::Log("OrgContact unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+				return "OrgContact unzip error.  Please contact helpdesk@capunit.com";
+			}
+			$members = explode("\n", file_get_contents("$dir/$id-$member->capid-OrgContact.txt"));
+			$titleRow = str_getcsv($members[0]);
+			$colIDs = array();
+			foreach ($titleRow as $k => $v) {
+				$colIDs[$v] = $k;
+			}
+			foreach (['ORGID','Type','Priority','Contact'] as $value) {
+				if (!isset($colIDs[$value])) {
+					ErrorMSG::Log("OrgContact.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+					$message = "A required column identifier, ".$value.", was not identified as present ";
+					$message .= "in the OrgContact.txt file.  The CAPWATCH import cannot continue and will halt.";
+					errorMailer($member, $message);
+					return "Error parsing OrgContact.txt.  Please contact helpdesk@capunit.com";
+				}
+			}
+			VN::$header = $colIDs;
+			$stmt = $pdo->prepare("DELETE FROM Data_OrgContact;");
 			if (!$stmt->execute()) {
-				ErrorMSG::Log("OrgContact Insert ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-				return "OrgContact Insert error: ".$stmt->errorInfo()[2];
+				ErrorMSG::Log("OrgContact Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "OrgContact Delete ORGID error: ".$stmt->errorInfo()[2];
 			}
+			for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+				VN::$vals = $m; 
+
+				$stmt = $pdo->prepare("INSERT INTO Data_OrgContact VALUES (:orgid, :wing, :unit, :ctype, :pri, 
+					:contact, :uid, :dtemod);");
+
+				$stmt->bindValue(':orgid', VN::g('ORGID'));
+				$stmt->bindValue(':wing', VN::g('Wing'));
+				$stmt->bindValue(':unit', VN::g('Unit'));
+				$stmt->bindValue(':ctype', VN::g('Type'));
+				$stmt->bindValue(':pri', VN::g('Priority'));
+				$stmt->bindValue(':contact', VN::g('Contact'));
+				$stmt->bindValue(':uid', VN::g('UsrID'));
+				$stmt->bindValue(':dtemod', UtilCollection::GetTimestamp(VN::g('DateMod')));
+
+				if (!$stmt->execute()) {
+					$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+					$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+					$message .= VN::g('CAPID')." row: ".$i;
+					ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+					return "OrgContact Insert error: ".$stmt->errorInfo()[2];
+				}
+			}
+			unlink("$dir/$id-$member->capid-OrgContact.txt");
 		}
-		unlink("$dir/$id-$member->capid-OrgContact.txt");
 
 		//Run member update procedure
 		//UPDATE existing Member data, leaving newly imported members in Import_Member table
