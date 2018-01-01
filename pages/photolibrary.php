@@ -37,7 +37,7 @@
 		$("#photoLibraryBox").append(parseReturn(data).MainBody);
 		pageCount+=1;
 		if (Math.max($(document).height(), $("#mother").height()) < $(window).height()) {
-			getHtml("/photolibrary/?page="+pageCount, null, null, getPictures, null, null, true, true);
+			getHtml("/photolibrary/?page="+pageCount, null, null, getPictures, null, null, true, true, false);
 		}
 		setTimeout(function () {
 			ready = true;
@@ -49,7 +49,7 @@
 			if($(window).scrollTop() + $(window).height() > $(document).height() - 100 && ready) {
 				console.log("At the bottom; " + $(window).scrollTop() + ", " + $(window).height() + ", "+ $(document).height());
 				ready = false;
-				getHtml("/photolibrary/?page="+pageCount, null, null, getPictures, null, null, true, true);
+				getHtml("/photolibrary/?page="+pageCount, null, null, getPictures, null, null, true, true, false);
 			}
 		});
 		photoLibraryLoaded = true;

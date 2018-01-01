@@ -1,5 +1,5 @@
 window.loaded.push(function() {
-    this.getHtml = function(url, func, method, scback, fcback, push, remove, update) {
+    this.getHtml = function(url, func, method, scback, fcback, push, remove, update, changeThing) {
         push = typeof push == 'undefined' ? true : push;
         url = url == "#" ? window.location.pathname + window.location.search : url || (window.location.pathname + window.location.search);
         method = method || 'GET';
@@ -74,16 +74,16 @@ window.loaded.push(function() {
         if (!update) {
             window.history[push ? 'pushState' : 'replaceState']({ url: safeurl }, null, safeurl);
         }
-        $(".selected").removeClass("selected");
-        u = document.createElement('a');
-        u.href = url;
-        url = u.pathname;
-        console.log(url);
-        url = (url == "/" ? "/main/" : url);
-        console.log(url.split('/')[1].toLowerCase());
-        if (['main', 'blog', 'calendar', 'photolibrary'].indexOf(url.split('/')[1].toLowerCase()) > -1) {
-            $("."+url.split('/')[1].toLowerCase()).addClass("selected"); 
-        } 
+        if (changeThing === undefined || changeThing) {
+            $(".selected").removeClass("selected");
+            u = document.createElement('a');
+            u.href = url;
+            url = u.pathname;
+            url = (url == "/" ? "/main/" : url);
+            if (['main', 'blog', 'calendar', 'photolibrary'].indexOf(url.split('/')[1].toLowerCase()) > -1) {
+                $("."+url.split('/')[1].toLowerCase()).addClass("selected"); 
+            } 
+        }
     };
     this.handleFormSubmit = function(form, takeoutput) {
         try {
