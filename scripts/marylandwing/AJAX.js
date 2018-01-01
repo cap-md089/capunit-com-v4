@@ -20,7 +20,7 @@ window.loaded.push(function() {
             url += "&func=" + func;
         }
         url += "&cookies=" + encodeURIComponent(JSON.stringify(getCookies()));
-        url += "&mobile=" + window.mobile;
+        url += "&mobile=" + (window.mobile ? "true" : "false");
         if (!remove) {
             $("#body").html("");
             $("#loader").css({
@@ -305,7 +305,7 @@ window.loaded.push(function() {
                     $(form).find('textarea').each(function(i) {
                         query += "&" + encodeURIComponent($(this).attr("name")) + "=" + encodeURIComponent($(this).val());
                     });
-                    query += "&mobile=" + window.mobile;
+                    query += "&mobile=" + (window.mobile ? "true" : "false");
                     $.ajax({
                         url: url,
                         data: query,
@@ -388,7 +388,7 @@ window.loaded.push(function() {
             }
 
             url += "&method=" + encodeURIComponent(a.attr("data-http-func"));
-            url += "&mobile=" + window.mobile;
+            url += "&mobile=" + (window.mobile ? "true" : "false");
 
             push = true;
             if (typeof window[cbackn + "_prepush"] !== 'undefined') {

@@ -134,20 +134,33 @@
 			$html .= '<span class="fright">'.new Link("Calendar", getByOne($months, $nextM), [$nextY, $nextM])."</span>";
 			$html .= "</caption>";
 			$html .= "<tbody>";
-			$html .= "<tr>";
-			foreach (['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $day) {
-				$html .= "<th>$day</th>";
+			$dow = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			if ($e['parameter']['mobile'] !== 'true') {
+				$html .= "<tr>";
+				foreach ($dow as $day) {
+					$html .= "<th>$day</th>";
+				}
+				$html .= "</tr>";
 			}
-			$html .= "</tr>";
 			foreach ($Calendar as $CRow) {
 				$CRowHTML = "<tr>";
+				$i = 0;
 				foreach ($CRow as $CTD) {
 					if ($CTD == null) {
-						$CRowHTML .= "<td></td>";
+						if ($e['parameter']['mobile'] !== 'true') {
+							$CRowHTML .= "<td></td>";
+						}
+						continue;
+					}
+					if ($e['parameter']['mobile'] == 'true' && count($Events[$CTD]) == 0) {
 						continue;
 					}
 					$TD = "<td>";
-					$TD .= "<div class=\"td-row\">" . (strlen($CTD."") == 1 ? "0" : "") . $CTD . ".</div>";
+					$TD .= "<div class=\"td-row\">" . (strlen($CTD."") == 1 ? "0" : "") . "$CTD.";
+					if ($e['parameter']['mobile'] == 'true') {
+						$TD .= " {$dow[$i]}";
+					}
+					$TD .= "</div>";
 					$TD .= "<div class=\"td-data\"><ul>";
 					foreach ($Events[$CTD] as $event) {
 						$butt = new AsyncButton('calendar', $event['EventName'], "calendarEventView");
@@ -190,6 +203,7 @@
 					}
 					$TD .= "</ul></div></td>";
 					$CRowHTML .= $TD;
+					$i++;
 				}
 				$CRowHTML .= "</tr>";
 				$html .= $CRowHTML;
