@@ -35,9 +35,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/Member.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['CAPID','NameLast','NameFirst','NameMiddle','Gender','DOB','ORGID',
@@ -115,9 +114,8 @@
 		fgetcsv($fmem);
 		$members = explode("\n", file_get_contents("$dir/MbrContact.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['CAPID','Type','Priority','Contact','DoNotContact','ORGID'] as $value) {
@@ -174,9 +172,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetDutyPositions.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['CAPID','Duty','FunctArea','Lvl','Asst','ORGID'] as $value) {
@@ -232,9 +229,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/DutyPosition.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['CAPID','Duty','FunctArea','Lvl','Asst','ORGID'] as $value) {
@@ -290,9 +286,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetAchv.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['CAPID','CadetAchvID','DateCreated'] as $value) {
@@ -370,9 +365,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetAchvAprs.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['CAPID','CadetAchvID','Status','AprCAPID','DspReason'] as $value) {
@@ -433,9 +427,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/Organization.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['ORGID','Region','Wing','Unit','NextLevel','Name','Type','Status','Scope'] as $value) {
@@ -490,9 +483,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/OrgAddresses.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['ORGID','Type','Priority','Addr1','Addr2','City','State','Zip'] as $value) {
@@ -544,9 +536,8 @@
 		}
 		$members = explode("\n", file_get_contents("$dir/OrgContact.txt"));
 		$titleRow = str_getcsv($members[0]);
-		$_colIDs = explode(',', $titleRow);
 		$colIDs = array();
-		foreach ($_colIDs as $k => $v) {
+		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
 		}
 		foreach (['ORGID','Type','Priority','Contact'] as $value) {
