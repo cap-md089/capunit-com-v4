@@ -186,7 +186,7 @@
 					->addField ('ExtPOCName', 'External POC Name', 'text')
 					->addField ('ExtPOCPhone', 'External POC Phone', 'text')
 					->addField ('ExtPOCEmail', 'External POC Email', 'text')
-					->addField ('ExtPOCEUpdates', 'Send Update Emails', 'checkbox')
+					->addField ('ExtPOCEUpdates', 'Send Update Emails', 'checkbox', 'ExtPOCEUpdates')
 					->addField ('', 'Administrative Information', 'label')
 					// ->addField ('acceptSignups', 'Accept Sign-Ups','checkbox', Null, Null, '1')
 					// ->addField ('signUpDeny', 'Sign-Up Deny Message', 'textarea')
@@ -312,19 +312,19 @@
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
 					'CAPPOC1Email' => $eventdata['form-data']['CAPPOC1Email'],
-					'CAPPOC1EUpdates' => $eventdata['form-data']['CAPPOC1ReceiveEventUpdates'],
-					'CAPPOC1SUpdates' => $eventdata['form-data']['CAPPOC1ReceiveSighUpUpdates'],
+					'CAPPOC1EUpdates' => $eventdata['form-data']['CAPPOC1EUpdates'],
+					'CAPPOC1SUpdates' => $eventdata['form-data']['CAPPOC1SUpdates'],
 					'CAPPOC2ID' => $eventdata['form-data']['CAPPOC2ID'],
 					'CAPPOC2Name' => !!$poc2 ? $poc2->memberRank . ' ' . $poc2->memberName : '',
 					'CAPPOC2Phone' => $eventdata['form-data']['CAPPOC2Phone'],
 					'CAPPOC2Email' => $eventdata['form-data']['CAPPOC2Email'],
-					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2ReceiveEventUpdates'],
-					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2ReceiveSighUpUpdates'],
-					'additionalEmailAddresses' => $eventdata['form-data']['AdditionalEmailAddresses'],
+					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2EUpdates'],
+					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2SUpdates'],
+					'additionalEmailAddresses' => $eventdata['form-data']['additionalEmailAddresses'],
 					'ExtPOCName' => $eventdata['form-data']['ExtPOCName'],
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
-					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCReceiveEventUpdates'],
+					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCEUpdates'],
 					'TeamID' => $eventdata['form-data']['TeamID'],
 					'Debrief' => $eventdata['form-data']['Debrief']
 				), Null, $member);
@@ -437,19 +437,19 @@
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
 					'CAPPOC1Email' => $eventdata['form-data']['CAPPOC1Email'],
-					'CAPPOC1EUpdates' => $eventdata['form-data']['CAPPOC1ReceiveEventUpdates'],
-					'CAPPOC1SUpdates' => $eventdata['form-data']['CAPPOC1ReceiveSighUpUpdates'],
+					'CAPPOC1EUpdates' => $eventdata['form-data']['CAPPOC1EUpdates'],
+					'CAPPOC1SUpdates' => $eventdata['form-data']['CAPPOC1SUpdates'],
 					'CAPPOC2ID' => $eventdata['form-data']['CAPPOC2ID'],
 					'CAPPOC2Name' => !!$poc2 ? $poc2->memberRank . ' ' . $poc2->memberName : '',
 					'CAPPOC2Phone' => $eventdata['form-data']['CAPPOC2Phone'],
 					'CAPPOC2Email' => $eventdata['form-data']['CAPPOC2Email'],
-					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2ReceiveEventUpdates'],
-					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2ReceiveSighUpUpdates'],
-					'additionalEmailAddresses' => $eventdata['form-data']['AdditionalEmailAddresses'],
+					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2EUpdates'],
+					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2SUpdates'],
+					'additionalEmailAddresses' => $eventdata['form-data']['additionalEmailAddresses'],
 					'ExtPOCName' => $eventdata['form-data']['ExtPOCName'],
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
-					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCReceiveEventUpdates'],
+					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCEUpdates'],
 					'Author' => $member->uname,
 					'TeamID' => $eventdata['form-data']['TeamID'],
 					'Debrief' => $eventdata['form-data']['Debrief']
