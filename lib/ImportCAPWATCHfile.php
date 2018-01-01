@@ -30,11 +30,12 @@
 		//Import Member.txt file
 		flog ("Processing Member");
 		if(!system("unzip -u $fname -d $dir Member.txt")) {
-			ErrorMSG::Log("Member unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Member unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("Member unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "Member unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/Member.txt"));
 		$titleRow = str_getcsv($members[0]);
+		print_r($titleRow);
 		$colIDs = array();
 		foreach ($titleRow as $k => $v) {
 			$colIDs[$v] = $k;
@@ -107,8 +108,8 @@
 		//Import MbrContact.txt file
 		flog ("Processing MbrContact");
 		if(!system("unzip -u $fname -d $dir MbrContact.txt")) {
-			ErrorMSG::Log("MbrContact unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "MbrContact unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("MbrContact unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "MbrContact unzip error";
 		}
 		$fmem = fopen("$dir/MbrContact.txt", "r");
 		fgetcsv($fmem);
@@ -167,8 +168,8 @@
 		//Import CadetDutyPositions.txt file
 		flog ("Processing CadetDutyPositions");
 		if(!system("unzip -u $fname -d $dir CadetDutyPositions.txt")) {
-			ErrorMSG::Log("CadetDutyPositions unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "CadetDutyPositions unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("CadetDutyPositions unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "CadetDutyPositions unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetDutyPositions.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -224,8 +225,8 @@
 		//Import DutyPosition.txt file
 		flog ("Processing DutyPosition");
 		if(!system("unzip -u $fname -d $dir DutyPosition.txt")) {
-			ErrorMSG::Log("DutyPosition unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "DutyPosition unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("DutyPosition unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "DutyPosition unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/DutyPosition.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -281,8 +282,8 @@
 		//Import CadetAchv.txt file
 		flog ("Processing CadetAchv");
 		if(!system("unzip -u $fname -d $dir CadetAchv.txt")) {
-			ErrorMSG::Log("CadetAchv unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "CadetAchv unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("CadetAchv unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "CadetAchv unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetAchv.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -360,8 +361,8 @@
 		//Import CadetAchvAprs.txt file
 		flog ("Processing CadetAchvAprs");
 		if(!system("unzip -u $fname -d $dir CadetAchvAprs.txt")) {
-			ErrorMSG::Log("CadetAchvAprs unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "CadetAchvAprs unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("CadetAchvAprs unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "CadetAchvAprs unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetAchvAprs.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -422,8 +423,8 @@
 		//Import Organization.txt file
 		flog ("Processing Organization");
 		if(!system("unzip -u $fname -d $dir Organization.txt")) {
-			ErrorMSG::Log("Organization unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Organization unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("Organization unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "Organization unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/Organization.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -478,8 +479,8 @@
 		//Import OrgAddresses.txt file
 		flog ("Processing Organization Addresses");
 		if(!system("unzip -u $fname -d $dir OrgAddresses.txt")) {
-			ErrorMSG::Log("OrgAddresses unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "OrgAddresses unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("OrgAddresses unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "OrgAddresses unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/OrgAddresses.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -531,8 +532,8 @@
 		//Import OrgContacts.txt file
 		flog ("Processing Organization Contacts");
 		if(!system("unzip -u $fname -d $dir OrgContact.txt")) {
-			ErrorMSG::Log("OrgContact unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "OrgContact unzip error: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("OrgContact unzip: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "OrgContact unzip error";
 		}
 		$members = explode("\n", file_get_contents("$dir/OrgContact.txt"));
 		$titleRow = str_getcsv($members[0]);
@@ -580,8 +581,8 @@
 		$stmt = $pdo->prepare("CALL UpdateMemberByUnit(:orgid);");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
-			ErrorMSG::Log("Update Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Update Stored Procedure Failed: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("Update Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "Update Stored Procedure Failed";
 		}
 		// $stmt = $pdo->prepare("CALL UpdateMemberMatch(:orgid);");
 		// $stmt->bindValue(':orgid', $id);
