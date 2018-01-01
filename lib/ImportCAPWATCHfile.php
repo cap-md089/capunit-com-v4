@@ -1,10 +1,22 @@
 <?php
+	class VN {
+		static $vals = [];
+		static $header = [];
+		static function g ($id) {
+			if (!isset($header[$id])) {
+				return null;
+			}
+			return $vals[$header[$id]];
+		}
+	}
+
 	function ImportCAPWATCH ($member, $id) {
 		if (!function_exists("flog")) {
 			function flog ($a) {}
 		}
 
-		flog ("Retrieving CAPWATCH text file");
+		//Retrieve zip file
+		flog ("Retrieving CAPWATCH zip file");
 		$fname = $member->getCAPWATCHFile($id, tempnam(sys_get_temp_dir(), 'capwatch'));
 		// file_exists: Checks whether a file or directory exists
 		if (!file_exists(sys_get_temp_dir()."/capwatch_unpack")){
@@ -22,14 +34,32 @@
 			return "Member unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/Member.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','NameLast','NameFirst','NameMiddle','Gender','DOB','ORGID',
+				'Wing','Unit','Rank','Joined','Expiration','RankDate'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("Member.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the Member.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing Member.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Import_Member WHERE ORGID=:orgid;");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
 			ErrorMSG::Log("Member Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "Member Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
-		for ($i = 1, $m = str_getcsv($members[1]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
+			
 			$stmt = $pdo->prepare("DELETE FROM Import_Member WHERE CAPID=:cid;");
 			$stmt->bindValue(':cid', $m[0]);
 			if (!$stmt->execute()) {
@@ -41,32 +71,32 @@
 				:gen, :birthdte, :prof, :edu, :citi, :orgid, :wing, :unit, :rank, :joindte, :expdte, :orgjoindte, :usrid,
 				:moddte, :lsc, :type, :rdte, :reg, :mstat, :pstat, :waiv);");
 
-			$stmt->bindValue(':cid', $m[0]);
-			$stmt->bindValue(':nlast', $m[2]);
-			$stmt->bindValue(':nfirst', $m[3]);
-			$stmt->bindValue(':nmid', $m[4]);
-			$stmt->bindValue(':nsuf', $m[5]);
-			$stmt->bindValue(':gen', $m[6]);
-			$stmt->bindValue(':birthdte', UtilCollection::GetTimestamp($m[7]));
-			$stmt->bindValue(':prof', $m[8]);
-			$stmt->bindValue(':edu', $m[9]);
-			$stmt->bindValue(':citi', $m[10]);
-			$stmt->bindValue(':orgid', $m[11]);
-			$stmt->bindValue(':wing', $m[12]);
-			$stmt->bindValue(':unit', $m[13]);
-			$stmt->bindValue(':rank', $m[14]);
-			$stmt->bindValue(':joindte', UtilCollection::GetTimestamp($m[15]));
-			$stmt->bindValue(':expdte', UtilCollection::GetTimestamp($m[16]));
-			$stmt->bindValue(':orgjoindte', UtilCollection::GetTimestamp($m[17]));
-			$stmt->bindValue(':usrid', $m[18]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[19]));
-			$stmt->bindValue(':lsc', $m[20]);
-			$stmt->bindValue(':type', $m[21]);
-			$stmt->bindValue(':rdte', UtilCollection::GetTimestamp($m[22]));
-			$stmt->bindValue(':reg', $m[23]);
-			$stmt->bindValue(':mstat', $m[24]);
-			$stmt->bindValue(':pstat', $m[25]);
-			$stmt->bindValue(':waiv', $m[27]);
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':nlast', VN::g('NameLast'));
+			$stmt->bindValue(':nfirst', VN::g('NameFirst'));
+			$stmt->bindValue(':nmid', VN::g('NameMiddle'));
+			$stmt->bindValue(':nsuf', VN::g('NameSuffix'));
+			$stmt->bindValue(':gen', VN::g('Gender'));
+			$stmt->bindValue(':birthdte', UtilCollection::GetTimestamp(VN::g('DOB')));
+			$stmt->bindValue(':prof', VN::g('Profession'));
+			$stmt->bindValue(':edu', VN::g('Education'));
+			$stmt->bindValue(':citi', VN::g('Citizen'));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
+			$stmt->bindValue(':wing', VN::g('Wing'));
+			$stmt->bindValue(':unit', VN::g('Unit'));
+			$stmt->bindValue(':rank', VN::g('Rank'));
+			$stmt->bindValue(':joindte', UtilCollection::GetTimestamp(VN::g('Joined')));
+			$stmt->bindValue(':expdte', UtilCollection::GetTimestamp(VN::g('Expiration')));
+			$stmt->bindValue(':orgjoindte', UtilCollection::GetTimestamp(VN::g('Joined')));
+			$stmt->bindValue(':usrid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':lsc', VN::g('LSCode'));
+			$stmt->bindValue(':type', VN::g('Type'));
+			$stmt->bindValue(':rdte', UtilCollection::GetTimestamp(VN::g('RankDate')));
+			$stmt->bindValue(':reg', VN::g('Region'));
+			$stmt->bindValue(':mstat', VN::g('MbrStatus'));
+			$stmt->bindValue(':pstat', VN::g('PicStatus'));
+			$stmt->bindValue(':waiv', VN::g('CdtWaiver'));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -84,6 +114,22 @@
 		$fmem = fopen("$dir/MbrContact.txt", "r");
 		fgetcsv($fmem);
 		$members = explode("\n", file_get_contents("$dir/MbrContact.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','Type','Priority','Contact','DoNotContact','ORGID'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("MbrContact.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the MbrContact.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing MbrContact.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Import_MbrContact WHERE ORGID=:orgid;");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
@@ -103,15 +149,15 @@
 			$stmt = $pdo->prepare("INSERT INTO Import_MbrContact VALUES (:cid, :ctype, :pri, :contact, :uid, 
 				:moddte, :dncontact, :contactname, :orgid);");
 
-			$stmt->bindValue(':cid', $m[0]);
-			$stmt->bindValue(':ctype', $m[1]);
-			$stmt->bindValue(':pri', $m[2]);
-			$stmt->bindValue(':contact', $m[3]);
-			$stmt->bindValue(':uid', $m[4]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[5]));
-			$stmt->bindValue(':dncontact', $m[6] == "True" ? 1 : 0);
-			$stmt->bindValue(':contactname', $m[7]);
-			$stmt->bindValue(':orgid', $id);
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':ctype', VN::g('Type'));
+			$stmt->bindValue(':pri', VN::g('Priority'));
+			$stmt->bindValue(':contact', VN::g('Contact'));
+			$stmt->bindValue(':uid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':dncontact', VN::g('DoNotContact') == "True" ? 1 : 0);
+			$stmt->bindValue(':contactname', VN::g('ContactName'));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("MbrContact Insert ORGID: ".$id." CAPID ".$m[0]." Contact ".$m[3]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -127,6 +173,22 @@
 			return "CadetDutyPositions unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetDutyPositions.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','Duty','FunctArea','Lvl','Asst','ORGID'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("CadetDutyPositions.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the CadetDutyPositions.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing CadetDutyPositions.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_CadetDutyPositions WHERE ORGID=:orgid;");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
@@ -146,14 +208,14 @@
 			$stmt = $pdo->prepare("INSERT INTO Data_CadetDutyPositions VALUES (:cid, :duty, :farea, :lvl, :asst, :usrid, 
 			:moddte, :orgid);");
 
-			$stmt->bindValue(':cid', $m[0]);
-			$stmt->bindValue(':duty', $m[1]);
-			$stmt->bindValue(':farea', $m[2]);
-			$stmt->bindValue(':lvl', $m[3]);
-			$stmt->bindValue(':asst', $m[4]);
-			$stmt->bindValue(':usrid', $m[5]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[6]));
-			$stmt->bindValue(':orgid', $m[7]);
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':duty', VN::g('Duty'));
+			$stmt->bindValue(':farea', VN::g('FunctArea'));
+			$stmt->bindValue(':lvl', VN::g('Lvl'));
+			$stmt->bindValue(':asst', VN::g('Asst'));
+			$stmt->bindValue(':usrid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("CadetDutyPositions Insert ORGID: ".$id." CAPID ".$m[0]." Duty ".$m[1]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -169,6 +231,22 @@
 			return "DutyPosition unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/DutyPosition.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','Duty','FunctArea','Lvl','Asst','ORGID'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("DutyPosition.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the DutyPosition.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing DutyPosition.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_DutyPosition WHERE ORGID=:orgid;");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
@@ -188,14 +266,14 @@
 			$stmt = $pdo->prepare("INSERT INTO Data_DutyPosition VALUES (:cid, :duty, :farea, :lvl, :asst, :usrid, 
 			:moddte, :orgid);");
 
-			$stmt->bindValue(':cid', $m[0]);
-			$stmt->bindValue(':duty', $m[1]);
-			$stmt->bindValue(':farea', $m[2]);
-			$stmt->bindValue(':lvl', $m[3]);
-			$stmt->bindValue(':asst', $m[4]);
-			$stmt->bindValue(':usrid', $m[5]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[6]));
-			$stmt->bindValue(':orgid', $m[7]);
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':duty', VN::g('Duty'));
+			$stmt->bindValue(':farea', VN::g('FunctArea'));
+			$stmt->bindValue(':lvl', VN::g('Lvl'));
+			$stmt->bindValue(':asst', VN::g('Asst'));
+			$stmt->bindValue(':usrid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("DutyPositions Insert ORGID: ".$id." CAPID ".$m[0]." Duty ".$m[1]." ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -211,6 +289,22 @@
 			return "CadetAchv unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetAchv.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','CadetAchvID','DateCreated'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("CadetAchv.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the CadetAchv.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing CadetAchv.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_CadetAchv WHERE ORGID=:orgid;");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
@@ -232,33 +326,33 @@
 			:createdte, :drilldte, :drillscore, :leadcurr, :oath, :aebookvalue, :milerun, :shuttlerun, :sitreach,
 			:pushups, :curlups, :orgid);");
 
-			$stmt->bindValue(':cid', $m[0]);
-			$stmt->bindValue(':cachvid', $m[1]);
-			$stmt->bindValue(':phfitdte', UtilCollection::GetTimestamp($m[2]));
-			$stmt->bindValue(':lldte', UtilCollection::GetTimestamp($m[3]));
-			$stmt->bindValue(':llscore', $m[4]);
-			$stmt->bindValue(':aedte', UtilCollection::GetTimestamp($m[5]));
-			$stmt->bindValue(':aescore', $m[6]);
-			$stmt->bindValue(':aemod', $m[7]);
-			$stmt->bindValue(':atest', $m[8]);
-			$stmt->bindValue(':moralldte', UtilCollection::GetTimestamp($m[9]));
-			$stmt->bindValue(':apart', $m[10] == "True" ? 1 : 0);
-			$stmt->bindValue(':otherreq', $m[11] == "True" ? 1 : 0);
-			$stmt->bindValue(':sdarpt', $m[12] == "True" ? 1 : 0);
-			$stmt->bindValue(':uid', $m[13]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[14]));
-			$stmt->bindValue(':frstusr', $m[15]);
-			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp($m[16]));
-			$stmt->bindValue(':drilldte', UtilCollection::GetTimestamp($m[17]));
-			$stmt->bindValue(':drillscore', $m[18]);
-			$stmt->bindValue(':leadcurr', $m[19]);
-			$stmt->bindValue(':oath', $m[20] == "True" ? 1 : 0);
-			$stmt->bindValue(':aebookvalue', $m[21]);
-			$stmt->bindValue(':milerun', $m[22]);
-			$stmt->bindValue(':shuttlerun', $m[23]);
-			$stmt->bindValue(':sitreach', $m[24]);
-			$stmt->bindValue(':pushups', $m[25]);
-			$stmt->bindValue(':curlups', $m[26]);
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':cachvid', VN::g('CadetAchivID'));
+			$stmt->bindValue(':phfitdte', UtilCollection::GetTimestamp(VN::g('PhyFitTest')));
+			$stmt->bindValue(':lldte', UtilCollection::GetTimestamp(VN::g('LeadLabDateP')));
+			$stmt->bindValue(':llscore', VN::g('LeadLabScore'));
+			$stmt->bindValue(':aedte', UtilCollection::GetTimestamp(VN::g('AEDateP')));
+			$stmt->bindValue(':aescore', VN::g('AEScore'));
+			$stmt->bindValue(':aemod', VN::g('AEMod'));
+			$stmt->bindValue(':atest', VN::g('AETest'));
+			$stmt->bindValue(':moralldte', UtilCollection::GetTimestamp(VN::g('MoralLDateP')));
+			$stmt->bindValue(':apart', VN::g('ActivePart') == "True" ? 1 : 0);
+			$stmt->bindValue(':otherreq', VN::g('OtherReq') == "True" ? 1 : 0);
+			$stmt->bindValue(':sdarpt', VN::g('SDAReport') == "True" ? 1 : 0);
+			$stmt->bindValue(':uid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':frstusr', VN::g('FirstUsr'));
+			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp(VN::g('DateCreated')));
+			$stmt->bindValue(':drilldte', UtilCollection::GetTimestamp(VN::g('DrillDate')));
+			$stmt->bindValue(':drillscore', VN::g('DrillScore'));
+			$stmt->bindValue(':leadcurr', VN::g('LeadCurr'));
+			$stmt->bindValue(':oath', VN::g('CadetOath') == "True" ? 1 : 0);
+			$stmt->bindValue(':aebookvalue', VN::g('AEBookValue'));
+			$stmt->bindValue(':milerun', VN::g('MileRun'));
+			$stmt->bindValue(':shuttlerun', VN::g('ShuttleRun'));
+			$stmt->bindValue(':sitreach', VN::g('SitAndReach'));
+			$stmt->bindValue(':pushups', VN::g('PushUps'));
+			$stmt->bindValue(':curlups', VN::g('CurlUps'));
 			$stmt->bindValue(':orgid', $id);
 
 			if (!$stmt->execute()) {
@@ -275,6 +369,22 @@
 			return "CadetAchvAprs unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/CadetAchvAprs.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','CadetAchvID','Status','AprCAPID','DspReason'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("CadetAchvAprs.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the CadetAchvAprs.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing CadetAchvAprs.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_CadetAchvAprs WHERE ORGID=:orgid;");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
@@ -294,18 +404,18 @@
 			$stmt = $pdo->prepare("INSERT INTO Data_CadetAchvAprs VALUES (:cid, :cachvid, :status, :aprcid,
 			:dspreason, :awardno, :JRWaiver, :uid, :moddte, :firstusr, :createdte, :printedCert, :orgid);");
 
-			$stmt->bindValue(':cid', $m[0]);
-			$stmt->bindValue(':cachvid', $m[1]);
-			$stmt->bindValue(':status', $m[2]);
-			$stmt->bindValue(':aprcid', $m[3]);
-			$stmt->bindValue(':dspreason', $m[4]);
-			$stmt->bindValue(':awardno', $m[5]);
-			$stmt->bindValue(':JRWaiver', $m[6] == "True" ? 1 : 0);
-			$stmt->bindValue(':uid', $m[7]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[8]));
-			$stmt->bindValue(':firstusr', $m[9]);
-			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp($m[10]));
-			$stmt->bindValue(':printedCert', $m[11]);
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':cachvid', VN::g('CadetAchvID'));
+			$stmt->bindValue(':status', VN::g('Status'));
+			$stmt->bindValue(':aprcid', VN::g('AprCAPID'));
+			$stmt->bindValue(':dspreason', VN::g('DspReason'));
+			$stmt->bindValue(':awardno', VN::g('AwardNo'));
+			$stmt->bindValue(':JRWaiver', VN::g('JROTCWaiver') == "True" ? 1 : 0);
+			$stmt->bindValue(':uid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':firstusr', VN::g('FirstUsr'));
+			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp(VN::g('DateCreated')));
+			$stmt->bindValue(':printedCert', VN::g('PrintedCert'));
 			$stmt->bindValue(':orgid', $id);
 
 			if (!$stmt->execute()) {
@@ -322,6 +432,22 @@
 			return "Organization unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/Organization.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['ORGID','Region','Wing','Unit','NextLevel','Name','Type','Status','Scope'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("Organization.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the Organization.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing Organization.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_Organization;");
 		if (!$stmt->execute()) {
 			ErrorMSG::Log("Organization Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -332,22 +458,22 @@
 			:nextlevel, :uname, :utype, :charterdte, :status, :scope, :uid, :moddte, :firstusr, :createdte, 
 			:recvddte, :orgnotes);");
 
-			$stmt->bindValue(':orgid', $m[0]);
-			$stmt->bindValue(':region', $m[1]);
-			$stmt->bindValue(':wing', $m[2]);
-			$stmt->bindValue(':unit', $m[3]);
-			$stmt->bindValue(':nextlevel', $m[4]);
-			$stmt->bindValue(':uname', $m[5]);
-			$stmt->bindValue(':utype', $m[6]);
-			$stmt->bindValue(':charterdte', UtilCollection::GetTimestamp($m[7]));
-			$stmt->bindValue(':status', $m[8]);
-			$stmt->bindValue(':scope', $m[9]);
-			$stmt->bindValue(':uid', $m[10]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[11]));
-			$stmt->bindValue(':firstusr', $m[12]);
-			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp($m[13]));
-			$stmt->bindValue(':recvddte', UtilCollection::GetTimestamp($m[14]));
-			$stmt->bindValue(':orgnotes', $m[15]);
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
+			$stmt->bindValue(':region', VN::g('Region'));
+			$stmt->bindValue(':wing', VN::g('Wing'));
+			$stmt->bindValue(':unit', VN::g('Unit'));
+			$stmt->bindValue(':nextlevel', VN::g('NextLevel'));
+			$stmt->bindValue(':uname', VN::g('Name'));
+			$stmt->bindValue(':utype', VN::g('Type'));
+			$stmt->bindValue(':charterdte', UtilCollection::GetTimestamp(VN::g('DateChartered')));
+			$stmt->bindValue(':status', VN::g('Status'));
+			$stmt->bindValue(':scope', VN::g('Scope'));
+			$stmt->bindValue(':uid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':firstusr', VN::g('FirstUsr'));
+			$stmt->bindValue(':createdte', UtilCollection::GetTimestamp(VN::g('DateCreated')));
+			$stmt->bindValue(':recvddte', UtilCollection::GetTimestamp(VN::g('DateReceived')));
+			$stmt->bindValue(':orgnotes', VN::g('OrgNotes'));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("Organization Insert ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -363,6 +489,22 @@
 			return "OrgAddresses unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/OrgAddresses.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['ORGID','Type','Priority','Addr1','Addr2','City','State','Zip'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("OrgAddresses.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the OrgAddresses.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing OrgAddresses.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_OrgAddresses;");
 		if (!$stmt->execute()) {
 			ErrorMSG::Log("OrgAddresses Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -372,20 +514,20 @@
 			$stmt = $pdo->prepare("INSERT INTO Data_OrgAddresses VALUES (:orgid, :wing, :unit, :type, :pri,
 			:addr1, :addr2, :city, :state, :zip, :lat, :long, :usrid, :moddte);");
 
-			$stmt->bindValue(':orgid', $m[0]);
-			$stmt->bindValue(':wing', $m[1]);
-			$stmt->bindValue(':unit', $m[2]);
-			$stmt->bindValue(':type', $m[3]);
-			$stmt->bindValue(':pri', $m[4]);
-			$stmt->bindValue(':addr1', $m[5]);
-			$stmt->bindValue(':addr2', $m[6]);
-			$stmt->bindValue(':city', $m[7]);
-			$stmt->bindValue(':state', $m[8]);
-			$stmt->bindValue(':zip', $m[9]);
-			$stmt->bindValue(':lat', $m[10]);
-			$stmt->bindValue(':long', $m[11]);
-			$stmt->bindValue(':usrid', $m[12]);
-			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp($m[13]));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
+			$stmt->bindValue(':wing', VN::g('Wing'));
+			$stmt->bindValue(':unit', VN::g('Unit'));
+			$stmt->bindValue(':type', VN::g('Type'));
+			$stmt->bindValue(':pri', VN::g('Priority'));
+			$stmt->bindValue(':addr1', VN::g('Addr1'));
+			$stmt->bindValue(':addr2', VN::g('Addr2'));
+			$stmt->bindValue(':city', VN::g('City'));
+			$stmt->bindValue(':state', VN::g('State'));
+			$stmt->bindValue(':zip', VN::g('Zip'));
+			$stmt->bindValue(':lat', VN::g('Latitude'));
+			$stmt->bindValue(':long', VN::g('Longitude'));
+			$stmt->bindValue(':usrid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("OrgAddresses Insert ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -401,6 +543,22 @@
 			return "OrgContact unzip error: ".$stmt->errorInfo()[2];
 		}
 		$members = explode("\n", file_get_contents("$dir/OrgContact.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$_colIDs = explode(',', $titleRow);
+		$colIDs = array();
+		foreach ($_colIDs as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['ORGID','Type','Priority','Contact'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("OrgContact.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the OrgContact.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing OrgContact.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
 		$stmt = $pdo->prepare("DELETE FROM Data_OrgContact;");
 		if (!$stmt->execute()) {
 			ErrorMSG::Log("OrgContact Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
@@ -410,14 +568,14 @@
 			$stmt = $pdo->prepare("INSERT INTO Data_OrgContact VALUES (:orgid, :wing, :unit, :ctype, :pri, 
 				:contact, :uid, :dtemod);");
 
-			$stmt->bindValue(':orgid', $m[0]);
-			$stmt->bindValue(':wing', $m[1]);
-			$stmt->bindValue(':unit', $m[2]);
-			$stmt->bindValue(':ctype', $m[3]);
-			$stmt->bindValue(':pri', $m[4]);
-			$stmt->bindValue(':contact', $m[5]);
-			$stmt->bindValue(':uid', $m[6]);
-			$stmt->bindValue(':dtemod', UtilCollection::GetTimestamp($m[7]));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
+			$stmt->bindValue(':wing', VN::g('Wing'));
+			$stmt->bindValue(':unit', VN::g('Unit'));
+			$stmt->bindValue(':ctype', VN::g('Type'));
+			$stmt->bindValue(':pri', VN::g('Priority'));
+			$stmt->bindValue(':contact', VN::g('Contact'));
+			$stmt->bindValue(':uid', VN::g('UsrID'));
+			$stmt->bindValue(':dtemod', UtilCollection::GetTimestamp(VN::g('DateMod')));
 
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("OrgContact Insert ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
