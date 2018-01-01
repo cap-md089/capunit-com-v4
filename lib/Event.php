@@ -328,29 +328,26 @@
             }
 
             $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['EventInformation']." (
-					EventNumber, EventName,
-					MeetLocation, EventLocation, PickupLocation, TransportationDescription,
-					RequiredEquipment, ParticipationFee, RegistrationInformation,
-					MeetDateTime, StartDateTime, EndDateTime, PickupDateTime, RegistrationDeadline,
-					ParticipationFeeDue, TransportationProvided, AcceptSignups, Complete,
-					PublishToWingCalendar, Comments, HighAdventureDescription, SignUpDenyMessage, Administration,
-					Activity, Meals, GroupEventNumber, Status, EventWebsite, Uniform, ShowUpcoming,
-					RequiredForms, DesiredNumParticipants, Debrief, CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email,
+					AccountID, EventNumber, EventName, MeetLocation, EventLocation, PickupLocation, 
+					MeetDateTime, StartDateTime, EndDateTime, PickupDateTime, TransportationProvided, TransportationDescription, 
+					RequiredEquipment, RegistrationDeadline, RegistrationInformation, ParticipationFeeDue, 
+					ParticipationFee, AcceptSignups, Complete, PublishToWingCalendar, Comments, 
+					HighAdventureDescription, SignUpDenyMessage, Administration, Activity, Meals, 
+					GroupEventNumber, Status, EventWebsite, Uniform, RequiredForms, ShowUpcoming, 
+					DesiredNumParticipants, Debrief, CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email,
                     CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email,
                     CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, ExtPOCName, ExtPOCPhone,
-                    ExtPOCEmail, ExtPOCReceiveEventUpdates, AccountID, Author, PartTime, TeamID
+                    ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID
 				) VALUES (
-					:eventnumber,
-                    :eventName,
-					:meetLocation, :eventLocation, :pickupLocation, :transportationDescription,
-					:requiredEquipment, :participationFee, registrationInformation,
-					:meetDate, :startDate, :endDate, :pickupDate, :registrationDeadline,
-					:participationFeeDeadline, :transportationProvided, :acceptSignups, :entryComplete,
-					:publishToWing, :comments, :highAdventureDescription, :signUpDeny, :adminComments,
-					:activity, :meals, :groupEventNumber, :eventStatus, :eventWebsite, :uniform, :showUpcoming,
-					:requiredForms, :desiredParticipants, :debrief, :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email,
+					:accountid, :eventnumber, :eventName, :meetLocation, :eventLocation, :pickupLocation, 
+					:meetDate, :startDate, :endDate, :pickupDate, :transportationProvided, :transportationDescription, 
+					:requiredEquipment, :registrationDeadline, registrationInformation, :participationFeeDeadline, 
+					:participationFee, :acceptSignups, :entryComplete, :publishToWing, :comments, 
+					:highAdventureDescription, :signUpDeny, :adminComments, :activity, :meals, 
+					:groupEventNumber, :eventStatus, :eventWebsite, :uniform, :requiredForms, :showUpcoming,
+					:desiredParticipants, :debrief, :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email,
                     :CAPPOC1REU, :CAPPOC1RSU, :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
-                    :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU :accountid, :author, :parttime, :teamid
+                    :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid
 				);");
 
             $stmt->bindValue(':accountid', $_ACCOUNT->id);
@@ -384,9 +381,9 @@
             $stmt->bindValue(':eventWebsite', $event->EventWebsite);
             $stmt->bindValue(':uniform', $event->Uniform);
             $stmt->bindValue(':requiredForms', $event->RequiredForms);
+			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming);
             $stmt->bindValue(':desiredParticipants', $event->DesiredNumParticipants);
             $stmt->bindValue(':debrief', $event->Debrief);
-			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming);
             $stmt->bindValue(':CAPPOC1ID', $event->CAPPOC1ID);
             $stmt->bindValue(':CAPPOC1Name', $event->CAPPOC1Name);
             $stmt->bindValue(':CAPPOC1Phone', $event->CAPPOC1Phone);
