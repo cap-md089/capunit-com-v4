@@ -60,8 +60,6 @@ var initializeMobile = function () {
     })
 }
 
-window.mobile = true;
-
 var undoMobile = function () {
     window.mobile = false;
     $(".mobile").addClass("desktop").removeClass("mobile");
