@@ -13,7 +13,7 @@
 			//need to adjust permission query to appropriate for CAPWATCH import
 			if (!$member->hasPermission("AddEvent")) {return ['error' => 402];}
 
-			$organizations = $member->getCAPWATCHList ();
+			$organizations = $member->getCAPWATCHList();
 
 			$form = new AsyncForm ();
 			$i = 0;
