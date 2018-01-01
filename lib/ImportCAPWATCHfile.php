@@ -30,7 +30,7 @@
 		//Import Member.txt file
 		flog ("Processing Member");
 		$last_line=system("unzip -op $fname Member.txt > $dir/$id-$member->capid-Member.txt",$retval);
-		if(!$last_line) {
+		if(!$retval) {
 			ErrorMSG::Log("Member unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
 			return "Member unzip error.  Return value: ".$retval.".  Please contact helpdesk@capunit.com";
 		}
