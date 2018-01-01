@@ -120,7 +120,7 @@
         return UtilCollection::sendFormattedEmail(
             $contact,
             $html,
-            "Error Occurred: (".date('h:i A n/j/Y', new Date()).")"
+            "Error Occurred: (".date('h:i A n/j/Y').")"
         );
     }
 
