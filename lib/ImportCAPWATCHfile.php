@@ -586,24 +586,24 @@
 
 		//Run member update procedure
 		//UPDATE existing Member data, leaving newly imported members in Import_Member table
-		$stmt = $pdo->prepare("CALL UpdateMemberExistingMember(:orgid);");
+		$stmt = $pdo->prepare("CALL UpdateMemberByUnit(:orgid);");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
-			ErrorMSG::Log("Update Procedure Existing Member Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Update Procedure Existing Member Failed: ".$stmt->errorInfo()[2];
+			ErrorMSG::Log("Update Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+			return "Update Stored Procedure Failed: ".$stmt->errorInfo()[2];
 		}
-		$stmt = $pdo->prepare("CALL UpdateMemberMatch(:orgid);");
-		$stmt->bindValue(':orgid', $id);
-		if (!$stmt->execute()) {
-			ErrorMSG::Log("Update Procedure Match Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Update Procedure Match Failed: ".$stmt->errorInfo()[2];
-		}
-		$stmt = $pdo->prepare("CALL UpdateMemberNoMatch(:orgid);");
-		$stmt->bindValue(':orgid', $id);
-		if (!$stmt->execute()) {
-			ErrorMSG::Log("Update Procedure No Match Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
-			return "Update Procedure No Match Failed: ".$stmt->errorInfo()[2];
-		}
+		// $stmt = $pdo->prepare("CALL UpdateMemberMatch(:orgid);");
+		// $stmt->bindValue(':orgid', $id);
+		// if (!$stmt->execute()) {
+		// 	ErrorMSG::Log("Update Procedure Match Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+		// 	return "Update Procedure Match Failed: ".$stmt->errorInfo()[2];
+		// }
+		// $stmt = $pdo->prepare("CALL UpdateMemberNoMatch(:orgid);");
+		// $stmt->bindValue(':orgid', $id);
+		// if (!$stmt->execute()) {
+		// 	ErrorMSG::Log("Update Procedure No Match Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+		// 	return "Update Procedure No Match Failed: ".$stmt->errorInfo()[2];
+		// }
 
 		//clean up
 		unlink("$fname");
