@@ -100,12 +100,14 @@
                 } else {
                     $this->html .= "<div$id class=\"formbar\">\n";
                 }
-                if ($field['label'] !== 'nolabel') {
+                if ($field['label'] == 'flat') {
+					$this->html .= "<div class=\"formbox flat\">\n</div>";
+				} else if ($field['label'] !== 'nolabel') {
                     $this->html .= "<div class=\"formbox\">\n";
                     $this->html .= "<label for=\"".$field['fname']."[]\">".$field['label']."</label>\n";
                     $this->html .= "</div>\n";
-                }
-                $this->html .= "<div style=\"min-height:50px;height:auto\" class=\"formbox\">\n";
+                } 
+                $this->html .= "<div style=\"height:auto\" class=\"formbox\">\n";
 				$this->html .= $field['fhtml'];
 				$this->html .= "</div>\n";
 				$this->html .= "</div>\n";
@@ -251,7 +253,7 @@
 				case "readtext" :
 				case "textread" :
 					$html = $label;
-					$label = "";
+					$label = "flat";
 				break;
 
                 case "range" :
@@ -263,7 +265,7 @@
 				case "daterange" :
 					$html = "<input type=\"range\" name=\"$name\" multiple class=\"$class\" min=\"".(isset($data['min'])?$data['min']:0)."\" max=\"".(isset($data['max'])?$data['max']:50)."\" ";
 					$html .= "step=\"".(isset($data['step'])?$data['step']:60*15)."\" value=\"".(isset($data['min'])?$data['min']:0).",".(isset($data['max'])?$data['max']:50)."\" id=\"$name\" />";
-					$html .= "<output for=\"$name\" style=\"margin-left:10px\"></output>";
+					$html .= "<output for=\"$name\"></output>";
 				break;
 
 				default :

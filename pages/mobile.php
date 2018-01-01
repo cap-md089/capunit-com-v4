@@ -4,8 +4,7 @@
 			$html = <<<HTM
 <script>
 	mobile = true;
-	$(".desktop").addClass("mobile").removeClass("desktop");
-	$("meta[name=viewport]").attr("content", "width=450, initial-scale=1");
+	initializeMobile();
 </script>
 HTM;
 			return $html;

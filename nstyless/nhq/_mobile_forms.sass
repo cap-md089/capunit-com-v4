@@ -1,12 +1,17 @@
 #output
 	margin: 20px auto
-
+	
 form.asyncForm
 	width: 100%
 	margin: 0
 	margin-bottom: 20px
 	overflow: auto
 	clear: both
+	
+	&::after, &::before
+		content: ' '
+		display: table
+		clear: both
 
 	.formbar
 		clear: both
@@ -15,24 +20,30 @@ form.asyncForm
 		margin: 5px 0
 		padding: 0
 
+		&:after
+			content: ""
+			clear: both
+			display: table
+
 		&.fheader
 			border-bottom: 2px solid #f6bf22
-			height: 30px
+			height: 50px
 			padding-left: 15px
 			box-sizing: border-box
-			margin: 20px 0
+			margin: 5px 0 10px 0
 			float: left
 
 			&::after, &::before
 				content: ' '
 				display: table
 				clear: both
-		
+
 		.formbox
-			display: inline-block
-			width: 220px
+			display: block
+			width: 100%
+			height: 30px
 			float: left
-			line-height: 50px
+			line-height: 30px
 			margin: 0
 			padding: 0
 			position: relative
@@ -40,20 +51,16 @@ form.asyncForm
 			&.flat
 				height: 2px
 
-			&:nth-of-type(2)
-				min-width: 400px
-				width: calc(90% - 220px)
-
 		input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="url"]
 			font-family: 'RobotoRegular', Arial, Helvetica, sans-serif
 			box-sizing: border-box
 			border: 1px solid black
 			@include border-radius (10px)
 			padding: 5px
-			color: #0b375b
+			color: #0b357b
 
 		input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="url"]:focus
-			@include box-shadows(inset 0 0 1em #258eea)
+			@include box-shadows (inset 0 0 1em #258eea)
 
 		input[type="submit"], label.file
 			@extend .primaryButton
@@ -71,7 +78,7 @@ form.asyncForm
 			z-index: -1
 
 		input.forminput:focus
-			@include box-shadows(inset 0 0 1em #3c9aec)
+			@include box-shadows (inset 0 0 1em #3c9aec)
 
 		input[type="submit"]:focus
 			box-shadow: none !important
@@ -84,15 +91,15 @@ form.asyncForm
 			color: #0b375b
 			border-bottom-width: 1px
 			background-color: transparent
-			@include border-radius (0px)
+			@include border-radius(0px)
 			padding: 2px
 
 			&:focus
 				@include box-shadows(none)
 
 		output
-			margin-top: -10px
-			margin-left: 10px
+			margin-top: 0px
+			margin-left: 0px
 			font-size: 15px
 			display: inline-block
 
@@ -100,7 +107,7 @@ form.asyncForm
 			margin-top: 15px
 			display: inline-block
 			padding-top: 0
-		
+
 		textarea
 			font-family: "RobotoMedium"
 			@include border-radius(15px)
@@ -226,3 +233,7 @@ form.asyncForm
 
 			strong
 				color: #2875d7
+
+
+	output
+		margin-top: 5px
