@@ -109,6 +109,22 @@
     }
 
 
+    function errorMailer(Member $member, $errorMessage) {
+        //send email to developers and admins regarding a system error
+        
+        global $_ACCOUNT;
+
+        $html = $member->RankName." attempted a function and an error occurred. <br />";
+        $html .= $errorMessage;
+        $contact = ["grioux.cap@gmail.com","arioux.cap@gmail.com"];
+        return UtilCollection::sendFormattedEmail(
+            $contact,
+            $html,
+            "Error Occurred: (".date('h:i A n/j/Y', new Date()).")"
+        );
+    }
+
+
     // Replacement function:
 
     /*
