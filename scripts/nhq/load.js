@@ -48,6 +48,12 @@ function checkJ() {
         setTimeout(checkJ, 50);
         return;
     }
+    $.ajaxSetup({cache:true});
+    $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+        FB.init({
+            version: 'v2.7'
+        });
+    });
     document.body.style.display = "block";
     for (var i in loaded) {
         loaded[i].apply(window);

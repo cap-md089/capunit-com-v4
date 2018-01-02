@@ -481,4 +481,9 @@ window.loaded.push(function() {
             getHtml(data.state.url, undefined, undefined, undefined, undefined, false);
         }
     };
+
+    this.addFunction(function () {
+        twttr.widgets.load();
+        FB.XFBML.parse();
+    });
 });

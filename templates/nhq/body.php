@@ -9,6 +9,7 @@
 				<div class="slideshowBottom"></div>
 				<div id="body">
 					<div id="content">
+						<div id="fb-root"></div>
 						<div id="breadcrumbs"></div>
 						<div id="pageblock"></div>
 						<div id="loader">
