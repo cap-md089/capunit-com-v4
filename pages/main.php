@@ -130,8 +130,25 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                 ]
             ];
 
+            $html = ''; 
             
-            $pdo = DB_Utils::CreateConnection();
+            $pdo = DBUtils::CreateConnection();
+            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND Activity LIKE '%Recurring Meeting%' LIMIT 1;");
+            $stmt->bindValue (':now', time());
+            $event = DBUtils::ExecutePDOStatement($stmt);
+            if (count($event) !== 1) {
+                $html .= "<section class=\"halfSection\" style=\"text-align: center\">No upcoming meeting</section>";
+            } else {
+                $e = Event::Get($event[0]['EventNumber']);
+                $link = new Link('/eventviewer', "<h3 style=\"text-align: center\">Next Meeting</h3>", [$e->EventNumber]);
+                $html .= "<section class=\"halfSection\" style=\"text-align: left\">
+                    $link
+                    <strong>Time:</strong> ".date('D, d M Y H:i:s', $e->MeetDateTime)."
+                    <strong>Location:</strong> $e->MeetLocation<br />
+                    <strong>Uniform of the Day:</strong> $e->Uniform<br />
+                </section>";
+            }
+            
             $stmt = $pdo->prepare("SELECT `name`, `id` FROM `".DB_TABLES['BlogPages']."` WHERE `parentname` = '' AND AccountID = :aid AND NOT `id` = 'none';");
             global $_ACCOUNT;
             $stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -146,7 +163,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
             
             return [
                 'body' => [
-                    'MainBody' => '<div>Main page</div>',
+                    'MainBody' => $html,
                     'SideNavigation' => UtilCollection::GenerateSideNavigation($finallinks),
                     'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
                         [

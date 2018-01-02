@@ -257,9 +257,11 @@ window.loaded.push(function() {
                                 scback(a, b, c);
                             },
                             error: function(xhr) {
-                                $("#sidenav").html("");
-                                $("#pageblock").html(xhr.responseText);
-                                $("#breadcrumbs").html("");
+                                text = xhr.responseText;
+                                ret = parseReturn(text.replace('\r', ''));
+                                $("#pageblock").html(ret.MainBody);
+                                $("#sidenav").html(ret.SideNavigation);
+                                $("#breadcrumbs").html(ret.BreadCrumbs);
                                 $("#loader").css({
                                     "display": "none"
                                 });
@@ -331,9 +333,11 @@ window.loaded.push(function() {
                             scback(a, b, c);
                         },
                         error: function(xhr) {
-                            $("#sidenav").html("");
-                            $("#pageblock").html(xhr.responseText);
-                            $("#breadcrumbs").html("");
+                            text = xhr.responseText;
+                            ret = parseReturn(text.replace('\r', ''));
+                            $("#pageblock").html(ret.MainBody);
+                            $("#sidenav").html(ret.SideNavigation);
+                            $("#breadcrumbs").html(ret.BreadCrumbs);
                             $("#loader").css({
                                 "display": "none"
                             });
