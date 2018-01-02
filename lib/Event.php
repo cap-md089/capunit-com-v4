@@ -341,7 +341,7 @@
 				) VALUES (
 					:accountid, :eventnumber, :eventName, :meetLocation, :eventLocation, :pickupLocation, 
 					:meetDate, :startDate, :endDate, :pickupDate, :transportationProvided, :transportationDescription, 
-					:requiredEquipment, :registrationDeadline, registrationInformation, :participationFeeDeadline, 
+					:requiredEquipment, :registrationDeadline, :registrationInformation, :participationFeeDeadline, 
 					:participationFee, :acceptSignups, :entryComplete, :publishToWing, :comments, 
 					:highAdventureDescription, :signUpDeny, :adminComments, :activity, :meals, 
 					:groupEventNumber, :eventStatus, :eventWebsite, :uniform, :requiredForms, :showUpcoming,
@@ -381,25 +381,25 @@
             $stmt->bindValue(':eventWebsite', $event->EventWebsite);
             $stmt->bindValue(':uniform', $event->Uniform);
             $stmt->bindValue(':requiredForms', $event->RequiredForms);
-			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming);
+			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming ? 1 : 0);
             $stmt->bindValue(':desiredParticipants', $event->DesiredNumParticipants);
             $stmt->bindValue(':debrief', $event->Debrief);
             $stmt->bindValue(':CAPPOC1ID', $event->CAPPOC1ID);
             $stmt->bindValue(':CAPPOC1Name', $event->CAPPOC1Name);
             $stmt->bindValue(':CAPPOC1Phone', $event->CAPPOC1Phone);
             $stmt->bindValue(':CAPPOC1Email', $event->CAPPOC1Email);
-            $stmt->bindValue(':CAPPOC1REU', $event->CAPPOC1ReceiveEventUpdates);
-            $stmt->bindValue(':CAPPOC1RSU', $event->CAPPOC1ReceiveSignUpUpdates);
+            $stmt->bindValue(':CAPPOC1REU', $event->CAPPOC1ReceiveEventUpdates ? 1 : 0);
+            $stmt->bindValue(':CAPPOC1RSU', $event->CAPPOC1ReceiveSignUpUpdates ? 1 : 0);
             $stmt->bindValue(':CAPPOC2ID', $event->CAPPOC2ID);
             $stmt->bindValue(':CAPPOC2Name', $event->CAPPOC2Name);
             $stmt->bindValue(':CAPPOC2Phone', $event->CAPPOC2Phone);
             $stmt->bindValue(':CAPPOC2Email', $event->CAPPOC2Email);
-            $stmt->bindValue(':CAPPOC2REU', $event->CAPPOC2ReceiveEventUpdates);
-            $stmt->bindValue(':CAPPOC2RSU', $event->CAPPOC2ReceiveSignUpUpdates);
+            $stmt->bindValue(':CAPPOC2REU', $event->CAPPOC2ReceiveEventUpdates ? 1 : 0);
+            $stmt->bindValue(':CAPPOC2RSU', $event->CAPPOC2ReceiveSignUpUpdates ? 1 : 0);
             $stmt->bindValue(':ExtPOCName', $event->ExtPOCName);
             $stmt->bindValue(':ExtPOCPhone', $event->ExtPOCPhone);
             $stmt->bindValue(':ExtPOCEmail', $event->ExtPOCEmail);
-            $stmt->bindValue(':ExtPOCREU', $event->ExtPOCReceiveEventUpdates);
+            $stmt->bindValue(':ExtPOCREU', $event->ExtPOCReceiveEventUpdates ? 1 : 0);
             $stmt->bindValue(':author', isset($member)?$member->uname:0);
             $stmt->bindValue(':parttime', $event->PartTime ? 1 : 0);
             $stmt->bindValue(':teamid', $event->TeamID);
