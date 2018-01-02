@@ -6,14 +6,17 @@
 We are sorry, the page "<?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0], '/'); ?>" does not exist.<br />
 <a href="#" onclick="history.go(-1);">Go back a page</a>.
 <?php
-            global $fromindex;
-            if ($fromindex) {
-                return [
-                    'body' => ob_get_clean()
-                ];
-            } else {
-                echo ob_get_clean();
-            }
+            return [
+                'body' => [
+                    'MainBody' => ob_get_clean(),
+                    'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+                        [
+                            'Text' => 'Home',
+                            'Target' => '/'
+                        ]
+                    ])
+                ]  
+            ];
         }
     }
 ?>

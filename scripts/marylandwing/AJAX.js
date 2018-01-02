@@ -28,7 +28,7 @@ window.loaded.push(function() {
             });
         }
         fcback = fcback || function(xhr, status, error) {
-            $("#body").html(parseReturn(xhr.responseText).MainBody);
+            $("#body").html(parseReturn(xhr.responseText.replace('\r', '')).MainBody);
             $("#loader").css({
                 "display": "none"
             });

@@ -30,9 +30,11 @@ window.loaded.push(function() {
             });
         }
         fcback = fcback || function(xhr, status, error) {
-            $("#pageblock").html(xhr.responseText);
-            $("#sidenav").html("");
-            $("#breadcrumbs").html("");
+            text = xhr.responseText;
+            ret = parseReturn(text.replace('\r', ''));
+            $("#pageblock").html(ret.MainBody);
+            $("#sidenav").html(ret.SideNavigation);
+            $("#breadcrumbs").html(ret.BreadCrumbs);
             $("#loader").css({
                 "display": "none"
             });

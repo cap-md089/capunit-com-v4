@@ -23,7 +23,6 @@ window.parseReturn = function (text) {
     for (var i = 0; i < text.length; i++) {
         if (text[i] == divider) {
             ct = text[i+1].split("Name: ")[1];
-            console.log(text[i+1]);
             i++;
             continue;
         } else if (ct !== '' && text[i] !== '') {

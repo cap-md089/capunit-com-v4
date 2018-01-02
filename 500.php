@@ -1,6 +1,7 @@
 <?php
 
     require_once(BASE_DIR."lib/templates.php");
+    require_once(BASE_DIR."lib/general.php");
     
     class ErrOutput {
         public static function doGet ($ERROR) {
@@ -26,6 +27,38 @@
             $form->setOption('reload', false);
             $html = '<h1>Uh oh! Something bad happened on our end...</h1>';
             $html .= $form->getHtml();
+            global $_FUNC;
+            $bc = UtilCollection::GenerateBreadCrumbs([
+                [
+                    'Target' => '/',
+                    'Text' => 'Home'
+                ],
+                [
+                    'Target' => '/'.$_FUNC,
+                    'Text' => $_FUNC
+                ]
+            ]);
+            $sn = UtilCollection::GenerateSideNavigation([]);
+            $html = <<<EOD
+--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING
+Name: MainBody
+
+$html
+
+
+--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING
+Name: BreadCrumbs
+
+$bc
+
+
+--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING
+Name: SideNavigation
+
+$sn
+
+EOD;
+
             return $html;
         }
     }

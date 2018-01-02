@@ -209,11 +209,11 @@
                $CAPPOC2RxRoster = 0;
 
         /**
-         * @var int $CAPPOC1ReceiveEventUpdates 
-         * @var int $CAPPOC1ReceiveEventUpdates 
-         * @var int $CAPPOC2ReceiveSignUpUpdates 
-         * @var int $CAPPOC2ReceiveSignUpUpdates 
-         * @var int $ExtPOCReceiveSignUpUpdates 
+         * @var bool $CAPPOC1ReceiveEventUpdates 
+         * @var bool $CAPPOC1ReceiveEventUpdates 
+         * @var bool $CAPPOC2ReceiveSignUpUpdates 
+         * @var bool $CAPPOC2ReceiveSignUpUpdates 
+         * @var bool $ExtPOCReceiveSignUpUpdates 
          */
         public $CAPPOC1ReceiveEventUpdates = false,
                $CAPPOC1ReceiveSignUpUpdates = false, 
