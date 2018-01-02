@@ -16,6 +16,7 @@
 
 			$html = '';
 
+			$breaks = 'false';
 			if ($l && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
 				if ($m->hasPermission("DeleteEvent")) {
 					$html .= (new AsyncButton(Null, 'Delete event', 'delEvent'))->getHtml('delet'.$ev)." | ";
@@ -27,6 +28,32 @@
 				if ($m->hasPermission("SignUpEdit") && $a->paid) {
 					$html .= " | ".new Link ("multiadd", "Add attendees", [$ev]);
 				}
+				$breaks = 'true';
+			}
+			if ($m->hasPermission("AddEvent")) {
+				$perm = 'true';
+				$notInAcct = !$a->hasMember($m);
+				$stmt = $pdo->prepare("SELECT ORGID FROM ".DB_TABLES['Member']." WHERE CAPID = :cid;");
+				$stmt->bindValue(":cid", $m->capid);
+				$orgid_data = DBUtils::ExecutePDOStatement($stmt);
+				$mbr_orgid = $orgid_data['ORGID'];
+				$stmt = $pdo->prepare("SELECT UnitID FROM ".DB_TABLES['Account']." WHERE AccountID = :aid;");
+				$stmt->bindValue(":aid", $a->id);
+				$data = DBUtils::ExecutePDOStatement($stmt);
+				$notInAcct = 'true';
+				foreach ($data as $datum) {
+					if ($datum['UnitID'] == $mbr_orgid) {
+						$notInAcct = 'false';
+					}
+				}
+				$notLinked = true; //need to query database for linked event
+				//need to add linked event fields to database before implementing
+				if ($perm && $notInAcct && notLinked) {
+//					$html .= " | ".new Link ("linkEvent", "Link To Event", [$ev]);
+				}
+				$breaks = 'true';
+			}
+			if ($breaks == 'true') {
 				$html .= "<br /><br />";
 			}
 

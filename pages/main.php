@@ -241,14 +241,14 @@ rightsection;
     <a class="twitter-timeline"
     data-height="600px"
     data-width="100%"
-    href="https://twitter.com/CAPStMarys">Tweets by CAPStMarys</a>
+    href="https://twitter.com/$con->Twitter">Tweets by CAPStMarys</a>
 </section>
 EOD;
                 }
                 if (!!$con->FaceBook) {
                     $html .= <<<EOD
 <section id="facebook-feed" class="$class">
-    <div class="fb-page" data-height="600" data-href="https://www.facebook.com/CAPStMarys/" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/CAPStMarys/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/CAPStMarys/">CAP St. Marys</a></blockquote></div>
+    <div class="fb-page" data-height="600" data-href="https://www.facebook.com/$con->FaceBook/" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/$con->FaceBook/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/$con->FaceBook/">CAP St. Marys</a></blockquote></div>
 </section>
 EOD;
                 }
