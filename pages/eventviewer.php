@@ -77,7 +77,7 @@
 				$html .= "Event administration comments: ".$event->Administration.'<br />';
 				$html .= "<br /><br />";
 				$dlist = new DetailedListPlus("Current Attendance");
-				$alist = new AsyncButton(null, "Comma separated CAPID list", "attendanceListingPopup");
+				$alist = new AsyncButton(null, "Short attendance listing", "attendanceListingPopup");
 				$html .= $alist->getHtml('atdir'.$event->EventNumber);
 				$attendance = $event->getAttendance();
 				foreach ($attendance as $capid => $data) {
