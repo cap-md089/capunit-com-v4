@@ -163,7 +163,7 @@ HTM;
         include (BASE_DIR."pages/$_FUNC.php");
     } else { // Not found or not to be displayed
         http_response_code (404);
-        include (BASE_DIR."/404.php");
+        include (BASE_DIR."404.php");
     } 
 
     /**

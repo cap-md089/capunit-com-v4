@@ -30,9 +30,11 @@ window.loaded.push(function() {
             });
         }
         fcback = fcback || function(xhr, status, error) {
-            $("#pageblock").html(xhr.responseText);
-            $("#sidenav").html("");
-            $("#breadcrumbs").html("");
+            text = xhr.responseText;
+            ret = parseReturn(text.replace('\r', ''));
+            $("#pageblock").html(ret.MainBody);
+            $("#sidenav").html(ret.SideNavigation);
+            $("#breadcrumbs").html(ret.BreadCrumbs);
             $("#loader").css({
                 "display": "none"
             });
@@ -255,9 +257,11 @@ window.loaded.push(function() {
                                 scback(a, b, c);
                             },
                             error: function(xhr) {
-                                $("#sidenav").html("");
-                                $("#pageblock").html(xhr.responseText);
-                                $("#breadcrumbs").html("");
+                                text = xhr.responseText;
+                                ret = parseReturn(text.replace('\r', ''));
+                                $("#pageblock").html(ret.MainBody);
+                                $("#sidenav").html(ret.SideNavigation);
+                                $("#breadcrumbs").html(ret.BreadCrumbs);
                                 $("#loader").css({
                                     "display": "none"
                                 });
@@ -329,9 +333,11 @@ window.loaded.push(function() {
                             scback(a, b, c);
                         },
                         error: function(xhr) {
-                            $("#sidenav").html("");
-                            $("#pageblock").html(xhr.responseText);
-                            $("#breadcrumbs").html("");
+                            text = xhr.responseText;
+                            ret = parseReturn(text.replace('\r', ''));
+                            $("#pageblock").html(ret.MainBody);
+                            $("#sidenav").html(ret.SideNavigation);
+                            $("#breadcrumbs").html(ret.BreadCrumbs);
                             $("#loader").css({
                                 "display": "none"
                             });
@@ -475,4 +481,9 @@ window.loaded.push(function() {
             getHtml(data.state.url, undefined, undefined, undefined, undefined, false);
         }
     };
+
+    this.addFunction(function () {
+        twttr.widgets.load();
+        FB.XFBML.parse();
+    });
 });
