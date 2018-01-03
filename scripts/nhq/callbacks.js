@@ -1,6 +1,5 @@
 function deletePageFuncs(data) {
-    getHtml('/' + HOST_SUB_DIR + 'page/list');
-    location.reload();
+    getHtml('/');
 }
 
 function devIssues(data) {
