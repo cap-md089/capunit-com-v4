@@ -53,16 +53,16 @@ function checkJ() {
         FB.init({
             version: 'v2.7'
         });
-    });
-    document.body.style.display = "block";
-    for (var i in loaded) {
-        loaded[i].apply(window);
-    }
-    if (JSON.parse(localStorage.getItem("LOGIN_DETAILS") || '{}').success == true) {
-        $(".signedout").addClass("signedin").removeClass("signedout");
-    }
-    console.log("Getting html");
-    getHtml();
+        document.body.style.display = "block";
+        for (var i in loaded) {
+            loaded[i].apply(window);
+        }
+        if (JSON.parse(localStorage.getItem("LOGIN_DETAILS") || '{}').success == true) {
+            $(".signedout").addClass("signedin").removeClass("signedout");
+        }
+        console.log("Getting html");
+        getHtml();
+    });    
 }
 
 xhr1.addEventListener("load", function() {

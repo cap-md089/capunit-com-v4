@@ -8,5 +8,4 @@ logs/*
 .vscode/*
 *.css.map
 .DS_Store
-config.php
 styles/*.css
