@@ -30,14 +30,14 @@
 				}
 				$breaks = 'true';
 			}
-			if ($m->hasPermission("AddEvent")) {
+			if($l && $m->hasPermission("AddEvent")) {
 				$perm = 'true';
 				$notInAcct = !$a->hasMember($m);
 				$stmt = $pdo->prepare("SELECT ORGID FROM ".DB_TABLES['Member']." WHERE CAPID = :cid;");
 				$stmt->bindValue(":cid", $m->capid);
 				$orgid_data = DBUtils::ExecutePDOStatement($stmt);
-				$mbr_orgid = $orgid_data['ORGID'];
-				$stmt = $pdo->prepare("SELECT UnitID FROM ".DB_TABLES['Account']." WHERE AccountID = :aid;");
+				$mbr_orgid = $orgid_data[0]['ORGID'];
+				$stmt = $pdo->prepare("SELECT UnitID FROM ".DB_TABLES['Accounts']." WHERE AccountID = :aid;");
 				$stmt->bindValue(":aid", $a->id);
 				$data = DBUtils::ExecutePDOStatement($stmt);
 				$notInAcct = 'true';
@@ -48,7 +48,7 @@
 				}
 				$notLinked = true; //need to query database for linked event
 				//need to add linked event fields to database before implementing
-				if ($perm && $notInAcct && notLinked) {
+				if ($perm && $notInAcct && $notLinked) {
 //					$html .= " | ".new Link ("linkEvent", "Link To Event", [$ev]);
 				}
 				$breaks = 'true';
