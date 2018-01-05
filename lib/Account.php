@@ -112,19 +112,18 @@
 			return (int)$data[0]['Size'];
 		}
 
-		public function hasMember (\Member $mem1) {
-			$mems = $this->getMembers();
-			foreach ($mems as $mem2) {
-				if ($mem1->uname == $mem2->uname) {
-					return true;
-				}
-			}
-			return false;
-		}
 
 		public function getNextMeetingTimestamp () {
 			$pdo = DBUtils::CreateConnection();
 			$stmt = $pdo->prepare("");
+		}
+
+		public function hasMember ($mem) {
+			$pdo = DBUtils::CreateConnection();
+			$stmt = $pdo->prepare("SELECT COUNT(*) AS ccount FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL AND CAPID = :cid;");
+			$stmt->bindValue(':cid', $mem->uname);
+			$data = DBUtils::ExecutePDOStatement($stmt);
+			return $data[0]['ccount'] == 1;
 		}
 
 		public function __toString () {
