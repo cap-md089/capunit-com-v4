@@ -140,6 +140,7 @@ function copyEvent_prepush(a) {
 }
 
 function copyEvent(data, status, jqxhr, a) {
+    console.log(data);
     if (data == 0) {
         customDialog("Event failed to copy");
     } else {

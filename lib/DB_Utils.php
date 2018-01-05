@@ -23,7 +23,7 @@
             if (!isset(self::$PDO)) {
  //               try {
                     self::$PDO = new PDO (DB_PROTOCOL . ":host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME, DB_UNAME, DB_UPASS, array (
-                        PDO::ATTR_PERSISTENT => false
+                        PDO::ATTR_PERSISTENT => true
                     ));
    //             } catch (PDOException $e) {}
             }

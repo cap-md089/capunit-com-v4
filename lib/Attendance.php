@@ -111,6 +111,16 @@
 			return true;
 		}
 
+		public function clearAll () {
+			$pdo = DBUtils::CreateConnection();
+			$stmt = $pdo->prepare ("DELETE FROM ".DB_TABLES['Attendance']." WHERE EventID = :id;");
+			$stmt->bindValue(':id', $this->EventNumber);
+			if (!$stmt->execute()) {
+				trigger_error($stmt->errorInfo()[2], 512);
+			}
+			return true;
+		}
+
 		/**
 		 * Iterator for using this kind of code:
 		 * foreach (\Attendance as int(CAPID) => array[]) {
