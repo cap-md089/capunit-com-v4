@@ -246,7 +246,10 @@
 			}
 
 			if ($a->paid && $func == "delete" && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
-				return JSSnippet::PageRedirect('Calendar') . ($event->remove() ? "Event deleted" : "Some error occurred");
+				$data = $event->remove();
+				var_export($data);
+				echo "$event->EventNumber\n";
+				return JSSnippet::PageRedirect('Calendar') . ($data ? "Event deleted" : "Some error occurred");
 			} else if (($a->paid || $a->getEventCount() < 5) && $func == "clone" && ($m->hasPermission("CopyEvent"))) {
 				$d = $event->data;
 				unset($d['EventNumber']);
@@ -265,8 +268,12 @@
 					//need to indicate to user that calendar update failed
 				}
 				//eventMailer should return an execution status and be reported/error recorded
-				eventMailer($m, $ne);
-				return $ne->save() ? $ne->EventNumber : 0;
+				// eventMailer($m, $ne);
+				return [
+					'body' => [
+						'MainBody' => $ne->EventNumber
+					]
+				];
 			} else if ($func == 'atmod' && ($m->hasPermissionLevel("SignUpEdit") || $event->isPOC($m))) {
 				
 			} else if (($func == 'atdel' && $m->AccessLevel == "Admin")) {
