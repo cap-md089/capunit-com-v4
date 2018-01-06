@@ -28,7 +28,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 			$links = [];
 
 			foreach ($data as $datum) {
-				$stmt = $pdo->prepare("select capid from ".DB_TABLES['ErrorMessages']." where message = :msg;");
+				$stmt = $pdo->prepare("select capid from ".DB_TABLES['ErrorMessages']." where message = :msg and resolved = 0;");
 				$stmt->bindValue(':msg', $datum['message']);
 				$cdata = DBUtils::ExecutePDOStatement($stmt);
 				$ncdata = [];

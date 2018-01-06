@@ -122,13 +122,15 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                     'Type' => 'link',
                     'Target' => '/teamlist',
                     'Text' => 'Team List'
-                ],
-                [
+                ]              
+            ];
+            if ($l) {
+                $finallinks[] = [
                     'Type' => 'link',
                     'Target' => '/admin',
                     'Text' => 'Administration'
-                ]
-            ];
+                ];
+            }
 
             $html = ''; 
             
@@ -196,26 +198,32 @@ rightsection;
             $html .= $leftsection1 . $rightsection1 . "<div class=\"divider\"></div>";
 
             $pdo = DBUtils::CreateConnection();
-            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND Activity LIKE '%Recurring Meeting%' LIMIT 1;");
+            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND Activity LIKE '%Recurring Meeting%' LIMIT 1;");
             $stmt->bindValue (':now', time());
+			$stmt->bindValue (':aid', $a->id);
             $event = DBUtils::ExecutePDOStatement($stmt);
+			print_r($event);
+			echo "\n";
             if (count($event) !== 1) {
                 $html .= "<section class=\"halfSection\" style=\"text-align: center\">No upcoming meeting</section>";
             } else {
                 $e = Event::Get($event[0]['EventNumber']);
+				if (!!$e) {
                 $link = new Link('eventviewer', "View details", [$e->EventNumber]);
                 $html .= "<section class=\"halfSection\" style=\"text-align: left\">
-                    <h3 style=\"text-align: center\">Next Meeting</h3>
-                    <strong>Time:</strong> ".date('D, d M Y H:i:s', $e->MeetDateTime)."<br />
-                    <strong>Location:</strong> $e->MeetLocation<br />
-                    <strong>Uniform of the Day:</strong> $e->Uniform<br />
-                    $link
-                </section>";
+                	    <h3 style=\"text-align: center\">Next Meeting</h3>
+                    	<strong>Time:</strong> ".date('D, d M Y H:i:s', $e->MeetDateTime)."<br />
+            	        <strong>Location:</strong> $e->MeetLocation<br />
+        	            <strong>Uniform of the Day:</strong> $e->Uniform<br />
+    	                $link
+	                </section>";
+				}
             }
 
             // $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND (ShowUpcoming = 1 OR Activity LIKE '%Recurring Meeting%') LIMIT :limit;");
-            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND ShowUpcoming = 1 LIMIT :limit;");
+            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND ShowUpcoming = 1 LIMIT :limit;");
             $stmt->bindValue(':now', time());
+			$stmt->bindValue(':aid', $a->id);
             $stmt->bindValue(':limit', (int)Registry::get('Website.ShowUpcomingEvents'), PDO::PARAM_INT);
             $data = DBUtils::ExecutePDOStatement($stmt);
             $html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">";

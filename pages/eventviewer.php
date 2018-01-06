@@ -30,26 +30,18 @@
 				}
 				$breaks = 'true';
 			}
-			if($l && $m->hasPermission("AddEvent")) {
-				$perm = 'true';
-				$notInAcct = !$a->hasMember($m);
-				$stmt = $pdo->prepare("SELECT ORGID FROM ".DB_TABLES['Member']." WHERE CAPID = :cid;");
-				$stmt->bindValue(":cid", $m->capid);
-				$orgid_data = DBUtils::ExecutePDOStatement($stmt);
-				$mbr_orgid = $orgid_data[0]['ORGID'];
-				$stmt = $pdo->prepare("SELECT UnitID FROM ".DB_TABLES['Accounts']." WHERE AccountID = :aid;");
-				$stmt->bindValue(":aid", $a->id);
-				$data = DBUtils::ExecutePDOStatement($stmt);
-				$notInAcct = 'true';
-				foreach ($data as $datum) {
-					if ($datum['UnitID'] == $mbr_orgid) {
-						$notInAcct = 'false';
-					}
+			if($l) {
+				$perm = false;
+				foreach ($m->genAccounts() as $acc) {
+					$perm = $perm || $m->hasPermission('CopyEvent', 1, $acc); 
 				}
+				$notInAcct = !$a->hasMember($m);
 				$notLinked = true; //need to query database for linked event
 				//need to add linked event fields to database before implementing
 				if ($perm && $notInAcct && $notLinked) {
 //					$html .= " | ".new Link ("linkEvent", "Link To Event", [$ev]);
+					// Better to use AsyncButton, similar to copy on line 26
+											
 				}
 				$breaks = 'true';
 			}

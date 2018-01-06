@@ -163,6 +163,9 @@ addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;
     }
+    if (!$("#emailList").length) {
+        return true;
+    }
     if ($("#emailList").html().length > 0) {
         names = $("#emailList").html().split("; ");
     } else {
