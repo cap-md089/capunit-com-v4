@@ -122,13 +122,15 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                     'Type' => 'link',
                     'Target' => '/teamlist',
                     'Text' => 'Team List'
-                ],
-                [
+                ]              
+            ];
+            if ($l) {
+                $finallinks[] = [
                     'Type' => 'link',
                     'Target' => '/admin',
                     'Text' => 'Administration'
-                ]
-            ];
+                ];
+            }
 
             $html = ''; 
             
