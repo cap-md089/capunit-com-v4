@@ -249,13 +249,13 @@ function asyncFormSelectFilesInsteadOfUpload_prepush(a, name) {
 }
 
 function memberPermissionsAddAUser_prepush(a, data) {
-
+	console.log("Running");
     memberSelect(function(data) {
+		console.log('Running 2');
         if (data[0] != undefined) {
             data = data[0];
             $clone = $("#templateAdder").clone();
             $clone.attr("id", "");
-            $clone.insertBefore($(a).parent().parent());
             $clone.find("input").attr("name", data.id);
             $($clone.find('.formbox')[0]).find("label").text(data.name);
             $($clone.find('.formbox')[1]).find("input").each(function(index) {
@@ -265,7 +265,8 @@ function memberPermissionsAddAUser_prepush(a, data) {
                 $(this).attr("for", data.id + '' + index);
             });
             $("<input name=\"capids[]]\" value=\"" + data.id + "\" type=\"hidden\" />").appendTo($(a).parent().parent().parent());
-        }
+            $clone.insertBefore($(a).parent().parent());
+		}
     }, false);
 
     return false;
@@ -274,7 +275,6 @@ function memberPermissionsAddAUser_prepush(a, data) {
 function memberPermissionsRemoveAUser(data, status, jqxhr, a) {
     $(a).parent().parent().prev().remove()
     $(a).parent().parent().remove();
-    customDialog("Permissions", "User removed from access list");
 }
 
 function selectCAPIDForEventForm_prepush(a, retclass) {

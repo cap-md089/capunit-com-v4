@@ -13,7 +13,7 @@
     <div>
 
     </div>
-    <h4>How to become an Senior Member (Age 18+)</h4>
+    <h4>How to become a Senior Member (Age 18+)</h4>
     <div>
         <p>
             As a CAP Senior Member, you can choose to serve in one of 25 Specialty Track Career Fields 
@@ -139,7 +139,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                 <div>
             
                 </div>
-                <h4>How to become an Senior Member (Age 18+)</h4>
+                <h4>How to become a Senior Member (Age 18+)</h4>
                 <div>
                     <p>
                         As a CAP Senior Member, you can choose to serve in one of 25 Specialty Track Career Fields 
@@ -249,7 +249,6 @@ rightsection;
     <a class="twitter-timeline"
     data-height="600px"
     data-width="100%"
-	data-tweet-limit="10"
     href="https://twitter.com/$con->Twitter">Tweets by $con->Twitter</a>
 </section>
 EOD;

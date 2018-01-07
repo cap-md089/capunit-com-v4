@@ -127,21 +127,8 @@ window.loaded.push(function() {
         $("#mother").append('<div class="cover"></div>');
         var html = '<div id="alert_box">' + (title ? '<h2>' + title + '</h2>' : '') + '<div class="content">' + message + '</div><div class="closeButton"><a style="float:right;" class="primaryButton" id="ok">Close</a></div></div>';
         $("#mother").append(html);
-        $("#alert_box #ok").click(function() {
-            if (callback) callback();
-            $(".cover").remove();
-            $("#alert_box").fadeOut(400, function() {
-                $("#alert_box").remove();
-            });
-        });
-        $("#alert_box div a").click(function() {
-            if (callback) callback();
-            $(".cover").remove();
-            $("#alert_box").fadeOut(400, function() {
-                $("#alert_box").remove();
-            });
-        });
-        $(".cover").click(function() {
+        $("#alert_box #ok, #alert_box a, .cover").click(function() {
+			console.log('Running 5');
             if (callback) callback();
             $(".cover").remove();
             $("#alert_box").fadeOut(400, function() {
@@ -207,6 +194,7 @@ window.loaded.push(function() {
                                 'name': $(this).find("+ label").text()
                             });
                         });
+						console.log('Running 3');
                         callback(ret);
                     });
                     $("#memberSelectFormSearch").on("keyup keydown", function() {
