@@ -82,7 +82,7 @@ window.loaded.push(function() {
         if (e) e.preventDefault();
         $("#signin_box").css("display", "block");
         $(this).blur();
-        $("#mother").append('<div id="cover"></div>');
+        $("#mother").append('<div class="cover"></div>');
         $("#signin_box").css({
             "z-index": 5020,
             "position": "fixed"
@@ -102,13 +102,13 @@ window.loaded.push(function() {
                 'bottom':'0px'
             });
         }
-        $("#cover").click(function() {
+        $(".cover").click(function() {
             $("#signin_box").fadeOut(400, function() {
                 $("#signin_box").css({
                     "display": "none"
                 });
+                $(".cover").remove();
             })
-            $("#cover").remove();
         });
         $("#signin").off();
         $("#signin").submit(function() {
@@ -118,32 +118,32 @@ window.loaded.push(function() {
                     "display": "none"
                 });
             })
-            $("#cover").remove();
+            $(".cover").remove();
             $("#loader").css("display", "block");
         });
     }
 
     this.customDialog = function(title, message, callback) {
-        $("#mother").append('<div id="cover"></div>');
+        $("#mother").append('<div class="cover"></div>');
         var html = '<div id="alert_box">' + (title ? '<h2>' + title + '</h2>' : '') + '<div class="content">' + message + '</div><div class="closeButton"><a style="float:right;" class="primaryButton" id="ok">Close</a></div></div>';
         $("#mother").append(html);
         $("#alert_box #ok").click(function() {
             if (callback) callback();
-            $("#cover").remove();
+            $(".cover").remove();
             $("#alert_box").fadeOut(400, function() {
                 $("#alert_box").remove();
             });
         });
         $("#alert_box div a").click(function() {
             if (callback) callback();
-            $("#cover").remove();
+            $(".cover").remove();
             $("#alert_box").fadeOut(400, function() {
                 $("#alert_box").remove();
             });
         });
-        $("#cover").click(function() {
+        $(".cover").click(function() {
             if (callback) callback();
-            $("#cover").remove();
+            $(".cover").remove();
             $("#alert_box").fadeOut(400, function() {
                 $("#alert_box").remove();
             });
