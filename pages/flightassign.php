@@ -50,7 +50,7 @@
 							'Target' => '/',
 						],
 						[
-							'Text' => 'Administratoin',
+							'Text' => 'Administration',
 							'Target' => '/admin'
 						],
 						[
