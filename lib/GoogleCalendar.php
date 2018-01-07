@@ -1,36 +1,67 @@
 <?php
     require_once (BASE_DIR."lib/DB_Utils.php");
     require_once (BASE_DIR."lib/vendor/autoload.php");
+	require_once (BASE_DIR."lib/logger.php");
 
     class GoogleCalendar {
         public static $accountId;
         public static $client;
         public static $service;
+		public static $logger;
+		public static $loglevel;
         
         public static function init () {
-            global $_ACCOUNT;
-            self::$accountId = $_ACCOUNT->id;
+			self::$loglevel = 2;
+			self::$logger = new Logger("GoogleCalendarUpdate");
+			global $_ACCOUNT;
+			self::$accountId = $_ACCOUNT->id;
+
+			self::$logger->Log("init:: AccountID=: ".$_ACCOUNT->id, self::$loglevel);
             self::$client = new Google_Client();
-            self::$client->useApplicationDefaultCredentials();
-            self::$client->setScopes(Google_Service_Calendar::CALENDAR);
+			if(!self::$client) {self::$logger->Log("init:: client creator returned false", self::$loglevel);} else {self::$logger->Log("init:: client creator returned true", self::$loglevel);}
+
+/*			if ($credentials_file = checkServiceAccountCredentialsFile()) {
+				self::$logger->Log("init:: no service account credentials file present", self::$loglevel);
+			} 
+*/			if (getenv('GOOGLE_APPLICATION_CREDENTIALS')) {
+				self::$logger->Log("init:: google application credentials env present", self::$loglevel);
+			}
+
+			$retval = self::$client->setApplicationName("capunit.com calendar update");
+			if(!$retval) {self::$logger->Log("init:: application name not set", self::$loglevel);} else {self::$logger->Log("init:: application name set", self::$loglevel);}
+
+            $retval = self::$client->useApplicationDefaultCredentials();
+			if(!$retval) {self::$logger->Log("init:: default credentials not found", self::$loglevel);} else {self::$logger->Log("init:: default credentials found", self::$loglevel);}
+
+            $retval = self::$client->setScopes(Google_Service_Calendar::CALENDAR);
+			if(!$retval) {self::$logger->Log("init:: calendar scope not set", self::$loglevel);} else {self::$logger->Log("init:: calendar scope set", self::$loglevel);}
+
             self::$service = new Google_Service_Calendar(self::$client);
-        }
+			if(!self::$service) {self::$logger->Log("init:: calendar creator returned false", self::$loglevel);} else {self::$logger->Log("init:: calendar creator returned true", self::$loglevel);}
+
+		}
 
         public static function updateCalendarEvent (Event $CUevent) {
             if ($CUevent->Status == 'Draft') {
+				self::$logger->Log("Draft event, deleting from Google Calendar");
                 self::removeCalendarEvent($CUevent);
                 return;
             }
-            global $_ACCOUNT;
-            $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
-            $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
-            $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
+//            global $_ACCOUNT;
+//            $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
+  //          $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
+    //        $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
+            $eventId = 'MD-089-476';
+            $calendarId = 'grioux.cap@gmail.com';
+            $wingCalendarId = 'jsuslg20d20560cljmvr9oeu48@group.calendar.google.com';
+			self::$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
             
             $optParams = array(
                 'q' => 'Event ID Number: '.$eventId,
                 'orderBy' => 'startTime',
                 'singleEvents' => TRUE,
             );
+			self::$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $wingResults = self::$service->events->listEvents($wingCalendarId, $optParams);
             

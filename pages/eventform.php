@@ -28,15 +28,15 @@
 				$form = new AsyncForm ('eventform', 'Edit Event', Null, 'eventForm');
 
 				$form->addField('', '(* Indicates Required Field)', 'textread')
-					->addField ('eventName', 'Event Name', 'text', Null, Null, $event->EventName)
+					->addField ('eventName', '*Event Name', 'text', Null, Null, $event->EventName)
 					->addField ('', 'Calendar Information', 'label')
-					->addField ('meetDate', 'Meet Date and Time', 'datetime-local', Null, Null, mdate($event->MeetDateTime))
-					->addField ('meetLocation', 'Meet Location', 'text', Null, Null, $event->MeetLocation)
-					->addField ('startDate', 'Start Date and Time', 'datetime-local', Null, Null, mdate($event->StartDateTime))
-					->addField ('eventLocation', 'Event Location', 'text', Null, Null, $event->EventLocation)
-					->addField ('endDate', 'End Date and Time', 'datetime-local', Null, Null, mdate($event->EndDateTime))
-					->addField ('pickupDate', 'Pickup Date and Time', 'datetime-local', Null, Null, mdate($event->PickupDateTime))
-					->addField ('pickupLocation', 'Pickup Location', 'text', Null, Null, $event->PickupLocation)
+					->addField ('meetDate', '*Meet Date and Time', 'datetime-local', Null, Null, mdate($event->MeetDateTime))
+					->addField ('meetLocation', '*Meet Location', 'text', Null, Null, $event->MeetLocation)
+					->addField ('startDate', '*Start Date and Time', 'datetime-local', Null, Null, mdate($event->StartDateTime))
+					->addField ('eventLocation', '*Event Location', 'text', Null, Null, $event->EventLocation)
+					->addField ('endDate', '*End Date and Time', 'datetime-local', Null, Null, mdate($event->EndDateTime))
+					->addField ('pickupDate', '*Pickup Date and Time', 'datetime-local', Null, Null, mdate($event->PickupDateTime))
+					->addField ('pickupLocation', '*Pickup Location', 'text', Null, Null, $event->PickupLocation)
 					->addField ('transportationProvided', 'Transportation Provided', 'checkbox', Null, Null, $event->TransportationProvided)
 					->addField ('transportationDescription', 'Transportation Description', 'text', Null, Null, $event->TransportationDescription)
 					->addField ('', 'Activity Information', 'label')
@@ -50,7 +50,7 @@
 					->addField ('eventWebsite', 'Event Website', 'url', Null, Null, $event->EventWebsite)
 					->addField ('highAdventureDescription', 'High Adventure Description', 'textarea', Null, Null, $event->HighAdventureDescription)
 					->addField ('', 'Logistics Information', 'label')
-					->addField ('uniform', 'Uniform', 'multcheckbox', Null, [
+					->addField ('uniform', '*Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
 						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					], explode(', ', $event->Uniform))
@@ -127,15 +127,15 @@
 				$form = new AsyncForm ('eventform', 'Create an Event', Null, 'eventForm');
 
 				$form->addField('', '(* Indicates Required Field)', 'textread')
-					->addField ('eventName', 'Event Name*', 'text')
+					->addField ('eventName', '*Event Name*', 'text')
 					->addField ('', 'Calendar Information', 'label')
-					->addField ('meetDate', 'Meet Date and Time*', 'datetime-local')
-					->addField ('meetLocation', 'Meet Location*', 'text')
-					->addField ('startDate', 'Start Date and Time*', 'datetime-local')
-					->addField ('eventLocation', 'Event Location*', 'text')
-					->addField ('endDate', 'End Date and Time*', 'datetime-local')
-					->addField ('pickupDate', 'Pickup Date and Time*', 'datetime-local')
-					->addField ('pickupLocation', 'Pickup Location*', 'text')
+					->addField ('meetDate', '*Meet Date and Time*', 'datetime-local')
+					->addField ('meetLocation', '*Meet Location*', 'text')
+					->addField ('startDate', '*Start Date and Time*', 'datetime-local')
+					->addField ('eventLocation', '*Event Location*', 'text')
+					->addField ('endDate', '*End Date and Time*', 'datetime-local')
+					->addField ('pickupDate', '*Pickup Date and Time*', 'datetime-local')
+					->addField ('pickupLocation', '*Pickup Location*', 'text')
 					->addField ('transportationProvided', 'Transportation Provided', 'checkbox')
 					->addField ('transportationDescription', 'Transportation Description', 'text')
 					->addField ('', 'Activity Information', 'label')
@@ -149,7 +149,7 @@
 					->addField ('eventWebsite', 'Event Website', 'url')
 					->addField ('highAdventureDescription', 'High Adventure Description', 'textarea')
 					->addField ('', 'Logistics Information', 'label')
-					->addField ('uniform', 'Uniform*', 'multcheckbox', Null, [
+					->addField ('uniform', '*Uniform*', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
 						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
 					])
