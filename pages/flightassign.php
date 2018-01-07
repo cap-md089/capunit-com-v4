@@ -57,7 +57,7 @@
 							'Target' => '/',
 						],
 						[
-							'Text' => 'Administratoin',
+							'Text' => 'Administration',
 							'Target' => '/admin'
 						],
 						[
@@ -95,7 +95,8 @@
 			// 		}
 			// 	}
 			// }
-			print_r($e['form-data']);
+			$pdo = DBUtils::CreateConnection();
+
 			foreach ($e['form-data']['capids'] as $capid) {
 				$data = explode(':', $capid);
 				$stmt = $pdo->prepare("UPDATE ".DB_TABLES['Flights']." SET Flight=:flight WHERE capid=:cid AND AccountID=:aid;");

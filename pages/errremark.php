@@ -60,13 +60,14 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 				$badfile = $datum['badfile'];
 				$badline = $datum['badline'];
 				$remark = $datum['remarks'];
+				$safemsg = urlencode($message);
 				$html .= <<<EOD
 <div style="clear:both">
 <h2 class="title" style="border-bottom: 1px solid #2b357b" id="error$id">Issue #$id $butth</h4>
 <section>
 Time: $time<br />
 Error type: $enumber ({$errname})<br />
-Error: $message<br />
+Error: $message (<a target="_blank" href="https://google.com/search?q=$safemsg">Google it</a>)<br />
 File: {$badfile}:{$badline}<br />
 People experiencing this problem:<br />
 <p style="margin: 15px">

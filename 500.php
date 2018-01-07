@@ -39,25 +39,13 @@
                 ]
             ]);
             $sn = UtilCollection::GenerateSideNavigation([]);
-            $html = <<<EOD
---COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING
-Name: MainBody
-
-$html
-
-
---COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING
-Name: BreadCrumbs
-
-$bc
-
-
---COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING
-Name: SideNavigation
-
-$sn
-
-EOD;
+			$th = $html;
+            $html = "--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING\n";
+			$html .= "Name: MainBody\n\n$th\n\n";
+			$html .= "--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING\n";
+			$html .= "Name: BreadCrumbs\n\n$bc\n\n";
+			$html .= "--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING\n";
+			$html .= "Name: SideNavigation\n\n$sn\n\n";
 
             return $html;
         }
