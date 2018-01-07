@@ -315,3 +315,43 @@ table#eventCalendar
 					a
 						color: #fff
 					border-color: #113
+
+#flights-title .title
+	font-size: 1.2em
+	display: inline-block
+	box-sizing: border-box
+	padding: 5px
+	border: 1px solid #0b375b
+	flex: 1 0 auto
+	width: 20%
+	text-align: center
+
+#flights
+	height: auto
+	padding: 0
+	margin: 0
+	width: 100%
+	display: flex
+
+	&::after
+		content: ""
+		display: table
+		clear: both	
+
+	.flight
+		display: block
+		box-sizing: border-box
+		padding: 5px
+		border: 1px solid #0b375b
+		flex: 1 0 auto
+		width: 20%
+
+		.cadet
+			width: 100%
+			border: 1px solid #0d3a74
+			cursor: move
+			min-height: 42px
+			box-sizing: border-box
+			text-align: center
+			padding: 4px
+			margin: 2.5px 0
