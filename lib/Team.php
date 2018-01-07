@@ -32,11 +32,11 @@
                 :name, :desc, :lead, :coach, :mentor, :aid
             )");
                
-            $stmt->bindValue(":lead", $info['TeamLead']);
+            $stmt->bindValue(":lead", (int)$info['TeamLead']);
             $stmt->bindValue(':name', $info['TeamName']);
             $stmt->bindValue(':desc', $info['TeamDescription']);
-            $stmt->bindValue(':coach', $info['TeamCoach']);
-            $stmt->bindValue(':mentor', $info['TeamMentor']);
+            $stmt->bindValue(':coach', (int)$info['TeamCoach']);
+            $stmt->bindValue(':mentor', (int)$info['TeamMentor']);
             $stmt->bindValue(':aid', $_ACCOUNT->id);
             if (!$stmt->execute()) {
                 trigger_error($stmt->errorInfo()[2], 512);

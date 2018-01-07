@@ -249,7 +249,8 @@ rightsection;
     <a class="twitter-timeline"
     data-height="600px"
     data-width="100%"
-    href="https://twitter.com/$con->Twitter">Tweets by CAPStMarys</a>
+	data-tweet-limit="10"
+    href="https://twitter.com/$con->Twitter">Tweets by $con->Twitter</a>
 </section>
 EOD;
                 }

@@ -47,6 +47,12 @@
             if (!$l) return false;
             if (!$m->hasPermission('AddTeam')) return ['error' => 402];
 
+			//add require team name or team list will crash
+
+			if (trim($e['form-data']['teamName']) == '') {
+				return "Team must have a name";	
+			}
+
             $team = Team::Create(array(
                 'TeamLead' => $e['form-data']['teamLeader'],
                 'TeamName' => $e['form-data']['teamName'],

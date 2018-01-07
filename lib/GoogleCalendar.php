@@ -20,40 +20,26 @@
             self::$client = new Google_Client();
 			if(!self::$client) {self::$logger->Log("init:: client creator returned false", self::$loglevel);} else {self::$logger->Log("init:: client creator returned true", self::$loglevel);}
 
-/*			if ($credentials_file = checkServiceAccountCredentialsFile()) {
-				self::$logger->Log("init:: no service account credentials file present", self::$loglevel);
-			} 
-*/			if (getenv('GOOGLE_APPLICATION_CREDENTIALS')) {
-				self::$logger->Log("init:: google application credentials env present", self::$loglevel);
-			}
-
-			$retval = self::$client->setApplicationName("capunit.com calendar update");
-			if(!$retval) {self::$logger->Log("init:: application name not set", self::$loglevel);} else {self::$logger->Log("init:: application name set", self::$loglevel);}
-
-            $retval = self::$client->useApplicationDefaultCredentials();
-			if(!$retval) {self::$logger->Log("init:: default credentials not found", self::$loglevel);} else {self::$logger->Log("init:: default credentials found", self::$loglevel);}
-
-            $retval = self::$client->setScopes(Google_Service_Calendar::CALENDAR);
-			if(!$retval) {self::$logger->Log("init:: calendar scope not set", self::$loglevel);} else {self::$logger->Log("init:: calendar scope set", self::$loglevel);}
+			//self::$client->setAuthConfig(BASE_DIR.'../credentials/'.$_ACCOUNT->id.'.json');			
+			self::$client->setApplicationName("capunit.com Calendar Update");
+            self::$client->useApplicationDefaultCredentials();
+            self::$client->setScopes(Google_Service_Calendar::CALENDAR);
 
             self::$service = new Google_Service_Calendar(self::$client);
-			if(!self::$service) {self::$logger->Log("init:: calendar creator returned false", self::$loglevel);} else {self::$logger->Log("init:: calendar creator returned true", self::$loglevel);}
+			if(!self::$service) {self::$logger->Log("init:: Calendar Service creator returned false", self::$loglevel);} else {self::$logger->Log("init:: Calendar Service creator returned true", self::$loglevel);}
 
 		}
 
         public static function updateCalendarEvent (Event $CUevent) {
             if ($CUevent->Status == 'Draft') {
-				self::$logger->Log("Draft event, deleting from Google Calendar");
+				self::$logger->Log("Draft event, deleting from Google Calendar", self::$loglevel);
                 self::removeCalendarEvent($CUevent);
                 return;
             }
-//            global $_ACCOUNT;
-//            $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
-  //          $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
-    //        $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
-            $eventId = 'MD-089-476';
-            $calendarId = 'grioux.cap@gmail.com';
-            $wingCalendarId = 'jsuslg20d20560cljmvr9oeu48@group.calendar.google.com';
+            global $_ACCOUNT;
+            $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
+            $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
+            $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
 			self::$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
             
             $optParams = array(
@@ -61,7 +47,7 @@
                 'orderBy' => 'startTime',
                 'singleEvents' => TRUE,
             );
-			self::$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
+			self::$logger->Log("Update Calendar Event::  optParams: ".implode($optParams), self::$loglevel);
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $wingResults = self::$service->events->listEvents($wingCalendarId, $optParams);
             
@@ -70,10 +56,12 @@
             //remove all event items from both calendars
             $results = $results->getItems();
             foreach ($results as $Gevent) {
+				self::$logger->Log("Update Calendar Event::  Remove event: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($calendarId, $Gevent->getId());
             }
             $wingResults = $wingResults->getItems();
             foreach ($wingResults as $Gevent) {
+				self::$logger->Log("Update Calendar Event::  Remove wing event: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($wingCalendarId, $Gevent->getId());
             }
 
@@ -86,6 +74,7 @@
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $results = $results->getItems();
             foreach ($results as $Gevent) {
+				self::$logger->Log("Update Calendar Event::  Remove event registration: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($calendarId, $Gevent->getId());
             }
             //remove all registration fee items
@@ -97,10 +86,11 @@
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $results = $results->getItems();
             foreach ($results as $Gevent) {
+				self::$logger->Log("Update Calendar Event::  Remove event fee: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($calendarId, $Gevent->getId());
             }
 
-            if ($CUevent->Status != 'Deleted') {
+            if (!($CUevent->Status == 'Deleted' || $CUevent->Status == 'Draft')) {
                 //build event data and create Google event
 
                 $descriptionString = "--Please contact the POC listed below directly with questions or comments.\n\n";
@@ -140,6 +130,16 @@
                 $descriptionString .= "--Desired number of Participants: ".$CUevent->DesiredNumParticipants."\n";
                 $descriptionString .= "--Event status: ".$CUevent->Status;
 
+				/*
+				Google Calendar API V3 event colors:
+				Draft			5
+				Tentative		7
+				Confirmed		9
+				Complete		9
+				Cancelled		11
+				Info Only		1
+				Team			10
+				*/
                 $colorId = '9';
                 if ($CUevent->Status == 'Tentative') {
                     $colorId = '7';
@@ -147,9 +147,8 @@
                     $colorId = '11';
                 } else if ($CUevent->Status == 'Information Only') {
                     $colorId = '1';
-                } else if ($CUevent->Status == 'Draft') {
-                    $colorId = '6';
                 }
+				if($CUevent->TeamID != 0) { $colorId = '10'; }
 
                 //create new event
                 $Gevent = new Google_Service_Calendar_Event(array(

@@ -352,10 +352,6 @@ HTM;
 						foreach ($e['form-data']['photos'] as $file) {
 							$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FilePhotoAssignments']." VALUES (:fid, :bid, :aid);");
 							$stmt->bindValue(':fid', $file);
-							$data = File::Get($file);
-							$data->IsPhoto = true;
-							$data->save();
-							unset($data);
 							$stmt->bindValue(':bid', $blogid);
 							$stmt->bindvalue(':aid', $a->id);
 							$v1 = $stmt->execute() && $v1;
