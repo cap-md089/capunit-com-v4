@@ -221,7 +221,7 @@ rightsection;
             }
 
             // $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND (ShowUpcoming = 1 OR Activity LIKE '%Recurring Meeting%') LIMIT :limit;");
-            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND ShowUpcoming = 1 LIMIT :limit;");
+            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND ShowUpcoming = 1 ORDER BY MeetDateTime ASC LIMIT :limit;");
             $stmt->bindValue(':now', time());
 			$stmt->bindValue(':aid', $a->id);
             $stmt->bindValue(':limit', (int)Registry::get('Website.ShowUpcomingEvents'), PDO::PARAM_INT);

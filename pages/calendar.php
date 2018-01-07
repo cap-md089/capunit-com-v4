@@ -195,8 +195,9 @@
 						}
 
 						if ($event['TeamID'] != 0) {
-							if ($l) $stat = in_array($event['TeamID'], $m->getTeamIDs()) ? 5 : -1;
-							else $stat = -1;
+							// if ($l) $stat = in_array($event['TeamID'], $m->getTeamIDs()) ? 5 : -1;
+							// else $stat = -1;
+							$stat = 5;
 						}
 						$lh = $stat != -1 ? "<li class=\"ce$stat\">".(new Link('eventviewer', $event['EventName'], [$event['EventNumber']]))."</li>" : '';
 						$TD .= $lh;
