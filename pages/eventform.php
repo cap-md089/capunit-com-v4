@@ -349,7 +349,7 @@
 				try {
 					GoogleCalendar::updateCalendarEvent($event);
 				} catch (Exception $e) {
-					//need to indicate to user that calendar update failed
+					ErrorMSG::Log('Google calendar update failed: '.$e->getMessage(), 'pages/eventform.php');
 				}
 
 				//eventMailer should return an execution status and be reported/error recorded
@@ -476,7 +476,7 @@
 				try {
 					GoogleCalendar::updateCalendarEvent($event);
 				} catch (Exception $e) {
-					//need to indicate to user that calendar update failed
+					ErrorMSG::Log('Google calendar update failed: '.$e->getMessage(), 'pages/eventform.php');
 				}
 
 				eventMailer($member, $event);
