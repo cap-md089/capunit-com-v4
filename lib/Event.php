@@ -729,7 +729,7 @@
         public function remove () {
             global $_ACCOUNT;
             try {
-                // GoogleCalendar::removeCalendarEvent($this);
+                GoogleCalendar::removeCalendarEvent($this);
             } catch (Exception $e) {
                 
             }

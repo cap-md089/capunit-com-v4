@@ -150,9 +150,19 @@
 						if ($e['parameter']['mobile'] !== 'true') {
 							$CRowHTML .= "<td></td>";
 						}
+						$i++;
 						continue;
 					}
-					if ($e['parameter']['mobile'] == 'true' && count($Events[$CTD]) == 0) {
+					$count = 0;
+					if ($l && ($m->hasPermission('EditEvent') || $event['Author'] == $m->uname)) {
+						$count = count($Events[$CTD]);
+					} else {
+						foreach ($Events[$CTD] as $event) {
+							$count += $event['Status'] == 'Draft' ? 0 : 1;
+						}
+					}
+					if ($e['parameter']['mobile'] == 'true' && $count == 0) {
+						$i++;
 						continue;
 					}
 					$TD = "<td>";
