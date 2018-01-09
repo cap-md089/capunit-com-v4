@@ -182,6 +182,17 @@
 				case "radio" :
 					$html = "<section class=\"$class radioDiv\">";
 					$i = 0;
+					$selected = '';
+					if (isset($default)) {	
+						foreach ($data as $fname => $fvalue) {
+								
+						}
+					} else {
+						foreach ($data as $fname => $fvalue) {
+							$selected = $fname;
+							break;
+						}
+					}
 					$disabled = isset($default);
 					foreach ($data as $fname => $fvalue) {
 						if ((int)$fname === $fname) {
