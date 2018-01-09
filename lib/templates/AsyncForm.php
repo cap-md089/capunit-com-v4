@@ -167,7 +167,7 @@
 				break;
 
 				case "multcheckbox" :
-					if (gettype($default) != 'string') {
+					if (isset($default) && $default && gettype($default) != 'string') {
 						$default = implode(', ', $default);
 					}
 					$selected = [];
