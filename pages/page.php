@@ -173,7 +173,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 				$html = $form->getHtml();
 				$title = 'Add page';
 			} else if (isset($e['uri'][$e['uribase-index']]) && $e['uri'][$e['uribase-index']] == 'edit' && $l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
-				$stmt = $pdo->prepare("SELECT `text`, `name` FROM ".DB_TABLES['BlogPages']." WHERE `id` = :pname AND `AccountID` = :aid;");
+				$stmt = $pdo->prepare("SELECT `text`, `name`, `parentname` FROM ".DB_TABLES['BlogPages']." WHERE `id` = :pname AND `AccountID` = :aid;");
 				$stmt->bindParam(":pname", $e['uri'][$e['uribase-index']+1]);
 				$stmt->bindValue(':aid', $a->id);
 
@@ -198,7 +198,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					foreach ($values as $k) {
 						$pages[$k['id']] = $k['name'];
 					}
-					$form->addField('parent', 'Parent page', 'select', Null, $pages);
+					$form->addField('parent', 'Parent page', 'select', Null, $pages, $data[0]['parentname']);
 					$form->addField('photos', 'Photos', 'file');
 					$form->addHiddenField('pageId', $e['uri'][$e['uribase-index']+1]);
 					$butt = new AsyncButton ('page', 'Delete page', "deletePageFuncs", 'rightFloat', Null, "PUT", "PUT");

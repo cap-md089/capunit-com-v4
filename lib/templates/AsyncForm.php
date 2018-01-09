@@ -167,6 +167,9 @@
 				break;
 
 				case "multcheckbox" :
+					if (gettype($default) != 'string') {
+						$default = implode(', ', $default);
+					}
 					$selected = [];
 					$other = '';
 					if (isset($default)) {
@@ -255,7 +258,7 @@
 					$html .= "<select name=\"$name\" class=\"$class\">\n";
 					foreach ($data as $k => $v) {
 						$selected = false;
-						if (isset($default)) $selected = ((int)$k == $k ? $v : $k) == $default;
+						if (isset($default)) $selected = ((int)$k == $k ? $k : $v) == $default;
 						if ((int)$k !== $k) {
 							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
 						} else {

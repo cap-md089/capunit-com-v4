@@ -33,7 +33,7 @@
 				->addField('test12', 'Datetime test', 'datetime-local')
 				->addField('test13', 'Select test', 'select', null, [
 					'Test1', 'Test2', 'Test3'
-				]);
+				], 'Test2');
 
 			$form->reload = false;
 
