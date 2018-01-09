@@ -597,15 +597,19 @@
          *
          * @return array Associative array of member permissions
          */
-        public function getAccessLevels ($su=Null) {
+        public function getAccessLevels ($su=Null, $acc=Null) {
             $pdo = DB_Utils::CreateConnection();
             
             global $_ACCOUNT;
-
+			if (!isset($acc)) {
+				$id = $_ACCOUNT->id;
+			} else {
+				$id = $acc->id;
+			}
             // Get the access levels, but only for the current account (e.g., no global access levels)
             $stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['AccessLevel']." WHERE CAPID = :CAPID AND (".DB_TABLES['AccessLevel'].".AccountID = :aid OR ".DB_TABLES['AccessLevel'].".AccountID = 'www');");
             $stmt->bindParam(":CAPID", $this->uname);
-            $stmt->bindParam(":aid", $_ACCOUNT->id);
+            $stmt->bindParam(":aid", $id);
             $rows = array ();
             $perms = array ();
             try {
@@ -762,9 +766,13 @@
          *
          * @return bool Whether or not the user has appropriate permissions
          */
-        public function hasPermission ($permission, $threshold=1) {
-            if ($this->perms['Developer'] == 1) return true;
-            return $this->perms[$permission] >= $threshold;
+        public function hasPermission ($permission, $threshold=1, $acc=Null) {
+			if ($this->perms['Developer'] == 1) return true;
+			if (!isset($acc)) {
+	            return $this->perms[$permission] >= $threshold;
+			} else {
+				return $this->getAccessLevels(null, $acc)[$permission] >= $threshold;
+			}
         }
 
         /**

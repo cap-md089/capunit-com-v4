@@ -5,7 +5,7 @@
             if (!$m->hasPermission("FileManagement")) return ['error' => 402];
 
             $form = new AsyncForm ();
-            $form->addField("files", "Add a file", "file")->addField('comment', 'Comments?', 'textarea')->
+            $form->addField("files", "Add a file", "file")->
             addHiddenField('func', 'upload');
             $form->reload = true;
             $html = $form->getHtml();

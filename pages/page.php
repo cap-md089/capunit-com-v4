@@ -62,7 +62,9 @@
 
 					$html .= "<div id=\"photo-bank\">";
 					foreach ($photos as $photo) {
-						$html .= "<div class=\"image-box\"><a onclick=\"return !!viewImage(this);\" href = \"#\"><img class=\"image\" src=\"data:".$photo->ContentType.";base64,".base64_encode($photo->Data)."\" /><span class=\"comment\">".$photo->Comments."</span></a></div>";
+						if ($photo) {
+							$html .= "<div class=\"image-box\"><a onclick=\"return !!viewImage(this);\" href = \"#\"><img class=\"image\" src=\"data:".$photo->ContentType.";base64,".base64_encode($photo->Data)."\" /><span class=\"comment\">".$photo->Comments."</span></a></div>";
+						}
 					}
 					$html .= "</div>";
 
@@ -243,11 +245,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					$v1 = true;
 					foreach ($e['form-data']['photos'] as $file) {
 						$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileBlogAssignments']." VALUES (:fid, :bid, :aid);");
-						$stmt->bindValue(':fid', $file);
-						$data = File::Get($file);
-						$data->IsPhoto = true;
-						$data->save();
-						unset($data);
+						$stmt->bindValue(':fid', trim($file));
 						$stmt->bindValue(':bid', $e['raw']['pageId']);
 						$stmt->bindvalue(':aid', $a->id);
 						$v1 = $stmt->execute() && $v1;
@@ -272,20 +270,9 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					$v1 = true;
 					foreach ($e['form-data']['photos'] as $file) {
 						$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileBlogAssignments']." VALUES (:fid, :bid, :aid);");
-						$stmt->bindValue(':fid', $file);
-						$data = File::Get($file);
-						$data->IsPhoto = true;
-						$data->save();
-						unset($data);
+						$stmt->bindValue(':fid', trim($file));
 						$stmt->bindValue(':bid', $id);
 						$stmt->bindvalue(':aid', $a->id);
-						$v1 = $stmt->execute() && $v1;
-						if (!$v1) {
-							trigger_error($stmt->errorInfo()[2], 512);
-						}
-						$stmt = $pdo->prepare("UPDATE ".DB_TABLES['FileData']." SET IsPhoto=1 WHERE ID=:id AND AccountID=:aid");
-						$stmt->bindValue(':id', $file);
-						$stmt->bindValue(':aid', $a->id);
 						$v1 = $stmt->execute() && $v1;
 						if (!$v1) {
 							trigger_error($stmt->errorInfo()[2], 512);

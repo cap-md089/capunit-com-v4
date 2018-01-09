@@ -205,13 +205,14 @@
 						}
 						$html .= "<div class=\"roundedTwo\">";
 						$html .= "<input id=\"{$name}{$i}\" type=\"radio\" ".(isset($default)&&$default==$fname?"checked ":"")."name=\"$name\" value=\"".$fname."\"";
-						$html .= !$disabled ? " checked" : "";
+						if ($fname === $selected) {
+							$html .= " checked";
+						}
 						$html .= " />";
 						$html .= "<label for=\"{$name}{$i}\">$ftext</label>";
 						$html .= "<div class=\"check\"></div>";
 						$html .= "</div>";
 						$i++;
-						$disabled = true;
 					}
 					$html .= "</section>";
 				break;
@@ -223,7 +224,7 @@
 						if ((int)$k !== $k) {
 							$html .= "<option ".(isset($default)&&($default==$k||$default==$v)?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
 						} else {
-							$html .= "<option ".(isset($default)&&$default==$v?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
+							$html .= "<option ".(isset($default)&&($default==$v||$default==$k)?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
 						}
 					}
 					$html .= "</select>";

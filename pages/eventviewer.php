@@ -30,26 +30,18 @@
 				}
 				$breaks = 'true';
 			}
-			if ($m->hasPermission("AddEvent")) {
-				$perm = 'true';
-				$notInAcct = !$a->hasMember($m);
-				$stmt = $pdo->prepare("SELECT ORGID FROM ".DB_TABLES['Member']." WHERE CAPID = :cid;");
-				$stmt->bindValue(":cid", $m->capid);
-				$orgid_data = DBUtils::ExecutePDOStatement($stmt);
-				$mbr_orgid = $orgid_data['ORGID'];
-				$stmt = $pdo->prepare("SELECT UnitID FROM ".DB_TABLES['Account']." WHERE AccountID = :aid;");
-				$stmt->bindValue(":aid", $a->id);
-				$data = DBUtils::ExecutePDOStatement($stmt);
-				$notInAcct = 'true';
-				foreach ($data as $datum) {
-					if ($datum['UnitID'] == $mbr_orgid) {
-						$notInAcct = 'false';
-					}
+			if($l) {
+				$perm = false;
+				foreach ($m->genAccounts() as $acc) {
+					$perm = $perm || $m->hasPermission('CopyEvent', 1, $acc); 
 				}
+				$notInAcct = !$a->hasMember($m);
 				$notLinked = true; //need to query database for linked event
 				//need to add linked event fields to database before implementing
-				if ($perm && $notInAcct && notLinked) {
+				if ($perm && $notInAcct && $notLinked) {
 //					$html .= " | ".new Link ("linkEvent", "Link To Event", [$ev]);
+					// Better to use AsyncButton, similar to copy on line 26
+											
 				}
 				$breaks = 'true';
 			}
@@ -246,7 +238,10 @@
 			}
 
 			if ($a->paid && $func == "delete" && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
-				return JSSnippet::PageRedirect('Calendar') . ($event->remove() ? "Event deleted" : "Some error occurred");
+				$data = $event->remove();
+				var_export($data);
+				echo "$event->EventNumber\n";
+				return JSSnippet::PageRedirect('Calendar') . ($data ? "Event deleted" : "Some error occurred");
 			} else if (($a->paid || $a->getEventCount() < 5) && $func == "clone" && ($m->hasPermission("CopyEvent"))) {
 				$d = $event->data;
 				unset($d['EventNumber']);
@@ -265,8 +260,12 @@
 					//need to indicate to user that calendar update failed
 				}
 				//eventMailer should return an execution status and be reported/error recorded
-				eventMailer($m, $ne);
-				return $ne->save() ? $ne->EventNumber : 0;
+				// eventMailer($m, $ne);
+				return [
+					'body' => [
+						'MainBody' => $ne->EventNumber
+					]
+				];
 			} else if ($func == 'atmod' && ($m->hasPermissionLevel("SignUpEdit") || $event->isPOC($m))) {
 				
 			} else if (($func == 'atdel' && $m->AccessLevel == "Admin")) {

@@ -12,7 +12,7 @@ var jload = false;
 var loaded = [];
 
 function checkJ() {
-    jload = !!window.jQuery && loaded.length == 8;
+    jload = !!window.jQuery && loaded.length == 8 && !!window.twttr && !window.FB;
     if (!jload) {
         setTimeout(checkJ, 50);
         return;
