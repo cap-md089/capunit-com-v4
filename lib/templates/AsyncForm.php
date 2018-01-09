@@ -179,7 +179,8 @@
 								$selected[] = $v;
 							} else {
 								$selected[] = 'other';
-								$other = $v;
+								if ($other == '') $other = $v;
+								else $other .= ', '.$v;
 							}
 						}	
 					}
@@ -207,7 +208,7 @@
 					$selected = '';
 					if (isset($default)) {	
 						foreach ($data as $fname => $fvalue) {
-							if ((int)$fname == $fname) {
+							if (is_int($fname)) {
 								$fname = $fvalue;
 							}
 							if ($default == $fname) {
@@ -220,12 +221,9 @@
 							break;
 						}
 					}
-					print_r($data);
-					print_r($default);
-					echo "\n\n";
 					$disabled = isset($default);
 					foreach ($data as $fname => $fvalue) {
-						if ((int)$fname == $fname) {
+						if (is_int($fname)) {
 							$fname = $fvalue;
 						}
 						$ftext = $fvalue;
@@ -258,8 +256,8 @@
 					$html .= "<select name=\"$name\" class=\"$class\">\n";
 					foreach ($data as $k => $v) {
 						$selected = false;
-						if (isset($default)) $selected = ((int)$k == $k ? $k : $v) == $default;
-						if ((int)$k !== $k) {
+						if (isset($default)) $selected = (is_int($k) ? $v : $k) == $default;
+						if (!is_int($k)) {
 							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
 						} else {
 							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
