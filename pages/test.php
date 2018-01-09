@@ -6,10 +6,10 @@
 				->addField('test1', 'Checkbox test', 'checkbox')
 				->addField('test2', 'Multcheckbox test', 'multcheckbox', '', [
 					'Test1', 'Test2', 'other'
-				])
+				], 'Test2, Test3')
 				->addField('test3', 'Radio test', 'radio', '', [
 					'Test1', 'Test2', 'other'	
-				])
+				], 'Test3')
 				->addField('test5', 'Autocomplete test', 'autocomplete', '', [
 					'Test 1', 'Test 2'	
 				])
