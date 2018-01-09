@@ -30,7 +30,10 @@
 				])
 				->addField('test10', 'Text field', 'text')
 				->addField('test11', 'Password field', 'password')
-				->addField('test12', 'Datetime test', 'datetime-local');
+				->addField('test12', 'Datetime test', 'datetime-local')
+				->addField('test13', 'Select test', 'select', null, [
+					'Test1', 'Test2', 'Test3'
+				]);
 
 			$form->reload = false;
 

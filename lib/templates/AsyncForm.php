@@ -254,10 +254,12 @@
                     $html = "<div class=\"selectDiv\">";
 					$html .= "<select name=\"$name\" class=\"$class\">\n";
 					foreach ($data as $k => $v) {
+						$selected = false;
+						if (isset($default)) $selected = ((int)$k == $k ? $v : $k) == $default;
 						if ((int)$k !== $k) {
-							$html .= "<option ".(isset($default)&&($default==$k||$default==$v)?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
+							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
 						} else {
-							$html .= "<option ".(isset($default)&&($default==$v||$default==$k)?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
+							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
 						}
 					}
 					$html .= "</select>";
