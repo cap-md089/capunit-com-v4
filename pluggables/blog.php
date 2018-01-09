@@ -13,7 +13,6 @@
 <h2 class="title">Feel like adding to the blog?</h2>
 <div>
 	$l1 | $l2 | $l3 | $l5<br />
-	$form
 </div>
 HTM;
 			return ['text' => $htm, 'title' => 'Blog Information'];

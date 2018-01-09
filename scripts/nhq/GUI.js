@@ -10,7 +10,7 @@ var SIGNIN_FORM = '<?php
 
     $message = "Enter your eServices login information below to sign into the site.  Your password is not ";
     $message .= "permanently stored.  By providing your eServices information you agree to the terms and conditions ";
-    $message .= "located at <a href='https://www.capunit.com/EULA'>https://www.capunit.com/EULA</a>";
+    $message .= "located at <a href='https://www.capunit.com/eula'>https://www.capunit.com/eula</a>";
     $form->addField('eula',$message,'textread');
     $form->addField('name', 'CAP ID')->addField('password', 'Password', 'password')->setSubmitInfo('Log in');
 
