@@ -63,6 +63,10 @@
 			return $this->getGoogleCalendarAccountId("Wing");
 		}
 
+                public function getGoogleCalendarShareLink() {                                        
+                        return $this->getGoogleCalendarAccountId("Share");
+                }
+
 		private function getGoogleCalendarAccountId($calType) {
 			$pdo = DBUtils::CreateConnection();
 			$stmt = $pdo->prepare("SELECT CalendarID FROM ".DB_TABLES['GoogleCalendarIDs']." 
@@ -76,7 +80,7 @@
 		public function getMembers () {
 			$ret = [];
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL;");
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL ORDER BY NameLast;");
 			$stmt->bindValue(":id", $this->id);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
