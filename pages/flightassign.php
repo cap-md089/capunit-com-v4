@@ -17,7 +17,7 @@
 			$stmt = $pdo->prepare("insert into ".DB_TABLES['Flights']." (CAPID, Flight, Mentor, AccountID) select 
 			".DB_TABLES['Member'].".CAPID, 'Charlie' as Flight, Null as Mentor, :aid as AccountID from ".DB_TABLES['Member']."
 			left join ".DB_TABLES['Flights']." on ".DB_TABLES['Member'].".CAPID = ".DB_TABLES['Flights'].".CAPID
-			where ".DB_TABLES['Flights'].".CAPID IS NULL AND Rank like 'C/%' AND ORGID in $a->orgSQL;");
+			where ".DB_TABLES['Flights'].".CAPID IS NULL AND (Rank like 'C/%' or Rank like 'CADET') AND ORGID in $a->orgSQL;");
 			$stmt->bindValue(":aid", $a->id);
 			if (!$stmt->execute()) {
 				trigger_error($stmt->errorInfo()[2], 512);
@@ -33,14 +33,16 @@
 			foreach ($flights as $flight) {
 				$hhtml .= "<div class=\"title\">$flight</div>";
 				$fhtml = "<div class=\"flight $flight\">";
-				$stmt = $pdo->prepare("SELECT capid FROM ".DB_TABLES['Flights']." WHERE Flight = :fly;");
+				$stmt = $pdo->prepare("SELECT F.capid FROM ".DB_TABLES['Member']." as M inner join ".DB_TABLES['Flights']." as F on M.CAPID = F.CAPID WHERE F.Flight = :fly;");
 				$stmt->bindValue(":fly", $flight);
 				$data = DBUtils::ExecutePDOStatement($stmt);
 				foreach ($data as $datum) {
 					$mem = Member::Estimate($datum['capid']);
-					$fhtml .= "<div id=\"{$datum['capid']}\" class=\"cadet\">";
-					$fhtml .= "$mem->RankName<input name=\"capids[]\" type=\"hidden\" value=\"$mem->uname:$flight\" />";
-					$fhtml .= "</div>";
+					if ($mem) {
+						$fhtml .= "<div id=\"{$datum['capid']}\" class=\"cadet\">";
+						$fhtml .= "$mem->RankName<input name=\"capids[]\" type=\"hidden\" value=\"$mem->uname:$flight\" />";
+						$fhtml .= "</div>";
+					}
 					// $form->addField($mem->uname, $mem->memberRank.' '.$mem->memberName, 'radio', Null, $flights, $flight);
 					// $form->addHiddenField('capid[]', $mem->uname);
 				}

@@ -51,6 +51,11 @@ EOD;
 			$l1 = new Link("importcapwatch", "Import CAPWATCH");
 			$html .= "$l1<br />";
 		}
+		if ($m->hasPermission("ViewAttendance")) {
+			$t++;
+			$l1 = new Link("viewattendance", "View Attendance");
+			$html .= "$l1<br />";
+		}
 		if ($m->hasPermission("DownloadStaffGuide")) {
 			$fileid = Registry::get('Administration.CadetStaffGuideID');
 			if ($fileid != '') {
