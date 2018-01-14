@@ -242,37 +242,49 @@ table#eventCalendar
 					display: none
 
 				&.ce1 // info
-					background-color: #76CAE9
+					background-color: #A4BDFC
 					a
 						color: #000 !important
 					border-color: #000
 
 				&.ce2 // cancelled
-					background: #f22
-					background-image: repeating-linear-gradient(-45deg, #f22, #f22 10px, #f77 10px, #f77 20px)
-					background-image: -webkit-repeating-linear-gradient(-45deg, #f22, #f22 10px, #f77 10px, #f77 20px)
-
+					background: #DC2127
+					background-image: repeating-linear-gradient(-45deg, #DC2127, #DC2127 10px, #f77 10px, #f77 20px)
+					background-image: -webkit-repeating-linear-gradient(-45deg, #DC2127, #DC2127 10px, #f77 10px, #f77 20px)
 					a
 						color: #fff
 					border-color: #FAA
 
 				&.ce3 // main
-					background-color: $secondary-color
+					background-color: #5484ED
 					a
-						color: #000
+						color: #fff
 					border-color: #877406
 
 				&.ce4 // Draft
-					background-color: #191
+					background-color: #FBD75B
 					background-image: repeating-linear-gradient(-45deg, #151, #151 10px, #171 10px, #171 20px)
 					background-image: -webkit-repeating-linear-gradient(-45deg, #151, #151 10px, #171 10px, #171 20px)
 					a
 						color: #fff
 					border-color: #131
 
+				&.ce45 // Draft Team event
+					background-color: #7AE7BF
+					background-image: repeating-linear-gradient(-45deg, #51B749, #51B749 10px, #55da5e 10px, #55da5e 20px)
+					background-image: -webkit-repeating-linear-gradient(-45deg, #51B749, #51B749 10px, #55da5e 10px, #55da5e 20px)
+					a
+						color: #fff
+					border-color: #113
+					
 				&.ce5 // Team event
-					background-color: #119
-
+					background-color: #51B749
+					a
+						color: #fff
+					border-color: #113
+					
+				&.ce6 // Tentative event
+					background-color: #46D6DB
 					a
 						color: #fff
 					border-color: #113
@@ -293,3 +305,43 @@ table#eventCalendar
 		text-align: center
 		border-bottom: 1px solid $secondary-color
 		padding-bottom: 5px
+
+#flights-title .title
+	font-size: 1.2em
+	display: inline-block
+	box-sizing: border-box
+	padding: 5px
+	border: 1px solid #0b375b
+	flex: 1 0 auto
+	width: 20%
+	text-align: center
+
+#flights
+	height: auto
+	padding: 0
+	margin: 0
+	width: 100%
+	display: flex
+
+	&::after
+		content: ""
+		display: table
+		clear: both	
+
+	.flight
+		display: block
+		box-sizing: border-box
+		padding: 5px
+		border: 1px solid #0b375b
+		flex: 1 0 auto
+		width: 20%
+
+		.cadet
+			width: 100%
+			border: 1px solid #0d3a74
+			cursor: move
+			min-height: 42px
+			box-sizing: border-box
+			text-align: center
+			padding: 4px
+			margin: 2.5px 0

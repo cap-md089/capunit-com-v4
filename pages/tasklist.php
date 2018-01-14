@@ -37,19 +37,26 @@
 			$tasks = Task::GetFor($m);
 
 			if (count($tasks) == 0) {
-				return "$rhtml<h2 class=\"title\">No tasks!</h2>";
+				$rhtml = "<h2 class=\"title\">No tasks!</h2>";
 			}
 
 			$html = new DetailedListPlus("Tasks assigned to you");
 
 			$butt = new AsyncButton(Null, "Complete!", "reload");
 
+			$links = [];
+
 			foreach ($tasks as $task) {
 				$butt->data = 'r'.$task->ID;
-				$form = new AsyncForm ();
+				$form = new AsyncForm (null, null, null, "task{$task->ID}");
 				$form->addField('comments', 'Comments', 'textarea');
 				$form->addHiddenField('taskid', $task->ID);
 				$html->addElement("From: ".$task->Tasker->RankName, "<h2 class=\"titl\">$task->Name</h2><br />$task->Description$form", $butt);
+				$links[] = [
+					'Type' => 'ref',
+					'Target' => "task{$task->ID}",
+					'Text' => $task->Name
+				];
 			}
 
 			return [
@@ -68,7 +75,8 @@
 							'Target' => '/tasklist',
 							'Text' => 'View tasks'
 						]
-					])
+					]),
+					'SideNavigation' => UtilCollection::GenerateSideNavigation($links)
 				],
 				'title' => 'User tasks'
 			];

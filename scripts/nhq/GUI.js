@@ -10,7 +10,7 @@ var SIGNIN_FORM = '<?php
 
     $message = "Enter your eServices login information below to sign into the site.  Your password is not ";
     $message .= "permanently stored.  By providing your eServices information you agree to the terms and conditions ";
-    $message .= "located at https://www.capunit.com/EULA.php";
+    $message .= "located at <a href='https://www.capunit.com/eula'>https://www.capunit.com/eula</a>";
     $form->addField('eula',$message,'textread');
     $form->addField('name', 'CAP ID')->addField('password', 'Password', 'password')->setSubmitInfo('Log in');
 
@@ -82,7 +82,7 @@ window.loaded.push(function() {
         if (e) e.preventDefault();
         $("#signin_box").css("display", "block");
         $(this).blur();
-        $("#mother").append('<div id="cover"></div>');
+        $("#mother").append('<div class="cover"></div>');
         $("#signin_box").css({
             "z-index": 5020,
             "position": "fixed"
@@ -102,13 +102,13 @@ window.loaded.push(function() {
                 'bottom':'0px'
             });
         }
-        $("#cover").click(function() {
+        $(".cover").click(function() {
             $("#signin_box").fadeOut(400, function() {
                 $("#signin_box").css({
                     "display": "none"
                 });
+                $(".cover").remove();
             })
-            $("#cover").remove();
         });
         $("#signin").off();
         $("#signin").submit(function() {
@@ -118,32 +118,19 @@ window.loaded.push(function() {
                     "display": "none"
                 });
             })
-            $("#cover").remove();
+            $(".cover").remove();
             $("#loader").css("display", "block");
         });
     }
 
     this.customDialog = function(title, message, callback) {
-        $("#mother").append('<div id="cover"></div>');
+        $("#mother").append('<div class="cover"></div>');
         var html = '<div id="alert_box">' + (title ? '<h2>' + title + '</h2>' : '') + '<div class="content">' + message + '</div><div class="closeButton"><a style="float:right;" class="primaryButton" id="ok">Close</a></div></div>';
         $("#mother").append(html);
-        $("#alert_box #ok").click(function() {
+        $("#alert_box #ok, #alert_box a, .cover").click(function() {
+			console.log('Running 5');
             if (callback) callback();
-            $("#cover").remove();
-            $("#alert_box").fadeOut(400, function() {
-                $("#alert_box").remove();
-            });
-        });
-        $("#alert_box div a").click(function() {
-            if (callback) callback();
-            $("#cover").remove();
-            $("#alert_box").fadeOut(400, function() {
-                $("#alert_box").remove();
-            });
-        });
-        $("#cover").click(function() {
-            if (callback) callback();
-            $("#cover").remove();
+            $(".cover").remove();
             $("#alert_box").fadeOut(400, function() {
                 $("#alert_box").remove();
             });
@@ -207,6 +194,7 @@ window.loaded.push(function() {
                                 'name': $(this).find("+ label").text()
                             });
                         });
+						console.log('Running 3');
                         callback(ret);
                     });
                     $("#memberSelectFormSearch").on("keyup keydown", function() {
@@ -433,5 +421,48 @@ window.loaded.push(function() {
         $("textarea").change(resizeTextareas);
         $("textarea").keydown(resizeTextareas);
         $("textarea").keyup(resizeTextareas);
+    });
+    addFunction(function () {
+        if (window.location.pathname.split("/")[1] != 'flightassign') {
+            return true;
+        }
+        if (!$("#flights").length) {
+            return true;
+        }
+        els = document.getElementsByClassName('flight');
+        for (i in els) {
+            els[i].ondrop = function (ev) {
+                ev.preventDefault();
+                ev.target.prepend(document.getElementById(ev.dataTransfer.getData('text')));
+                var cs = Array.prototype.slice.apply(ev.target.classList);
+                cs.splice(cs.indexOf('flight'), 1);
+                var input = document.getElementById(ev.dataTransfer.getData('text')).children[0];
+                input.value = input.value.split(':')[0] + ':' + cs[0];
+                var el = document.getElementById(ev.dataTransfer.getData('text'));
+                console.log(el.parentElement);
+                console.log(el.parentElement.classList);
+                if (Array.prototype.slice.apply(el.parentElement.classList).indexOf('flight') == -1) {
+                    el.parentElement.parentElement.prepend(el);
+                }
+            };
+            els[i].ondragover = function (ev) {
+                ev.preventDefault();
+            }
+        }
+        var els = document.getElementsByClassName('cadet');
+        for (var i in els) {
+            els[i].draggable = true;
+            els[i].ondragstart = function (ev) {
+                ev.currentTarget.style.border = 'dashed';
+                ev.dataTransfer.setData('text', ev.target.id);
+                ev.effectAllowed = 'move';
+            };
+            els[i].ondragend = function (ev) {
+                ev.target.style.border = 'solid';
+                ev.dataTransfer.clearData();
+            };
+            els[i].ondrop = function(ev) {};
+            els[i].ondragover = function(ev) {};
+        }
     });
 });

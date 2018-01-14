@@ -119,6 +119,9 @@
 
 			$html = "";
 
+			$GcalLink = $a->getGoogleCalendarShareLink();
+			$html .= '<p align="center">Link to our <a href='.$GcalLink.'>Google Calendar</a> and see events on your calendar</p>';
+
 			if ($l && $m->hasPermission('AddEvent')) {
 				$html .= new Link ('eventform', 'Add an event'). "<br />";
 			}
@@ -150,9 +153,19 @@
 						if ($e['parameter']['mobile'] !== 'true') {
 							$CRowHTML .= "<td></td>";
 						}
+						$i++;
 						continue;
 					}
-					if ($e['parameter']['mobile'] == 'true' && count($Events[$CTD]) == 0) {
+					$count = 0;
+					if ($l && ($m->hasPermission('EditEvent') || $event['Author'] == $m->uname)) {
+						$count = count($Events[$CTD]);
+					} else {
+						foreach ($Events[$CTD] as $event) {
+							$count += $event['Status'] == 'Draft' ? 0 : 1;
+						}
+					}
+					if ($e['parameter']['mobile'] == 'true' && $count == 0) {
+						$i++;
 						continue;
 					}
 					$TD = "<td>";
@@ -163,8 +176,6 @@
 					$TD .= "</div>";
 					$TD .= "<div class=\"td-data\"><ul>";
 					foreach ($Events[$CTD] as $event) {
-						$butt = new AsyncButton('calendar', $event['EventName'], "calendarEventView");
-
 						switch ($event['Status']) {
 
 							case 'Deleted' :
@@ -180,6 +191,9 @@
 							break;
 
 							case 'Tentative' :
+								$stat = 6;
+							break;
+
 							case 'Confirmed' :
 							case 'Complete' :
 								$stat = 3;
@@ -195,8 +209,9 @@
 						}
 
 						if ($event['TeamID'] != 0) {
-							if ($l) $stat = in_array($event['TeamID'], $m->getTeamIDs()) ? 5 : -1;
-							else $stat = -1;
+							// if ($l) $stat = in_array($event['TeamID'], $m->getTeamIDs()) ? 5 : -1;
+							// else $stat = -1;
+							$stat = 5 + ($stat == 4 ? 40 : 0);
 						}
 						$lh = $stat != -1 ? "<li class=\"ce$stat\">".(new Link('eventviewer', $event['EventName'], [$event['EventNumber']]))."</li>" : '';
 						$TD .= $lh;

@@ -63,6 +63,10 @@
 			return $this->getGoogleCalendarAccountId("Wing");
 		}
 
+                public function getGoogleCalendarShareLink() {                                        
+                        return $this->getGoogleCalendarAccountId("Share");
+                }
+
 		private function getGoogleCalendarAccountId($calType) {
 			$pdo = DBUtils::CreateConnection();
 			$stmt = $pdo->prepare("SELECT CalendarID FROM ".DB_TABLES['GoogleCalendarIDs']." 
@@ -76,7 +80,7 @@
 		public function getMembers () {
 			$ret = [];
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL;");
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL ORDER BY NameLast;");
 			$stmt->bindValue(":id", $this->id);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
@@ -112,19 +116,18 @@
 			return (int)$data[0]['Size'];
 		}
 
-		public function hasMember (\Member $mem1) {
-			$mems = $this->getMembers();
-			foreach ($mems as $mem2) {
-				if ($mem1->uname == $mem2->uname) {
-					return true;
-				}
-			}
-			return false;
-		}
 
 		public function getNextMeetingTimestamp () {
 			$pdo = DBUtils::CreateConnection();
 			$stmt = $pdo->prepare("");
+		}
+
+		public function hasMember ($mem) {
+			$pdo = DBUtils::CreateConnection();
+			$stmt = $pdo->prepare("SELECT COUNT(*) AS ccount FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL AND CAPID = :cid;");
+			$stmt->bindValue(':cid', $mem->uname);
+			$data = DBUtils::ExecutePDOStatement($stmt);
+			return $data[0]['ccount'] == 1;
 		}
 
 		public function __toString () {

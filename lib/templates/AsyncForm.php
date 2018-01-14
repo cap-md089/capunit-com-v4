@@ -167,14 +167,37 @@
 				break;
 
 				case "multcheckbox" :
+					if (isset($default) && $default && gettype($default) != 'string') {
+						$default = implode(', ', $default);
+					}
+					$selected = [];
+					$other = '';
+					if (isset($default)) {
+						$default = explode(', ', $default);
+						foreach ($default as $v) {
+							if (in_array($v, $data)) {
+								$selected[] = $v;
+							} else {
+								$selected[] = 'other';
+								if ($other == '') $other = $v;
+								else $other .= ', '.$v;
+							}
+						}	
+					}
 					$html = "<section class=\"$class\">";
 					for ($i = 0; $i < count($data); $i++) {
 						$fname = $data[$i];
 						$ftext = $fname;
+						$checked = in_array($fname, $selected);
 						if (strtolower($fname) == 'other') {
-							$ftext = "Other: <input type=\"text\" name=\"{$name}[]\" class=\"otherInput\" />";
+							$ftext = "Other: <input type=\"text\" name=\"{$name}[]\" class=\"otherInput\"";
+							$ftext .= " value=\"$other\"";
+							$ftext .= " />";
+							if ($other != '') {
+								$checked = true;
+							}
 						}
-						$html .= "<div class=\"checkboxDiv checkboxDivMult\" class=\"forminput\"><input ".(isset($default)&&in_array($data[$i],$default)?"checked ":"")."type=\"checkbox\" value=\"$fname\" name=\"{$name}[]\" id=\"{$name}{$fname}{$i}\" /><label for=\"{$name}{$fname}{$i}\"></label><label for=\"{$name}{$fname}{$i}\">$ftext</label></div>";
+						$html .= "<div class=\"checkboxDiv checkboxDivMult\" class=\"forminput\"><input ".($checked?"checked ":"")."type=\"checkbox\" value=\"$fname\" name=\"{$name}[]\" id=\"{$name}{$fname}{$i}\" /><label for=\"{$name}{$fname}{$i}\"></label><label for=\"{$name}{$fname}{$i}\">$ftext</label></div>";
 					}
 					$html .= "</section>";
 				break;
@@ -182,25 +205,48 @@
 				case "radio" :
 					$html = "<section class=\"$class radioDiv\">";
 					$i = 0;
+					$selected = '';
+					if (isset($default)) {	
+						foreach ($data as $fname => $fvalue) {
+							if (is_int($fname)) {
+								$fname = $fvalue;
+							}
+							if ($default == $fname) {
+								$selected = $fname;
+							}
+						}
+					} else {
+						foreach ($data as $fname => $fvalue) {
+							$selected = $fname;
+							break;
+						}
+					}
 					$disabled = isset($default);
 					foreach ($data as $fname => $fvalue) {
-						if ((int)$fname === $fname) {
+						if (is_int($fname)) {
 							$fname = $fvalue;
 						}
 						$ftext = $fvalue;
 						if (strtolower($fvalue) == 'other') {
-							$ftext = "Other: <input type=\"text\" id=\"{$name}Other\" class=\"otherRadioInput otherInput\" />";	
+							$ftext = "Other: <input type=\"text\" id=\"{$name}Other\" class=\"otherRadioInput otherInput\" ";
+							if ($selected == '') {
+								$ftext .= "value=\"$default\"";
+							}
+							$ftext .= ' />';
 							$fname = "";
 						}
 						$html .= "<div class=\"roundedTwo\">";
 						$html .= "<input id=\"{$name}{$i}\" type=\"radio\" ".(isset($default)&&$default==$fname?"checked ":"")."name=\"$name\" value=\"".$fname."\"";
-						$html .= !$disabled ? " checked" : "";
+						if ($fname === $selected) {
+							$html .= " checked";
+						} else if (strtolower($fvalue) == 'other' && $selected == '') {
+							$html .= " checked";
+						}
 						$html .= " />";
 						$html .= "<label for=\"{$name}{$i}\">$ftext</label>";
 						$html .= "<div class=\"check\"></div>";
 						$html .= "</div>";
 						$i++;
-						$disabled = true;
 					}
 					$html .= "</section>";
 				break;
@@ -209,10 +255,12 @@
                     $html = "<div class=\"selectDiv\">";
 					$html .= "<select name=\"$name\" class=\"$class\">\n";
 					foreach ($data as $k => $v) {
-						if ((int)$k !== $k) {
-							$html .= "<option ".(isset($default)&&($default==$k||$default==$v)?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
+						$selected = false;
+						if (isset($default)) $selected = (is_int($k) ? $v : $k) == $default;
+						if (!is_int($k)) {
+							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>\n";
 						} else {
-							$html .= "<option ".(isset($default)&&$default==$v?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
+							$html .= "<option ".($selected?"selected=\"selected\" ":"")."value=\"".htmlspecialchars($v)."\">".htmlspecialchars($v)."</option>\n";
 						}
 					}
 					$html .= "</select>";

@@ -32,9 +32,13 @@
                         $str .= "Team Mentor: ".$mentor->RankName." (".$mentor->getBestEmail().")<br /><br />";
                     }
                 }
-                $lead = (Member::Estimate($team->Lead));
-                $str .= "Team Leader: ".$lead->RankName." (".$lead->getBestEmail().")<br />";
-                foreach ($team->Members as $mem => $role) {
+				if ($team->Lead !== 0) {
+                	$lead = (Member::Estimate($team->Lead));
+                	if ($lead) {
+						$str .= "Team Leader: ".$lead->RankName." (".$lead->getBestEmail().")<br />";
+					}
+                }
+				foreach ($team->Members as $mem => $role) {
                     $mem = Member::Estimate($mem);
                     $str .= "$role: {$mem->RankName}<br />";
                 }

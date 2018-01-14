@@ -14,6 +14,7 @@
 			"AssignTasks" => 0,
 			"AdministerPT" => 0,
 			"FileManagement" => 0,
+			"ViewAttendance" => 1,
 
 			"AddEvent" => 0,
 			"EditEvent" => 0,
@@ -52,6 +53,7 @@
 			"AdministerPT" => 2,
 			"FileManagement" => 1,
 			"DownloadStaffGuide" => 1,
+			"ViewAttendance" => 1,
 
 			"AddEvent" => 1, // Add a draft event
 			"EditEvent" => 0, // They are already 'POCs' of their own event
@@ -89,6 +91,7 @@
 			"AdministerPT" => 1,
 			"FileManagement" => 1,
 			"DownloadStaffGuide" => 1,
+			"ViewAttendance" => 1,
 
 			"AddEvent" => 2,
 			"EditEvent" => 1,
@@ -126,6 +129,7 @@
 			"AdministerPT" => 1,
 			"FileManagement" => 1,
 			"DownloadStaffGuide" => 1,
+			"ViewAttendance" => 1,
 
 			"AddEvent" => 2,
 			"EditEvent" => 1,

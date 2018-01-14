@@ -6,10 +6,10 @@
 				->addField('test1', 'Checkbox test', 'checkbox')
 				->addField('test2', 'Multcheckbox test', 'multcheckbox', '', [
 					'Test1', 'Test2', 'other'
-				])
+				], 'Test3, Test4, Test1, Test5')
 				->addField('test3', 'Radio test', 'radio', '', [
 					'Test1', 'Test2', 'other'	
-				])
+				], 'Test3')
 				->addField('test5', 'Autocomplete test', 'autocomplete', '', [
 					'Test 1', 'Test 2'	
 				])
@@ -30,7 +30,10 @@
 				])
 				->addField('test10', 'Text field', 'text')
 				->addField('test11', 'Password field', 'password')
-				->addField('test12', 'Datetime test', 'datetime-local');
+				->addField('test12', 'Datetime test', 'datetime-local')
+				->addField('test13', 'Select test', 'select', null, [
+					'Test1', 'Test2', 'Test3'
+				], 'Test2');
 
 			$form->reload = false;
 

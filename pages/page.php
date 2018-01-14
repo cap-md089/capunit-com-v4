@@ -62,7 +62,9 @@
 
 					$html .= "<div id=\"photo-bank\">";
 					foreach ($photos as $photo) {
-						$html .= "<div class=\"image-box\"><a onclick=\"return !!viewImage(this);\" href = \"#\"><img class=\"image\" src=\"data:".$photo->ContentType.";base64,".base64_encode($photo->Data)."\" /><span class=\"comment\">".$photo->Comments."</span></a></div>";
+						if ($photo) {
+							$html .= "<div class=\"image-box\"><a onclick=\"return !!viewImage(this);\" href = \"#\"><img class=\"image\" src=\"data:".$photo->ContentType.";base64,".base64_encode($photo->Data)."\" /><span class=\"comment\">".$photo->Comments."</span></a></div>";
+						}
 					}
 					$html .= "</div>";
 
@@ -171,7 +173,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 				$html = $form->getHtml();
 				$title = 'Add page';
 			} else if (isset($e['uri'][$e['uribase-index']]) && $e['uri'][$e['uribase-index']] == 'edit' && $l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
-				$stmt = $pdo->prepare("SELECT `text`, `name` FROM ".DB_TABLES['BlogPages']." WHERE `id` = :pname AND `AccountID` = :aid;");
+				$stmt = $pdo->prepare("SELECT `text`, `name`, `parentname` FROM ".DB_TABLES['BlogPages']." WHERE `id` = :pname AND `AccountID` = :aid;");
 				$stmt->bindParam(":pname", $e['uri'][$e['uribase-index']+1]);
 				$stmt->bindValue(':aid', $a->id);
 
@@ -196,7 +198,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					foreach ($values as $k) {
 						$pages[$k['id']] = $k['name'];
 					}
-					$form->addField('parent', 'Parent page', 'select', Null, $pages);
+					$form->addField('parent', 'Parent page', 'select', Null, $pages, $data[0]['parentname']);
 					$form->addField('photos', 'Photos', 'file');
 					$form->addHiddenField('pageId', $e['uri'][$e['uribase-index']+1]);
 					$butt = new AsyncButton ('page', 'Delete page', "deletePageFuncs", 'rightFloat', Null, "PUT", "PUT");
@@ -243,11 +245,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					$v1 = true;
 					foreach ($e['form-data']['photos'] as $file) {
 						$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileBlogAssignments']." VALUES (:fid, :bid, :aid);");
-						$stmt->bindValue(':fid', $file);
-						$data = File::Get($file);
-						$data->IsPhoto = true;
-						$data->save();
-						unset($data);
+						$stmt->bindValue(':fid', trim($file));
 						$stmt->bindValue(':bid', $e['raw']['pageId']);
 						$stmt->bindvalue(':aid', $a->id);
 						$v1 = $stmt->execute() && $v1;
@@ -272,20 +270,9 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 					$v1 = true;
 					foreach ($e['form-data']['photos'] as $file) {
 						$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileBlogAssignments']." VALUES (:fid, :bid, :aid);");
-						$stmt->bindValue(':fid', $file);
-						$data = File::Get($file);
-						$data->IsPhoto = true;
-						$data->save();
-						unset($data);
+						$stmt->bindValue(':fid', trim($file));
 						$stmt->bindValue(':bid', $id);
 						$stmt->bindvalue(':aid', $a->id);
-						$v1 = $stmt->execute() && $v1;
-						if (!$v1) {
-							trigger_error($stmt->errorInfo()[2], 512);
-						}
-						$stmt = $pdo->prepare("UPDATE ".DB_TABLES['FileData']." SET IsPhoto=1 WHERE ID=:id AND AccountID=:aid");
-						$stmt->bindValue(':id', $file);
-						$stmt->bindValue(':aid', $a->id);
 						$v1 = $stmt->execute() && $v1;
 						if (!$v1) {
 							trigger_error($stmt->errorInfo()[2], 512);

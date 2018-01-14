@@ -8,6 +8,13 @@ form.asyncForm
 	overflow: auto
 	clear: both
 
+	
+	input[type="submit"], label.file
+		@extend .primaryButton
+
+		&:hover
+			@extend .buttonHover
+
 	.formbar
 		clear: both
 		display: block
@@ -54,12 +61,6 @@ form.asyncForm
 
 		input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="url"]:focus
 			@include box-shadows(inset 0 0 1em #258eea)
-
-		input[type="submit"], label.file
-			@extend .primaryButton
-
-			&:hover
-				@extend .buttonHover
 
 		input[type="file"]
 			width: 0.1px
