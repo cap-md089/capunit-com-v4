@@ -954,11 +954,12 @@
 		public function getCAPWATCHList () {
 			$retdata = [];
 
-			$data = $this->goToPage('/cap.capwatch.web/download.aspx');
+			$data = $this->goToPage('/cap.capwatch.web/splash.aspx');
+			$data = $this->goToPage('/cap.capwatch.web/Default.aspx');
 
 			$h = Util_Collection::ParseHTML($data['body']);
 
-			$sel = $h->getElementById('ctl00_MainContentPlaceHolder_OrganizationChooser1')->getElementsByTagName('select')->item(0);
+			$sel = $h->getElementById('OrgChooser')->getElementsByTagName('select')->item(0);
 
 			$nodes = $sel->childNodes;
 
