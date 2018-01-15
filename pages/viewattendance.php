@@ -39,8 +39,8 @@
 
             foreach ($data as $datum) {
                 $columns[0] = $a->id."-".$datum['EventID'];
-                $columns[1] = $datum['EventLocation'];
-                $columns[2] = $datum['EventName'];
+                $columns[1] = $datum['EventName'];
+                $columns[2] = $datum['EventLocation'];
                 $columns[3] = date('d M Y, H:i',$datum['StartDateTime']);
                 $columns[4] = date('d M Y, H:i',$datum['EndDateTime']);
                 if(!$datum['PlanToUseCAPTransportation']) {$columns[5]='No';} else {$columns[5]='Yes';}
