@@ -12,8 +12,8 @@
             $tblEvt = DB_TABLES['EventInformation'];
             $sql = "SELECT $tblAtt.*, $tblEvt.EventLocation, $tblEvt.StartDateTime FROM $tblEvt INNER JOIN ";
             $sql .= "$tblAtt ON $tblAtt.EventID = $tblEvt.EventNumber WHERE $tblAtt.AccountID=:aid AND ";
-            $sql .= "$tblEvt.AccountID=:aid AND $tblAtt.CAPID=:cid AND $tblAtt.Attendance='Committed/Attended' ";
-            $sql .= "ORDER BY StartDateTime;";
+            $sql .= "$tblEvt.AccountID=:aid AND $tblAtt.CAPID=:cid AND $tblAtt.Status='Committed/Attended' ";
+            $sql .= "ORDER BY StartDateTime DESC;";
 
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':aid', $a->id);
@@ -21,35 +21,41 @@
 
             $data = DBUtils::ExecutePDOStatement($stmt);
 
-            $attendanceData = "";
+            $html = "<h2>Tab-delimited raw attendance data</h2>";
+
+            $attendanceData = "<pre>";
             $columns[0] = "Event Number";
             $columns[1] = "Event Location";
             $columns[2] = "Start Date/Time";
             $columns[3] = "Plan to use CAP Transport";
             $columns[4] = "Comments";
-            for ($line = "", i = 0 ; i <= 5 ; i++) { $line .= $columns[i].","; }
-            $line = left($line, strlen($line) - 2);
+            for ($line = "", $i = 0 ; $i < 5 ; $i++) { $line .= $columns[$i]."\t"; }
+            $line = substr($line, 0, strlen($line) - 2)."";
+            // for ($line = "", $i = 0 ; $i < 5 ; $i++) { $line .= $columns[$i].","; }
+            // $line = substr($line, 0, strlen($line) - 2);
+            $attendanceData .= $line."\r\n";
 
             foreach ($data as $datum) {
                 $columns[0] = $a->id."-".$datum['EventID'];
                 $columns[1] = $datum['EventLocation'];
                 $columns[2] = date('d M Y, H:i',$datum['StartDateTime']);
-                $columns[3] = $datum['PlanToUseCAPTransportation'];
+                if(!$datum['PlanToUseCAPTransportation']) {$columns[3]='false';} else {$columns[3]='true';}
                 $columns[4] = $datum['Comments'];
 
-                for ($line = "<p>", i = 0 ; i <= 5 ; i++) { $line .= $columns[i]."\t"; }
-                $line = left($line, strlen($line) - 2)."</p>";
+                for ($line = "", $i = 0 ; $i < 5 ; $i++) { $line .= $columns[$i]."\t"; }
+                $line = substr($line, 0, strlen($line) - 2)."";
                 $attendanceData .= $line."\r\n";
                 // for ($line = "", i = 0 ; i <= 5 ; i++) { $line .= $columns[i].","; }
                 // $line = left($line, strlen($line) - 2);
                 // $attendanceData .= $line."\r\n";
     
             }
+            $attendanceData .= "</pre>";
 
 
             return [
                 'body' => [
-                    'MainBody' => $attendanceData,
+                    'MainBody' => $html.$attendanceData,
                     'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
                         [
 							'Target' => '/',
@@ -61,7 +67,7 @@
 						]
                     ])
                 ],
-                'title' => 'Teams'
+                'title' => 'Attendance'
             ];
         }
     }
