@@ -374,15 +374,18 @@
                 //populate/update SignInData table
                 $coc = $m->goToPage("/preview/Widgets/Commanders.aspx");
                 $newTime = time();
+                $account = $_ACCOUNT;
 
                 $pdo = DB_Utils::CreateConnection();
-                $stmt = $pdo->prepare('SELECT AccessCount FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid;');
+                $stmt = $pdo->prepare('SELECT AccessCount FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
                 $stmt->bindValue(':cid', $m->capid);
+                $stmt->bindValue(':aid', $account->id);
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :time, :count, :mname, :mrank, :contacts, :oid, :coc);");
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :mrank, :contacts, :oid, :coc);");
                     $stmt->bindValue(':cid', $m->capid);
+                    $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
                     $stmt->bindValue(':count', 1);
                     $stmt->bindValue(':mname', $m->memberName);
@@ -406,9 +409,10 @@
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
                     $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, ORGID=:oid, ChainOfCommand=:coc ";
-                    $sql .= "WHERE CAPID=:cid;";
+                    $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
+                    $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
                     $stmt->bindValue(':count', $newCount);
                     $stmt->bindValue(':mname', $m->memberName);
