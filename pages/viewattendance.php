@@ -10,10 +10,10 @@
 
             $tblAtt = DB_TABLES['Attendance'];
             $tblEvt = DB_TABLES['EventInformation'];
-            $sql = "SELECT $tblAtt.*, $tblEvt.EventLocation, $tblEvt.StartDateTime, $tblEvt.EndDateTime FROM $tblEvt INNER JOIN ";
-            $sql .= "$tblAtt ON $tblAtt.EventID = $tblEvt.EventNumber WHERE $tblAtt.AccountID=:aid AND ";
-            $sql .= "$tblEvt.AccountID=:aid AND $tblAtt.CAPID=:cid AND $tblAtt.Status='Committed/Attended' ";
-            $sql .= "ORDER BY StartDateTime DESC;";
+            $sql = "SELECT $tblAtt.*, $tblEvt.EventName, $tblEvt.EventLocation, $tblEvt.StartDateTime, ";
+            $sql .= "$tblEvt.EndDateTime FROM $tblEvt INNER JOIN $tblAtt ON $tblAtt.EventID = $tblEvt.EventNumber ";
+            $sql .= "WHERE $tblAtt.AccountID=:aid AND $tblEvt.AccountID=:aid AND $tblAtt.CAPID=:cid AND ";
+            $sql .= "$tblAtt.Status='Committed/Attended' ORDER BY StartDateTime DESC;";
 
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':aid', $a->id);
@@ -25,12 +25,13 @@
 
             $attendanceData = "<pre>";
             $columns[0] = "Event Number";
-            $columns[1] = "Event Location";
-            $columns[2] = "Start Date/Time";
-            $columns[3] = "End Date/Time";
-            $columns[4] = "Plan to use CAP Transport";
-            $columns[5] = "Comments";
-            for ($line = "", $i = 0 ; $i < 6 ; $i++) { $line .= $columns[$i]."\t"; }
+            $columns[1] = "Event Name";
+            $columns[2] = "Event Location";
+            $columns[3] = "Start Date/Time";
+            $columns[4] = "End Date/Time";
+            $columns[5] = "Plan to use CAP Transport";
+            $columns[6] = "Comments";
+            for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
             $line = substr($line, 0, strlen($line) - 2)."";
             // for ($line = "", $i = 0 ; $i < 5 ; $i++) { $line .= $columns[$i].","; }
             // $line = substr($line, 0, strlen($line) - 2);
@@ -39,12 +40,13 @@
             foreach ($data as $datum) {
                 $columns[0] = $a->id."-".$datum['EventID'];
                 $columns[1] = $datum['EventLocation'];
-                $columns[2] = date('d M Y, H:i',$datum['StartDateTime']);
-                $columns[3] = "End Date/Time";
-                if(!$datum['PlanToUseCAPTransportation']) {$columns[4]='No';} else {$columns[4]='Yes';}
-                $columns[5] = $datum['Comments'];
+                $columns[2] = $datum['EventName'];
+                $columns[3] = date('d M Y, H:i',$datum['StartDateTime']);
+                $columns[4] = date('d M Y, H:i',$datum['EndDateTime']);
+                if(!$datum['PlanToUseCAPTransportation']) {$columns[5]='No';} else {$columns[5]='Yes';}
+                $columns[6] = $datum['Comments'];
 
-                for ($line = "", $i = 0 ; $i < 6 ; $i++) { $line .= $columns[$i]."\t"; }
+                for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
                 $line = substr($line, 0, strlen($line) - 2)."";
                 $attendanceData .= $line."\r\n";
                 // for ($line = "", i = 0 ; i <= 5 ; i++) { $line .= $columns[i].","; }
