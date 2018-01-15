@@ -208,6 +208,7 @@
          * @return Member Fully realized member
          */
         public static function Create ($uname, $upass, $mname=Null, $contact=Null, $ins=false) {
+            $logger = New Logger ("CreateMemberObject");
             global $_ACCOUNT;
             if (self::SkipNHQ) { // Used to create a member for testing with something like SQLMap or MetaSploit to 
                 // handle security stuff, NHQ is trusted to have done the same
@@ -369,6 +370,63 @@
                 $m->perms = $m->getAccessLevels(); // Load permissions
                 $m->logger->Log("Current SID: ".$m->setSessionID(), 8); // Set Session ID and log it at the same time!
                 $m->capid = $m->uname; // Alias
+
+                //populate/update SignInData table
+                $coc = $m->goToPage("/preview/Widgets/Commanders.aspx");
+                $newTime = time();
+
+                $pdo = DB_Utils::CreateConnection();
+                $stmt = $pdo->prepare('SELECT AccessCount FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid;');
+                $stmt->bindValue(':cid', $m->capid);
+                $data = DB_Utils::ExecutePDOStatement($stmt);
+                if (count($data) != 1) {
+                    //insert new row
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :time, :count, :mname, :mrank, :contacts, :oid, :coc);");
+                    $stmt->bindValue(':cid', $m->capid);
+                    $stmt->bindValue(':time', $newTime);
+                    $stmt->bindValue(':count', 1);
+                    $stmt->bindValue(':mname', $m->memberName);
+                    $stmt->bindValue(':mrank', $m->memberRank);
+                    $stmt->bindValue(':contacts', json_encode($m->contact));
+                    $stmt->bindValue(':oid', 0); //future capability
+                    $stmt->bindValue(':coc', var_export($coc,true));
+                    $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
+                    try {
+                        if (!$stmt->execute()) {
+                            $logger->Warn("$m->uname couldn't execute set SignInData, ". var_export($stmt->errorInfo(), true), 3);
+                        }
+                        $logger->Log("$m->uname set SignInData", 4);
+                    } catch (PDOException $e) {
+                        $logger->Warn("$m->uname couldn't set SignInData due to exception, ".$e->getMessage(), 2);
+                    }
+                } else {
+                    //update row
+                    $data = $data[0];
+                    $newCount = $data['AccessCount'];
+                    $newCount++;
+                    $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
+                    $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, ORGID=:oid, ChainOfCommand=:coc ";
+                    $sql .= "WHERE CAPID=:cid;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->bindValue(':cid', $m->capid);
+                    $stmt->bindValue(':time', $newTime);
+                    $stmt->bindValue(':count', $newCount);
+                    $stmt->bindValue(':mname', $m->memberName);
+                    $stmt->bindValue(':mrank', $m->memberRank);
+                    $stmt->bindValue(':contacts', json_encode($m->contact));
+                    $stmt->bindValue(':oid', 0); //future capability
+                    $stmt->bindValue(':coc', var_export($coc,true));
+                    $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
+                    try {
+                        if (!$stmt->execute()) {
+                            $logger->Warn("$m->uname couldn't execute update SignInData, ". var_export($stmt->errorInfo(), true), 3);
+                        }
+                        $logger->Log("$m->uname update SignInData", 4);
+                    } catch (PDOException $e) {
+                        $logger->Warn("$m->uname couldn't update SignInData due to exception, ".$e->getMessage(), 2);
+                    }
+                }
+
             }
 
             return $m;
