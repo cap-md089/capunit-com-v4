@@ -80,7 +80,7 @@
 		public function getMembers () {
 			$ret = [];
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL ORDER BY NameLast;");
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
 			$stmt->bindValue(":id", $this->id);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
