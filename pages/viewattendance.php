@@ -41,7 +41,7 @@
                 $columns[1] = $datum['EventLocation'];
                 $columns[2] = date('d M Y, H:i',$datum['StartDateTime']);
                 $columns[3] = "End Date/Time";
-                if(!$datum['PlanToUseCAPTransportation']) {$columns[4]='false';} else {$columns[4]='true';}
+                if(!$datum['PlanToUseCAPTransportation']) {$columns[4]='No';} else {$columns[4]='Yes';}
                 $columns[5] = $datum['Comments'];
 
                 for ($line = "", $i = 0 ; $i < 6 ; $i++) { $line .= $columns[$i]."\t"; }
