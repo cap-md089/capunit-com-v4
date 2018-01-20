@@ -1053,28 +1053,15 @@
 				$floc = BASE_DIR . "capwatch-zips/CAPWATCH-".date('Ymd-G').".zip";
 			}
 
-			$data = $this->goToPage('/cap.capwatch.web/download.aspx');
 
-			$url = "https://www.capnhq.gov/cap.capwatch.web/download.aspx";
-
+            $url = "https://www.capnhq.gov/CAP.CapWatchAPI.Web/api/cw";
+            
             $ch = new MyCURL();
 
-            $_ = $data["body"];
-
             $payload = array (
-                "__LASTFOCUS" => "",
-                "__VIEWSTATE" => _g($_, "__VIEWSTATE"),
-                "__EVENTTARGET" => "",
-                "__EVENTARGUMENT" => "",
-                "__EVENTVALIDATION" => _g($_, "__EVENTVALIDATION"),
-                "__VIEWSTATEGENERATOR" => _g($_, "__VIEWSTATEGENERATOR"),
-				"ctl00_LeftNavigationMenu_ExpandState" => "enn",
-				"ctl00_LeftNavigationMenu_SelectedNode" => "",
-				"ctl00_LeftNavigationMenu_PopulateLog" => "",
-				'ctl00$MainContentPlaceHolder$ddlZipType' => 'Zip',
-				'ctl00$MainContentPlaceHolder$btnSubmit' => 'Submit',
-
-                'ctl00$MainContentPlaceHolder$OrganizationChooser1$ctl00' => $id
+                "wa" => "true",
+                "unitOnly" => "0",
+                "ORGID" => $id
             );
 
             $fields_string = '';
@@ -1086,74 +1073,28 @@
             $ch = new MyCURL();
 
             $ch->setOpts (array (
-                CURLOPT_POST => count($payload),
-                CURLOPT_POSTFIELDS => $fields_string,
-                CURLOPT_FOLLOWLOCATION => false,
                 CURLOPT_HTTPHEADER => [
                     'Host: www.capnhq.gov',
                     'User-Agent: Mozilla/5.0 (compatible; EventManagementLoginBot/2.1)',
-                    'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*,q=0.8',
-                    'Accept-Language: en-US,en;q=0.8',
+                    'Accept: */*',
+                    'Accept-Language: en-US,en;q=0.5',
                     'Accept-Encoding: gzip, deflate, br',
+                    'Referer: https://www.capnhq.gov/cap.capwatch.web/Default.aspx',
                     'Connection: keep-alive',
-                    'Upgrade-Insecure-Requests: 1',
+                    'Content-Type: application/json',
                     'Cookie: '.$this->cookieData
                 ],
             ), false);
 
-            $data = $ch->download($url);
+            $data = $ch->download("$url?$fields_string");
 
             $_ = $data["body"];
-
-            $payload = array (
-                "__LASTFOCUS" => "",
-                "__VIEWSTATE" => _g($_, "__VIEWSTATE"),
-                "__EVENTTARGET" => 'ctl00$MainContentPlaceHolder$lnkGetData',
-                "__EVENTARGUMENT" => "",
-                "__EVENTVALIDATION" => _g($_, "__EVENTVALIDATION"),
-                "__VIEWSTATEGENERATOR" => _g($_, "__VIEWSTATEGENERATOR"),
-				'ctl00_LeftNavigationMenu_ExpandState' => "enn",
-				'ctl00_LeftNavigationMenu_SelectedNode' => "",
-				'ctl00_LeftNavigationMenu_PopulateLog' => "",
-				'ctl00$MainContentPlaceHolder$ddlZipType' => 'Zip',
-
-                'ctl00$MainContentPlaceHolder$OrganizationChooser1$ctl00' => $id
-            );
-
-            $fields_string = '';
-            foreach ($payload as $key=>$value) {
-                $fields_string .= urlencode($key)."=". urlencode($value) . "&";
-            }
-            $fields_string = rtrim($fields_string, "&");
-
-            $ch = new MyCURL();
-
-			$ch->setOpts (array (
-                CURLOPT_POST => count($payload),
-                CURLOPT_POSTFIELDS => $fields_string,
-                CURLOPT_FOLLOWLOCATION => false,
-                CURLOPT_HTTPHEADER => array (
-                    'Host: www.capnhq.gov',
-                    'Origin: www.capnhq.gov',
-                    'Referer:https://www.capnhq.gov/cap.capwatch.web/download.aspx',
-                    'Content-Type:application/x-www-form-urlencoded',
-                    'User-Agent: Mozilla/5.0 (compatible; EventManagementLoginBot/2.1)',
-                    'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'Accept-Language: en-US,en;q=0.5',
-                    'Accept-Encoding: gzip, deflate, br',
-                    'Connection: keep-alive',
-                    'Upgrade-Insecure-Requests: 1',
-                    'Cookie: '.$this->cookieData,
-                    'Cache-Control: max-age=0',
-                    'Content-Length: '.strlen($fields_string)
-                )
-            ), false);
 
             if (file_exists($floc)) {
                 unlink($floc);
             }
 
-            file_put_contents($floc, $ch->download("https://www.capnhq.gov/cap.capwatch.web/download.aspx")['body']);
+            file_put_contents($floc, $_);
 
             return $floc;
 		}
