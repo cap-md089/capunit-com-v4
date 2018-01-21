@@ -39,19 +39,9 @@
 
 			$form->setSubmitInfo("SUBMIT", null, null, null, true);
 
-			$html = <<<HTM
-<br /><br /><br />
-<form method="get" class="searchForm" action="/test">
-	<div role="search">
-		<input type="text" value="" name="s1" placeholder="Search" />
-		<button aria-label="Do search"></button>
-	</div>
-</form>
-HTM;
-
 			return [
 				'body' => [
-					'MainBody' => $form->getHtml().$html
+					'MainBody' => $form->getHtml()
 				]
 			];
 		}

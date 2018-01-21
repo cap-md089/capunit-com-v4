@@ -459,7 +459,6 @@
                 "DesiredNumParticipants",
                 "RegistrationDeadline",
                 "ParticipationFeeDue",
-                "GroupEventNumber",
                 "CAPPOC1ID",
                 "CAPPOC2ID",
                 "TeamID"
@@ -611,7 +610,6 @@
                 "DesiredNumParticipants",
                 "RegistrationDeadline",
                 "ParticipationFeeDue",
-                "GroupEventNumber",
                 "CAPPOC1ID",
                 "CAPPOC2ID",
                 "Author",
