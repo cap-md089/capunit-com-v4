@@ -479,7 +479,8 @@
 					ErrorMSG::Log('Google calendar update failed: '.$e->getMessage(), 'pages/eventform.php');
 				}
 
-				eventMailer($member, $event);
+				eventMailer($member, $event, Event::Get($event->EventNumber));
+				$event->save;
 				return JSSnippet::PageRedirect('calendar');
 			}
         }
