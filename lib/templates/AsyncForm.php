@@ -163,7 +163,8 @@
 
 			switch (strtolower($type)) {
 				case "checkbox" :
-					$html = "<div class=\"checkboxDiv\" class=\"$class\"><input type=\"checkbox\"".(isset($default)&&$default?" checked":"")." value=\"".($data!=[]?$data:"true")."\" name=\"$name\" id=\"$name\" /><label for=\"$name\"></label></div>";
+					$random = (string)rand(1000, 9999);
+					$html = "<div class=\"checkboxDiv\" class=\"$class\"><input type=\"checkbox\"".(isset($default)&&$default?" checked":"")." value=\"".($data!=[]?$data:"true")."\" name=\"$name\" id=\"{$random}{$name}\" /><label for=\"{$random}{$name}\"></label></div>";
 				break;
 
 				case "multcheckbox" :
@@ -189,6 +190,7 @@
 						$fname = $data[$i];
 						$ftext = $fname;
 						$checked = in_array($fname, $selected);
+						$random = (string)rand(1000, 9999);
 						if (strtolower($fname) == 'other') {
 							$ftext = "Other: <input type=\"text\" name=\"{$name}[]\" class=\"otherInput\"";
 							$ftext .= " value=\"$other\"";
@@ -197,7 +199,7 @@
 								$checked = true;
 							}
 						}
-						$html .= "<div class=\"checkboxDiv checkboxDivMult\" class=\"forminput\"><input ".($checked?"checked ":"")."type=\"checkbox\" value=\"$fname\" name=\"{$name}[]\" id=\"{$name}{$fname}{$i}\" /><label for=\"{$name}{$fname}{$i}\"></label><label for=\"{$name}{$fname}{$i}\">$ftext</label></div>";
+						$html .= "<div class=\"checkboxDiv checkboxDivMult\" class=\"forminput\"><input ".($checked?"checked ":"")."type=\"checkbox\" value=\"$fname\" name=\"{$name}[]\" id=\"{$random}{$name}{$fname}{$i}\" /><label for=\"{$random}{$name}{$fname}{$i}\"></label><label for=\"{$random}{$name}{$fname}{$i}\">$ftext</label></div>";
 					}
 					$html .= "</section>";
 				break;
@@ -223,12 +225,13 @@
 					}
 					$disabled = isset($default);
 					foreach ($data as $fname => $fvalue) {
+						$random = (string)rand(1000, 9999);
 						if (is_int($fname)) {
 							$fname = $fvalue;
 						}
 						$ftext = $fvalue;
 						if (strtolower($fvalue) == 'other') {
-							$ftext = "Other: <input type=\"text\" id=\"{$name}Other\" class=\"otherRadioInput otherInput\" ";
+							$ftext = "Other: <input type=\"text\" id=\"{$random}{$name}Other\" class=\"otherRadioInput otherInput\" ";
 							if ($selected == '') {
 								$ftext .= "value=\"$default\"";
 							}
@@ -236,17 +239,18 @@
 							$fname = "";
 						}
 						$html .= "<div class=\"roundedTwo\">";
-						$html .= "<input id=\"{$name}{$i}\" type=\"radio\" ".(isset($default)&&$default==$fname?"checked ":"")."name=\"$name\" value=\"".$fname."\"";
+						$html .= "<input id=\"{$random}{$name}{$i}\" type=\"radio\" ".(isset($default)&&$default==$fname?"checked ":"")."name=\"$name\" value=\"".$fname."\"";
 						if ($fname === $selected) {
 							$html .= " checked";
 						} else if (strtolower($fvalue) == 'other' && $selected == '') {
 							$html .= " checked";
 						}
 						$html .= " />";
-						$html .= "<label for=\"{$name}{$i}\">$ftext</label>";
+						$html .= "<label for=\"{$random}{$name}{$i}\">$ftext</label>";
 						$html .= "<div class=\"check\"></div>";
 						$html .= "</div>";
 						$i++;
+
 					}
 					$html .= "</section>";
 				break;
