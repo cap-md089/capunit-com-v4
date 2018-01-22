@@ -99,7 +99,7 @@
 					->addField ('groupEventNumber', 'Group Event Number', 'radio', Null, [
 						'Not Required', 'To Be Applied For', 'Applied For', 'Other'
 					], $event->GroupEventNumber)
-					->addField ('eventStatus', 'Event Status', 'radio', Null, $member->AccessLevel == 'CadetStaff' ? ['Draft'] : [
+					->addField ('eventStatus', 'Event Status*', 'radio', Null, $member->AccessLevel == 'CadetStaff' ? ['Draft'] : [
 						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
 					], $event->Status)
 					->addField ('entryComplete', 'Entry Complete', 'checkbox', Null, Null, $event->Complete)
@@ -197,10 +197,10 @@
 					])
 					->addField ('groupEventNumber', 'Group Event Number', 'radio', Null, [
 						'Not Required', 'To Be Applied For', 'Applied For', 'Other'
-					])
-					->addField ('eventStatus', 'Event Status', 'radio', Null, $member->AccessLevel == 'CadetStaff' ? ['Draft'] : [
+					], 'Not Required')
+					->addField ('eventStatus', 'Event Status*', 'radio', Null, $member->AccessLevel == 'CadetStaff' ? ['Draft'] : [
 						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
-					])
+					], 'Draft')
 					->addField ('entryComplete', 'Entry Complete', 'checkbox')
 					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, '1')
 					->addField ('showUpcoming', 'Show in Upcoming Events', 'checkbox', Null, Null, '1')
