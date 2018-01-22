@@ -328,61 +328,61 @@
             }
 
             $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['EventInformation']." (
-					AccountID, EventNumber, EventName, MeetLocation, EventLocation, PickupLocation, 
-					MeetDateTime, StartDateTime, EndDateTime, PickupDateTime, TransportationProvided, TransportationDescription, 
-					RequiredEquipment, RegistrationDeadline, RegistrationInformation, ParticipationFeeDue, 
-					ParticipationFee, AcceptSignups, Complete, PublishToWingCalendar, Comments, 
-					HighAdventureDescription, SignUpDenyMessage, Administration, Activity, Meals, 
-					GroupEventNumber, Status, EventWebsite, Uniform, RequiredForms, ShowUpcoming, 
-					DesiredNumParticipants, Debrief, CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email,
-                    CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email,
-                    CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, ExtPOCName, ExtPOCPhone,
-                    ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID
+					AccountID, EventNumber, EventName, MeetDateTime, MeetLocation, StartDateTime, EventLocation, 
+					EndDateTime, PickupLocation, PickupDateTime, TransportationProvided, TransportationDescription, 
+					Uniform, DesiredNumParticipants, RegistrationDeadline, RegistrationInformation, ParticipationFeeDue, 
+                    ParticipationFee, LodgingArrangements, Meals, Activity, HighAdventureDescription, RequiredEquipment, 
+                    EventWebsite, RequiredForms, Comments, AcceptSignups, SignUpDenyMessage, PublishToWingCalendar, 
+                    ShowUpcoming, GroupEventNumber, Complete, Administration, Status, Debrief, 
+                    CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email, CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, 
+                    CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, 
+                    AdditionalEmailAddresses, ExtPOCName, ExtPOCPhone, ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID
 				) VALUES (
-					:accountid, :eventnumber, :eventName, :meetLocation, :eventLocation, :pickupLocation, 
-					:meetDate, :startDate, :endDate, :pickupDate, :transportationProvided, :transportationDescription, 
-					:requiredEquipment, :registrationDeadline, :registrationInformation, :participationFeeDeadline, 
-					:participationFee, :acceptSignups, :entryComplete, :publishToWing, :comments, 
-					:highAdventureDescription, :signUpDeny, :adminComments, :activity, :meals, 
-					:groupEventNumber, :eventStatus, :eventWebsite, :uniform, :requiredForms, :showUpcoming,
-					:desiredParticipants, :debrief, :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email,
-                    :CAPPOC1REU, :CAPPOC1RSU, :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
-                    :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid
+                    :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
+                    :endDate, :pickupLocation, :pickupDate, :transportationProvided, :transportationDescription, 
+                    :uniform, :desiredParticipants, :registrationDeadline, :registrationInformation, :participationFeeDeadline, 
+                    :participationFee, :logding, :meals, :activity, :highAdventureDescription, :requiredEquipment, 
+                    :eventWebsite, :requiredForms, :comments, :acceptSignups, :signUpDeny, :publishToWing, 
+                    :showUpcoming, :groupEventNumber, :entryComplete, :adminComments, :eventStatus, :debrief, 
+                    :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email, :CAPPOC1REU, :CAPPOC1RSU, 
+                    :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
+                    :additionalEmailAddresses, :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid
 				);");
 
             $stmt->bindValue(':accountid', $_ACCOUNT->id);
             $stmt->bindValue(':eventnumber', $event->EventNumber);
             $stmt->bindValue(':eventName', $event->EventName);
-            $stmt->bindValue(':meetLocation', $event->MeetLocation);
-            $stmt->bindValue(':eventLocation', $event->EventLocation);
-            $stmt->bindValue(':pickupLocation', $event->PickupLocation);
             $stmt->bindValue(':meetDate', $event->MeetDateTime);
+            $stmt->bindValue(':meetLocation', $event->MeetLocation);
             $stmt->bindValue(':startDate', $event->StartDateTime);
+            $stmt->bindValue(':eventLocation', $event->EventLocation);
             $stmt->bindValue(':endDate', $event->EndDateTime);
             $stmt->bindValue(':pickupDate', $event->PickupDateTime);
+            $stmt->bindValue(':pickupLocation', $event->PickupLocation);
             $stmt->bindValue(':transportationProvided', $event->TransportationProvided ? 1 : 0);
             $stmt->bindValue(':transportationDescription', $event->TransportationDescription);
-            $stmt->bindValue(':requiredEquipment', $event->RequiredEquipment);
+            $stmt->bindValue(':uniform', $event->Uniform);
+            $stmt->bindValue(':desiredParticipants', $event->DesiredNumParticipants);
             $stmt->bindValue(':registrationDeadline', $event->RegistrationDeadline);
 			$stmt->bindValue(':registrationInformation', $event->RegistrationInformation);
             $stmt->bindValue(':participationFeeDeadline', $event->ParticipationFeeDue);
             $stmt->bindValue(':participationFee', $event->ParticipationFee);
-            $stmt->bindValue(':acceptSignups', $event->AcceptSignups ? 1 : 0);
-            $stmt->bindValue(':entryComplete', $event->Complete ? 1 : 0);
-            $stmt->bindValue(':publishToWing', $event->PublishToWingCalendar ? 1 : 0);
-            $stmt->bindValue(':comments', $event->Comments);
-            $stmt->bindValue(':highAdventureDescription', $event->HighAdventureDescription);
-            $stmt->bindValue(':signUpDeny', $event->SignUpDenyMessage);
-            $stmt->bindValue(':adminComments', $event->Administration);
-            $stmt->bindValue(':activity', $event->Activity);
+            $stmt->bindValue(':lodging', $event->LodgingArrangements);
             $stmt->bindValue(':meals', $event->Meals);
-            $stmt->bindValue(':groupEventNumber', $event->GroupEventNumber);
-            $stmt->bindValue(':eventStatus', $event->Status);
+            $stmt->bindValue(':activity', $event->Activity);
+            $stmt->bindValue(':highAdventureDescription', $event->HighAdventureDescription);
+            $stmt->bindValue(':requiredEquipment', $event->RequiredEquipment);
             $stmt->bindValue(':eventWebsite', $event->EventWebsite);
-            $stmt->bindValue(':uniform', $event->Uniform);
             $stmt->bindValue(':requiredForms', $event->RequiredForms);
+            $stmt->bindValue(':comments', $event->Comments);
+            $stmt->bindValue(':acceptSignups', $event->AcceptSignups ? 1 : 0);
+            $stmt->bindValue(':signUpDeny', $event->SignUpDenyMessage);
+            $stmt->bindValue(':publishToWing', $event->PublishToWingCalendar ? 1 : 0);
 			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming ? 1 : 0);
-            $stmt->bindValue(':desiredParticipants', $event->DesiredNumParticipants);
+            $stmt->bindValue(':groupEventNumber', $event->GroupEventNumber);
+            $stmt->bindValue(':entryComplete', $event->Complete ? 1 : 0);
+            $stmt->bindValue(':adminComments', $event->Administration);
+            $stmt->bindValue(':eventStatus', $event->Status);
             $stmt->bindValue(':debrief', $event->Debrief);
             $stmt->bindValue(':CAPPOC1ID', $event->CAPPOC1ID);
             $stmt->bindValue(':CAPPOC1Name', $event->CAPPOC1Name);
@@ -396,6 +396,7 @@
             $stmt->bindValue(':CAPPOC2Email', $event->CAPPOC2Email);
             $stmt->bindValue(':CAPPOC2REU', $event->CAPPOC2ReceiveEventUpdates ? 1 : 0);
             $stmt->bindValue(':CAPPOC2RSU', $event->CAPPOC2ReceiveSignUpUpdates ? 1 : 0);
+            $stmt->bindValue(':additionalEmailAddresses', $event->AdditionalEmailAddresses);
             $stmt->bindValue(':ExtPOCName', $event->ExtPOCName);
             $stmt->bindValue(':ExtPOCPhone', $event->ExtPOCPhone);
             $stmt->bindValue(':ExtPOCEmail', $event->ExtPOCEmail);
@@ -491,15 +492,17 @@
                 PickupDateTime = :pickupDate, PickupLocation = :pickupLocation,
                 TransportationProvided = :transportationProvided, TransportationDescription = :transportationDescription,
                 Uniform = :uniform, DesiredNumParticipants = :desiredParticipants,
-                RegistrationDeadline = :registrationDeadline, ParticipationFeeDue = :participationFeeDeadline,
+                RegistrationDeadline = :registrationDeadline, RegistrationInformation = :registrationInformation,
+                ParticipationFeeDue = :participationFeeDeadline, LodgingArrangements =:lodging,
                 ParticipationFee = :participationFee, Meals = :meals, Activity = :activity,
                 HighAdventureDescription = :highAdventureDescription, RequiredEquipment = :requiredEquipment,
                 EventWebsite = :eventWebsite, RequiredForms = :requiredForms, Comments = :comments,
-                AcceptSignUps = :acceptSignups, SignUpDenyMessage = :signUpDeny,
+                AcceptSignUps = :acceptSignups, SignUpDenyMessage = :signUpDeny, ShowUpcoming =:showUpcoming,
                 PublishToWingCalendar = :publishToWing, GroupEventNumber = :groupEventNumber,
-                complete = :entryComplete, Administration = :adminComments, Status = :eventStatus,
+                Complete = :entryComplete, Administration = :adminComments, Status = :eventStatus,
                 Debrief = :debrief, CAPPOC1ID = :CAPPOC1ID, CAPPOC1Name = :CAPPOC1Name, CAPPOC1Phone = :CAPPOC1Phone, CAPPOC1Email = :CAPPOC1Email,
-                CAPPOC2ID = :CAPPOC2ID, CAPPOC2Name = :CAPPOC2Name, CAPPOC2Phone = :CAPPOC2Phone, CAPPOC2Email = :CAPPOC2Email,ExtPOCName = :ExtPOCName,ExtPOCPhone = :ExtPOCPhone,
+                CAPPOC2ID = :CAPPOC2ID, CAPPOC2Name = :CAPPOC2Name, CAPPOC2Phone = :CAPPOC2Phone, CAPPOC2Email = :CAPPOC2Email, 
+                ExtPOCName = :ExtPOCName, ExtPOCPhone = :ExtPOCPhone, AdditionalEmailAddresses =:additionalEmailAddresses,
                 ExtPOCEmail = :ExtPOCEmail, Author = :author, PartTime = :parttime, TeamID = :teamid,
                 CAPPOC1ReceiveEventUpdates = :POC1REU, CAPPOC1ReceiveSignUpUpdates = :POC1RSU,
                 CAPPOC2ReceiveEventUpdates = :POC2RSU, CAPPOC2ReceiveSignUpUpdates = :POC2RSU,
@@ -507,34 +510,37 @@
                 WHERE EventNumber = :ev AND AccountID = :aid;');            
 
             $stmt->bindValue(':eventName', $this->EventName);
-            $stmt->bindValue(':meetLocation', $this->MeetLocation);
-            $stmt->bindValue(':eventLocation', $this->EventLocation);
-            $stmt->bindValue(':pickupLocation', $this->PickupLocation);
-            $stmt->bindValue(':transportationDescription', $this->TransportationDescription);
-            $stmt->bindValue(':requiredEquipment', $this->RequiredEquipment);
-            $stmt->bindValue(':participationFee', $this->ParticipationFee);
             $stmt->bindValue(':meetDate', $this->MeetDateTime);
+            $stmt->bindValue(':meetLocation', $this->MeetLocation);
             $stmt->bindValue(':startDate', $this->StartDateTime);
+            $stmt->bindValue(':eventLocation', $this->EventLocation);
             $stmt->bindValue(':endDate', $this->EndDateTime);
             $stmt->bindValue(':pickupDate', $this->PickupDateTime);
-            $stmt->bindValue(':registrationDeadline', $this->RegistrationDeadline);
-            $stmt->bindValue(':participationFeeDeadline', $this->ParticipationFeeDue);
+            $stmt->bindValue(':pickupLocation', $this->PickupLocation);
             $stmt->bindValue(':transportationProvided', $this->TransportationProvided ? 1 : 0);
-            $stmt->bindValue(':acceptSignups', $this->AcceptSignups ? 1 : 0);
-            $stmt->bindValue(':entryComplete', $this->Complete ? 1 : 0);
-            $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
-            $stmt->bindValue(':comments', $this->Comments);
-            $stmt->bindValue(':highAdventureDescription', $this->HighAdventureDescription);
-            $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
-            $stmt->bindValue(':adminComments', $this->Administration);
-            $stmt->bindValue(':activity', $this->Activity);
-            $stmt->bindValue(':meals', $this->Meals);
-            $stmt->bindValue(':groupEventNumber', $this->GroupEventNumber);
-            $stmt->bindValue(':eventStatus', $this->Status);
-            $stmt->bindValue(':eventWebsite', $this->EventWebsite);
+            $stmt->bindValue(':transportationDescription', $this->TransportationDescription);
             $stmt->bindValue(':uniform', $this->Uniform);
-            $stmt->bindValue(':requiredForms', $this->RequiredForms);
             $stmt->bindValue(':desiredParticipants', $this->DesiredNumParticipants);
+            $stmt->bindValue(':registrationDeadline', $this->RegistrationDeadline);
+            $stmt->bindValue(':registrationInformation', $this->RegistrationInformation);
+            $stmt->bindValue(':participationFeeDeadline', $this->ParticipationFeeDue);
+            $stmt->bindValue(':participationFee', $this->ParticipationFee);
+            $stmt->bindValue(':lodging', $this->LodgingArrangements);
+            $stmt->bindValue(':meals', $this->Meals);
+            $stmt->bindValue(':activity', $this->Activity);
+            $stmt->bindValue(':highAdventureDescription', $this->HighAdventureDescription);
+            $stmt->bindValue(':requiredEquipment', $this->RequiredEquipment);
+            $stmt->bindValue(':eventWebsite', $this->EventWebsite);
+            $stmt->bindValue(':requiredForms', $this->RequiredForms);
+            $stmt->bindValue(':comments', $this->Comments);
+            $stmt->bindValue(':acceptSignups', $this->AcceptSignups ? 1 : 0);
+            $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
+            $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
+            $stmt->bindValue(':showUpcoming', $this->ShowUpcoming ? 1 : 0);
+            $stmt->bindValue(':groupEventNumber', $this->GroupEventNumber);
+            $stmt->bindValue(':entryComplete', $this->Complete ? 1 : 0);
+            $stmt->bindValue(':adminComments', $this->Administration);
+            $stmt->bindValue(':eventStatus', $this->Status);
             $stmt->bindValue(':debrief', $this->Debrief);
             $stmt->bindValue(':CAPPOC1ID', $this->CAPPOC1ID);
             $stmt->bindValue(':CAPPOC1Name', $this->CAPPOC1Name);
@@ -548,6 +554,7 @@
             $stmt->bindValue(':CAPPOC2Email', $this->CAPPOC2Email);
             $stmt->bindValue(':POC2REU', $this->CAPPOC2ReceiveEventUpdates ? 1 : 0);
             $stmt->bindValue(':POC2RSU', $this->CAPPOC2ReceiveSignUpUpdates ? 1 : 0);
+            $stmt->bindValue(':additionalEmailAddresses', $this->AdditionalEmailAddresses);
             $stmt->bindValue(':ExtPOCName', $this->ExtPOCName);
             $stmt->bindValue(':ExtPOCPhone', $this->ExtPOCPhone);
             $stmt->bindValue(':ExtPOCEmail', $this->ExtPOCEmail);

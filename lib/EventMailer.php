@@ -54,12 +54,14 @@
                 $things = [
                     'EventName','MeetDateTime','MeetLocation','StartDateTime','EventLocation','EndDateTime','PickupDateTime',
                     'PickupLocation','TransportationProvided','TransportationDescription','Uniform','DesiredNumParticipants',
-                    'RegistrationDeadline','ParticipationFeeDue','ParticipationFee','Meals','LodgingArrangements','Activity',
+                    'RegistrationDeadline','RegistrationInformation','ParticipationFeeDue','ParticipationFee','Meals',
+                    'LodgingArrangements','Activity',
                     'HighAdventureDescription','RequiredEquipment','EventWebsite','RequiredForms','Comments','AcceptSignups',
-                    'SignUpDenyMessage','ReceiveEventUpdates','ReceiveSignUpUpdates','PublishToWingCalendar','GroupEventNumber',
+                    'SignUpDenyMessage','PublishToWingCalendar','ShowUpcoming','GroupEventNumber',
                     'Complete','Administration','Status','Debrief','CAPPOC1ID','CAPPOC1Name','CAPPOC1Phone','CAPPOC1Email',
+                    'CAPPOC1ReceiveEventUpdates','CAPPOC1ReceiveSignUpUpdates','CAPPOC2ReceiveEventUpdates','CAPPOC2ReceiveSignUpUpdates',
                     'CAPPOC2ID','CAPPOC2Name','CAPPOC2Phone','CAPPOC2Email','ExtPOCName','ExtPOCPhone','ExtPOCEmail','Author',
-                    'PartTime','TeamID'
+                    'AdditionalEmailAddresses','ExtPOCReceiveEventUpdates','PartTime','TeamID'
                 ];
 
                 foreach ($things as $thing) {

@@ -175,18 +175,18 @@
 					->addField ('CAPPOC1ID', 'First CAP POC ID ('.(new AsyncButton(Null, 'Select', 'selectCAPIDForEventForm'))->getHtml('1').')', 'text', 'capPOC1')
 					->addField ('CAPPOC1Phone', 'First CAP POC Phone', 'text', 'capPOCPHONE1')
 					->addField ('CAPPOC1Email', 'First CAP POC Email', 'text', 'capPOCEMAIL1')
-					->addField ('CAPPOC1EUpdates', 'Send Update Emails', 'checkbox', 'capPOCEUpdates1', Null, Null, 1)
-					->addField ('CAPPOC1SUpdates', 'Send SignUp Emails', 'checkbox', 'capPOCEUpdates1', Null, Null, 1)
+					->addField ('CAPPOC1EUpdates', 'Send Update Emails', 'checkbox', 'capPOCEUpdates1')
+					->addField ('CAPPOC1SUpdates', 'Send SignUp Emails', 'checkbox', 'capPOCEUpdates1')
 					->addField ('CAPPOC2ID', 'Second CAP POC ID ('.(new AsyncButton(Null, 'Select', 'selectCAPIDForEventForm'))->getHtml('2').')', 'text', 'capPOC2')
 					->addField ('CAPPOC2Phone', 'Second CAP POC Phone', 'text', 'capPOCPHONE2')
 					->addField ('CAPPOC2Email', 'Second CAP POC Email', 'text', 'capPOCEMAIL2')
-					->addField ('CAPPOC2EUpdates', 'Send Update Emails', 'checkbox', 'capPOCEUpdates2', Null, Null, 1)
-					->addField ('CAPPOC2SUpdates', 'Send SignUp Emails', 'checkbox', 'capPOCEUpdates2', Null, Null, 1)
+					->addField ('CAPPOC2EUpdates', 'Send Update Emails', 'checkbox', 'capPOCEUpdates2')
+					->addField ('CAPPOC2SUpdates', 'Send SignUp Emails', 'checkbox', 'capPOCEUpdates2')
 					->addField ('additionalEmailAddresses', 'Additional Email Addresses', 'text')
 					->addField ('ExtPOCName', 'External POC Name', 'text')
 					->addField ('ExtPOCPhone', 'External POC Phone', 'text')
 					->addField ('ExtPOCEmail', 'External POC Email', 'text')
-					->addField ('ExtPOCEUpdates', 'Send Update Emails', 'checkbox', 'ExtPOCEUpdates', Null, Null, 1)
+					->addField ('ExtPOCEUpdates', 'Send Update Emails', 'checkbox', 'ExtPOCEUpdates')
 					->addField ('', 'Administrative Information', 'label')
 					// ->addField ('acceptSignups', 'Accept Sign-Ups','checkbox', Null, Null, '1')
 					// ->addField ('signUpDeny', 'Sign-Up Deny Message', 'textarea')
@@ -320,7 +320,7 @@
 					'CAPPOC2Email' => $eventdata['form-data']['CAPPOC2Email'],
 					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2EUpdates'],
 					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2SUpdates'],
-					'additionalEmailAddresses' => $eventdata['form-data']['additionalEmailAddresses'],
+					'AdditionalEmailAddresses' => $eventdata['form-data']['additionalEmailAddresses'],
 					'ExtPOCName' => $eventdata['form-data']['ExtPOCName'],
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
@@ -359,8 +359,6 @@
 				return JSSnippet::PageRedirect('calendar');
 
 			} else if ($eventdata['form-data']['function'] == 'edit') {
-				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
-
 				$ev = $eventdata['form-data']['eventnumber'];
 				$event = Event::Get($ev);
 
@@ -447,7 +445,7 @@
 					'CAPPOC2Email' => $eventdata['form-data']['CAPPOC2Email'],
 					'CAPPOC2EUpdates' => $eventdata['form-data']['CAPPOC2EUpdates'],
 					'CAPPOC2SUpdates' => $eventdata['form-data']['CAPPOC2SUpdates'],
-					'additionalEmailAddresses' => $eventdata['form-data']['additionalEmailAddresses'],
+					'AdditionalEmailAddresses' => $eventdata['form-data']['additionalEmailAddresses'],
 					'ExtPOCName' => $eventdata['form-data']['ExtPOCName'],
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
