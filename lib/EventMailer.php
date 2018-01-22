@@ -90,16 +90,18 @@
 
                 $html .= "</ul><br />";
 
-                $html .= "View the event <a href=\"".(new Link("eventviewer", "", [$form->EventNumber]))->getURL(false)."\">here</a>";
+                $html .= "View the event at <a href=\"".(new Link("eventviewer", "", [$form->EventNumber]))->getURL(false)."\">this link</a>";
 
                 $contact = [];
-                if ($form->CAPPOC1ID != 0) $contact[$form->CAPPOC1Name] = $form->CAPPOC1Email;
-                if ($form->CAPPOC2ID != 0) $contact[$form->CAPPOC2Name] = $form->CAPPOC2Email;
-                if ($form->ExtPOCName != '') $contact[$form->ExtPOCName] = $form->ExtPOCEmail;
+                if ($form->CAPPOC1Email != 0 && $form->CAPPOC1ReceiveEventUpdates) $contact[$form->CAPPOC1Name] = $form->CAPPOC1Email;
+                if ($form->CAPPOC2ID != 0 && $form->CAPPOC2ReceiveEventUpdates) $contact[$form->CAPPOC2Name] = $form->CAPPOC2Email;
+                if ($form->ExtPOCName != '' && $form->ExtPOCReceiveEventUpdates) $contact[$form->ExtPOCName] = $form->ExtPOCEmail;
                 
-                if ($database->CAPPOC1ID != 0) $contact[$database->CAPPOC1Name] = $database->CAPPOC1Email;
-                if ($database->CAPPOC2ID != 0) $contact[$database->CAPPOC2Name] = $database->CAPPOC2Email;
-                if ($database->ExtPOCName != '') $contact[$database->ExtPOCName] = $database->ExtPOCEmail;
+                if ($database->CAPPOC1ID != 0 && $database->CAPPOC1ReceiveEventUpdates) $contact[$database->CAPPOC1Name] = $database->CAPPOC1Email;
+                if ($database->CAPPOC2ID != 0 && $database->CAPPOC2ReceiveEventUpdates) $contact[$database->CAPPOC2Name] = $database->CAPPOC2Email;
+                if ($database->ExtPOCName != '' && $database->ExtPOCReceiveEventUpdates) $contact[$database->ExtPOCName] = $database->ExtPOCEmail;
+
+                if ($form->AdditionalEmailAddresses != '') $contact[$form->AdditionalEmailAddresses] = $form->AdditionalEmailAddresses;
                 
                 return UtilCollection::sendFormattedEmail(
                     $contact,
