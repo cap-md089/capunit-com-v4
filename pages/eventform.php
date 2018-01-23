@@ -52,7 +52,7 @@
 					->addField ('', 'Logistics Information', 'label')
 					->addField ('uniform', '*Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
 					], explode(', ', $event->Uniform))
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
@@ -326,7 +326,7 @@
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCEUpdates'],
-					'PartTime' => '',
+					'PartTime' => true,
 					'TeamID' => $eventdata['form-data']['TeamID']
 				), Null, $member);
 
@@ -394,7 +394,7 @@
 					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
 					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
 					]),
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
@@ -453,7 +453,7 @@
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCEUpdates'],
 					'Author' => $member->uname,
-					'PartTime' => '',
+					'PartTime' => true,
 					'TeamID' => $eventdata['form-data']['TeamID']
 				));
 

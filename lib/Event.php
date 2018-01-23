@@ -336,7 +336,7 @@
 					EndDateTime, PickupLocation, PickupDateTime, TransportationProvided, TransportationDescription, 
 					Uniform, DesiredNumParticipants, RegistrationDeadline, RegistrationInformation, ParticipationFeeDue, 
                     ParticipationFee, LodgingArrangements, Meals, Activity, HighAdventureDescription, RequiredEquipment, 
-                    EventWebsite, RequiredForms, Comments, AcceptSignups, SignUpDenyMessage, PublishToWingCalendar, 
+                    EventWebsite, RequiredForms, Comments, AcceptSignUps, SignUpDenyMessage, PublishToWingCalendar, 
                     ShowUpcoming, GroupEventNumber, Complete, Administration, Status, Debrief, 
                     CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email, CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, 
                     CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, 
@@ -379,8 +379,8 @@
             $stmt->bindValue(':eventWebsite', $event->EventWebsite);
             $stmt->bindValue(':requiredForms', $event->RequiredForms);
             $stmt->bindValue(':comments', $event->Comments);
-            $stmt->bindValue(':acceptSignups', 0);
-            $stmt->bindValue(':signUpDeny', '');
+            $stmt->bindValue(':acceptSignups', $event->AcceptSignUps);
+            $stmt->bindValue(':signUpDeny', $event->SignUpDenyMessage);
             $stmt->bindValue(':publishToWing', $event->PublishToWingCalendar ? 1 : 0);
 			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $event->GroupEventNumber);
@@ -509,7 +509,7 @@
                 ExtPOCName = :ExtPOCName, ExtPOCPhone = :ExtPOCPhone, AdditionalEmailAddresses =:additionalEmailAddresses,
                 ExtPOCEmail = :ExtPOCEmail, Author = :author, PartTime = :parttime, TeamID = :teamid,
                 CAPPOC1ReceiveEventUpdates = :POC1REU, CAPPOC1ReceiveSignUpUpdates = :POC1RSU,
-                CAPPOC2ReceiveEventUpdates = :POC2RSU, CAPPOC2ReceiveSignUpUpdates = :POC2RSU,
+                CAPPOC2ReceiveEventUpdates = :POC2REU, CAPPOC2ReceiveSignUpUpdates = :POC2RSU,
                 ExtPOCReceiveEventUpdates = :ExtREU
                 WHERE EventNumber = :ev AND AccountID = :aid;');            
 
@@ -537,8 +537,8 @@
             $stmt->bindValue(':eventWebsite', $this->EventWebsite);
             $stmt->bindValue(':requiredForms', $this->RequiredForms);
             $stmt->bindValue(':comments', $this->Comments);
-            $stmt->bindValue(':acceptSignups', 0);
-            $stmt->bindValue(':signUpDeny', '');
+            $stmt->bindValue(':acceptSignups', $this->AcceptSignUps);
+            $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
             $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
             $stmt->bindValue(':showUpcoming', $this->ShowUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $this->GroupEventNumber);

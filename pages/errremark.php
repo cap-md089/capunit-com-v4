@@ -164,8 +164,8 @@ EOD;
 				$stmt->bindValue(':file', $data[0]['badfile']);
 				$stmt->bindValue(':line', $data[0]['badline']);
 				$data = DBUtils::ExecutePDOStatement($stmt);
-				// return $data;
-				return $stmt->execute() ? 'Issue resolved' : 'Database issue';
+				return $data;
+				// return $stmt->execute() ? 'Issue resolved' : 'Database issue';
 			}
 		}
 	}
