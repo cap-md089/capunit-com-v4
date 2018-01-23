@@ -56,7 +56,7 @@
                     'PickupLocation','TransportationProvided','TransportationDescription','Uniform','DesiredNumParticipants',
                     'RegistrationDeadline','RegistrationInformation','ParticipationFeeDue','ParticipationFee','Meals',
                     'LodgingArrangements','Activity',
-                    'HighAdventureDescription','RequiredEquipment','EventWebsite','RequiredForms','Comments','AcceptSignups',
+                    'HighAdventureDescription','RequiredEquipment','EventWebsite','RequiredForms','Comments','AcceptSignUps',
                     'SignUpDenyMessage','PublishToWingCalendar','ShowUpcoming','GroupEventNumber',
                     'Complete','Administration','Status','Debrief','CAPPOC1ID','CAPPOC1Name','CAPPOC1Phone','CAPPOC1Email',
                     'CAPPOC1ReceiveEventUpdates','CAPPOC1ReceiveSignUpUpdates','CAPPOC2ReceiveEventUpdates','CAPPOC2ReceiveSignUpUpdates',
