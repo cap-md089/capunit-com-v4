@@ -441,7 +441,7 @@
 
             $boolvars = [
                 "TransportationProvided",
-                "AcceptSignups",
+                "AcceptSignUps",
                 "PublishToWingCalendar",
                 "Complete",
                 "PartTime",
@@ -628,7 +628,7 @@
             ];
             $boolvars = [
                 "TransportationProvided",
-                "AcceptSignups",
+                "AcceptSignUps",
                 "PublishToWingCalendar",
                 "Complete",
                 "PartTime",
