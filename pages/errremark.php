@@ -156,7 +156,7 @@ EOD;
 		public static function doPut ($e, $c, $l, $m) {
 			if ($l && $m->perms['Developer'] == 1) {
 				$pdo = DB_Utils::CreateConnection();
-				$stmt = $pdo->prepare("SELECT `message`, badfile, badline from ".DB_TABLES['ErrorMessages']." where id = :id;");
+				$stmt = $pdo->prepare("SELECT `message`, badfile, badline FROM ".DB_TABLES['ErrorMessages']." WHERE id = :id;");
 				$stmt->bindValue(":id", $e['parameter']['data']);
 				$data = DBUtils::ExecutePDOStatement($stmt);
 				$stmt = $pdo->prepare("UPDATE ".DB_TABLES['ErrorMessages']." SET resolved=1 WHERE message=:msg, badfile=:file, badline=:line;");
@@ -164,8 +164,8 @@ EOD;
 				$stmt->bindValue(':file', $data[0]['badfile']);
 				$stmt->bindValue(':line', $data[0]['badline']);
 				$data = DBUtils::ExecutePDOStatement($stmt);
-				return $data;
-//				return $stmt->execute() ? 'Issue resolved' : 'Database issue';
+				// return $data;
+				return $stmt->execute() ? 'Issue resolved' : 'Database issue';
 			}
 		}
 	}
