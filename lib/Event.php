@@ -92,6 +92,11 @@
         public $RegistrationDeadline = 0;
 
         /**
+         * @var int UNIX timestamp of when signups close
+         */
+        public $RegistrationInformation = '';
+
+        /**
          * @var int UNIX timestamp of when the money is due
          */
         public $ParticipationFeeDue = 0;
@@ -157,6 +162,11 @@
         public $PublishToWingCalendar = false;
 
         /**
+         * @var bool Whether or not to show this event on the home page in the upcoming events section
+         */
+        public $showUpcoming = true;
+
+        /**
          * @var int Event number in Group calendar
          */
         public $GroupEventNumber = 0;
@@ -209,11 +219,11 @@
                $CAPPOC2RxRoster = 0;
 
         /**
-         * @var bool $CAPPOC1ReceiveEventUpdates 
-         * @var bool $CAPPOC1ReceiveEventUpdates 
-         * @var bool $CAPPOC2ReceiveSignUpUpdates 
-         * @var bool $CAPPOC2ReceiveSignUpUpdates 
-         * @var bool $ExtPOCReceiveSignUpUpdates 
+         * @var int $CAPPOC1ReceiveEventUpdates 
+         * @var int $CAPPOC2ReceiveEventUpdates 
+         * @var int $CAPPOC1ReceiveSignUpUpdates 
+         * @var int $CAPPOC2ReceiveSignUpUpdates 
+         * @var int $ExtPOCReceiveEventUpdates 
          */
         public $CAPPOC1ReceiveEventUpdates = false,
                $CAPPOC1ReceiveSignUpUpdates = false, 
@@ -229,18 +239,12 @@
          */
         public $ExtPOCName = '',
                $ExtPOCPhone = '',
-               $ExtPOCEmail = '',
-               $ExtPOCRxUpdates = 0;
+               $ExtPOCEmail = '';
 
         /**
          * @var int CAPID of author of event, allowing for cadet staff to create draft events only they and managers can see
          */
         public $Author = 0;
-
-        /**
-         * @var bool Whether or not to show this event on the home page in the upcoming events section
-         */
-        public $showUpcoming = true;
 
         /**
          * @var bool Whether or not it is possible to sign up for part of the event
@@ -341,7 +345,7 @@
                     :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
                     :endDate, :pickupLocation, :pickupDate, :transportationProvided, :transportationDescription, 
                     :uniform, :desiredParticipants, :registrationDeadline, :registrationInformation, :participationFeeDeadline, 
-                    :participationFee, :logding, :meals, :activity, :highAdventureDescription, :requiredEquipment, 
+                    :participationFee, :lodging, :meals, :activity, :highAdventureDescription, :requiredEquipment, 
                     :eventWebsite, :requiredForms, :comments, :acceptSignups, :signUpDeny, :publishToWing, 
                     :showUpcoming, :groupEventNumber, :entryComplete, :adminComments, :eventStatus, :debrief, 
                     :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email, :CAPPOC1REU, :CAPPOC1RSU, 
@@ -375,8 +379,8 @@
             $stmt->bindValue(':eventWebsite', $event->EventWebsite);
             $stmt->bindValue(':requiredForms', $event->RequiredForms);
             $stmt->bindValue(':comments', $event->Comments);
-            $stmt->bindValue(':acceptSignups', $event->AcceptSignups ? 1 : 0);
-            $stmt->bindValue(':signUpDeny', $event->SignUpDenyMessage);
+            $stmt->bindValue(':acceptSignups', 0);
+            $stmt->bindValue(':signUpDeny', '');
             $stmt->bindValue(':publishToWing', $event->PublishToWingCalendar ? 1 : 0);
 			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $event->GroupEventNumber);
@@ -533,8 +537,8 @@
             $stmt->bindValue(':eventWebsite', $this->EventWebsite);
             $stmt->bindValue(':requiredForms', $this->RequiredForms);
             $stmt->bindValue(':comments', $this->Comments);
-            $stmt->bindValue(':acceptSignups', $this->AcceptSignups ? 1 : 0);
-            $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
+            $stmt->bindValue(':acceptSignups', 0);
+            $stmt->bindValue(':signUpDeny', '');
             $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
             $stmt->bindValue(':showUpcoming', $this->ShowUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $this->GroupEventNumber);
