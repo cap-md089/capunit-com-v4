@@ -127,15 +127,15 @@
 				$form = new AsyncForm ('eventform', 'Create an Event', Null, 'eventForm');
 
 				$form->addField('', '(* Indicates Required Field)', 'textread')
-					->addField ('eventName', '*Event Name*', 'text')
+					->addField ('eventName', '*Event Name', 'text')
 					->addField ('', 'Calendar Information', 'label')
-					->addField ('meetDate', '*Meet Date and Time*', 'datetime-local')
-					->addField ('meetLocation', '*Meet Location*', 'text')
-					->addField ('startDate', '*Start Date and Time*', 'datetime-local')
-					->addField ('eventLocation', '*Event Location*', 'text')
-					->addField ('endDate', '*End Date and Time*', 'datetime-local')
-					->addField ('pickupDate', '*Pickup Date and Time*', 'datetime-local')
-					->addField ('pickupLocation', '*Pickup Location*', 'text')
+					->addField ('meetDate', '*Meet Date and Time', 'datetime-local')
+					->addField ('meetLocation', '*Meet Location', 'text')
+					->addField ('startDate', '*Start Date and Time', 'datetime-local')
+					->addField ('eventLocation', '*Event Location', 'text')
+					->addField ('endDate', '*End Date and Time', 'datetime-local')
+					->addField ('pickupDate', '*Pickup Date and Time', 'datetime-local')
+					->addField ('pickupLocation', '*Pickup Location', 'text')
 					->addField ('transportationProvided', 'Transportation Provided', 'checkbox')
 					->addField ('transportationDescription', 'Transportation Description', 'text')
 					->addField ('', 'Activity Information', 'label')
@@ -149,10 +149,10 @@
 					->addField ('eventWebsite', 'Event Website', 'url')
 					->addField ('highAdventureDescription', 'High Adventure Description', 'textarea')
 					->addField ('', 'Logistics Information', 'label')
-					->addField ('uniform', '*Uniform*', 'multcheckbox', Null, [
+					->addField ('uniform', '*Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
-					])
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
+					], ['Battle Dress Uniform or Airman Battle Uniform (BDU ABU)'])
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
@@ -257,45 +257,36 @@
 
 				$event = Event::Create(array (
 					'EventName' => $eventdata['form-data']['eventName'],
-					'MeetLocation' => $eventdata['form-data']['meetLocation'],
-					'EventLocation' => $eventdata['form-data']['eventLocation'],
-					'PickupLocation' => $eventdata['form-data']['pickupLocation'],
-					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
-					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
-					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'MeetDateTime' => $eventdata['form-data']['meetDate'],
+					'MeetLocation' => $eventdata['form-data']['meetLocation'],
 					'StartDateTime' => $eventdata['form-data']['startDate'],
+					'EventLocation' => $eventdata['form-data']['eventLocation'],
 					'EndDateTime' => $eventdata['form-data']['endDate'],
 					'PickupDateTime' => $eventdata['form-data']['pickupDate'],
+					'PickupLocation' => $eventdata['form-data']['pickupLocation'],
+					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
+					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
+					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
+						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
+					]),
+					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
 					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
-					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
-					// 'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
-					'AcceptSignups' => true,
-					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
-					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
-					'Comments' => $eventdata['form-data']['comments'],
-					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
-					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
-					'SignUpDenyMessage' => '',
-					'Administration' => $eventdata['form-data']['adminComments'],
-					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
-					]),
+					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
 					]),
 					'Meals' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['meals'], [
 						'No Meals Provided', 'Meals Provided', 'Bring Own Food', 'Bring Money', 'Other'
 					]),
-					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
-					'Status' => $eventdata['form-data']['eventStatus'],
-					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
-					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
-						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
+					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
+						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
+					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
+					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
+					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
@@ -306,8 +297,18 @@
 						'CAP Identification Card',
 						'Other'
 					]),
-					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
+					'Comments' => $eventdata['form-data']['comments'],
+					// 'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
+					'AcceptSignups' => true,
+					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
+					'SignUpDenyMessage' => '',
+					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
+					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
+					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
 					'Complete' => $eventdata['form-data']['entryComplete'] == 'true',
+					'Administration' => $eventdata['form-data']['adminComments'],
+					'Status' => $eventdata['form-data']['eventStatus'],
+					'Debrief' => $eventdata['form-data']['Debrief'],
 					'CAPPOC1ID' => $eventdata['form-data']['CAPPOC1ID'],
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
@@ -325,8 +326,8 @@
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCEUpdates'],
-					'TeamID' => $eventdata['form-data']['TeamID'],
-					'Debrief' => $eventdata['form-data']['Debrief']
+					'PartTime' => '',
+					'TeamID' => $eventdata['form-data']['TeamID']
 				), Null, $member);
 
 				if (gettype($event) == gettype('string')) {
@@ -382,45 +383,36 @@
 
 				$event->set(array (
 					'EventName' => $eventdata['form-data']['eventName'],
-					'MeetLocation' => $eventdata['form-data']['meetLocation'],
-					'EventLocation' => $eventdata['form-data']['eventLocation'],
-					'PickupLocation' => $eventdata['form-data']['pickupLocation'],
-					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
-					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
-					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'MeetDateTime' => $eventdata['form-data']['meetDate'],
+					'MeetLocation' => $eventdata['form-data']['meetLocation'],
 					'StartDateTime' => $eventdata['form-data']['startDate'],
+					'EventLocation' => $eventdata['form-data']['eventLocation'],
 					'EndDateTime' => $eventdata['form-data']['endDate'],
 					'PickupDateTime' => $eventdata['form-data']['pickupDate'],
+					'PickupLocation' => $eventdata['form-data']['pickupLocation'],
+					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
+					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
+					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
+						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
+					]),
+					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
 					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
-					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
-					// 'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
-					'AcceptSignups' => true,
-					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
-					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
-					'Comments' => $eventdata['form-data']['comments'],
-					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
-					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
-					'SignUpDenyMessage' => '',
-					'Administration' => $eventdata['form-data']['adminComments'],
-					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
-					]),
+					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
 					]),
 					'Meals' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['meals'], [
 						'No Meals Provided', 'Meals Provided', 'Bring Own Food', 'Bring Money', 'Other'
 					]),
-					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
-					'Status' => $eventdata['form-data']['eventStatus'],
-					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
-					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
-						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire'
+					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
+						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
+					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
+					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
+					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
@@ -431,8 +423,18 @@
 						'CAP Identification Card',
 						'Other'
 					]),
-					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
+					'Comments' => $eventdata['form-data']['comments'],
+					// 'AcceptSignups' => $eventdata['form-data']['acceptSignups'] == 'true',
+					'AcceptSignups' => true,
+					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
+					'SignUpDenyMessage' => '',
+					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
+					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
+					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
 					'Complete' => $eventdata['form-data']['entryComplete'] == 'true',
+					'Administration' => $eventdata['form-data']['adminComments'],
+					'Status' => $eventdata['form-data']['eventStatus'],
+					'Debrief' => $eventdata['form-data']['Debrief'],
 					'CAPPOC1ID' => $eventdata['form-data']['CAPPOC1ID'],
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
@@ -451,8 +453,8 @@
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCEUpdates' => $eventdata['form-data']['ExtPOCEUpdates'],
 					'Author' => $member->uname,
-					'TeamID' => $eventdata['form-data']['TeamID'],
-					'Debrief' => $eventdata['form-data']['Debrief']
+					'PartTime' => '',
+					'TeamID' => $eventdata['form-data']['TeamID']
 				));
 
 
