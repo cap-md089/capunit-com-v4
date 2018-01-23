@@ -149,7 +149,7 @@
         /**
          * @var bool Idk? Reserved stuff for the future?
          */
-        public $AcceptSignups = true;
+        public $AcceptSignUps = true;
 
         /**
          * @var string Idk? Reserved stuff for the future?
