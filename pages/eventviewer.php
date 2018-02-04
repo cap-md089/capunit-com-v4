@@ -148,7 +148,7 @@
 				}
 			} else {
 				$html .= "<h4>Please sign in to view restricted content</h4>";
-				$html .= "<a href=\"#\" id=\"signin_link\">Sign in now</a>";
+				$html .= JSSnippet::SigninLink("Sign in now");
 			}
 
 			return [
@@ -203,7 +203,9 @@
 						"You're signed up!" : "Something went wrong!";
 			} else if ($e['raw']['func'] == 'signupedit') {
 				$attendance = new Attendance($e['form-data']['eid']);
-				if (!$attendance->has($m)) {
+				print_r($attendance);
+				$mem = Member::Estimate($e['form-data']['capid']);
+				if (!$mem || !$attendance->has($mem)) {
 					return ['error' => 311];
 				}
 				if ($m->hasPermission('SignUpEdit') && $e['form-data']['capid'] != $m->uname) {
