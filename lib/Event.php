@@ -728,8 +728,8 @@
         public function set ($arr) {
             foreach ($arr as $k => $v) {
                 $this->$k = $v;
+				$this->data[$k] = $v;
             }
-            $this->data = $arr;
         }
 
         /**

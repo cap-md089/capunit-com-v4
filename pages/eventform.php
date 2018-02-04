@@ -307,7 +307,6 @@
 					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
 					'Complete' => $eventdata['form-data']['entryComplete'] == 'true',
 					'Administration' => $eventdata['form-data']['adminComments'],
-					'Status' => $eventdata['form-data']['eventStatus'],
 					'Debrief' => $eventdata['form-data']['Debrief'],
 					'CAPPOC1ID' => $eventdata['form-data']['CAPPOC1ID'],
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
@@ -330,9 +329,18 @@
 					'TeamID' => $eventdata['form-data']['TeamID']
 				), Null, $member);
 
+
 				if (gettype($event) == gettype('string')) {
 					return $event;
 				}
+
+				if ($member->AccessLevel == 'Cadet Staff') {
+					$event->set(array (
+						'Status' => $eventdata['form-data']['eventStatus'],
+					), Null, $member);
+				}
+
+				$event->save();
 
 				if (isset($eventdata['form-data']['eventFiles'])) {
 					foreach ($eventdata['form-data']['eventFiles'] as $file) {
@@ -433,7 +441,6 @@
 					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
 					'Complete' => $eventdata['form-data']['entryComplete'] == 'true',
 					'Administration' => $eventdata['form-data']['adminComments'],
-					'Status' => $eventdata['form-data']['eventStatus'],
 					'Debrief' => $eventdata['form-data']['Debrief'],
 					'CAPPOC1ID' => $eventdata['form-data']['CAPPOC1ID'],
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
@@ -457,6 +464,11 @@
 					'TeamID' => $eventdata['form-data']['TeamID']
 				));
 
+				if ($member->AccessLevel == 'Cadet Staff') {
+					$event->set(array (
+						'Status' => $eventdata['form-data']['eventStatus'],
+					), Null, $member);
+				}
 
 				if (isset($eventdata['form-data']['eventFiles'])) {
 					foreach ($eventdata['form-data']['eventFiles'] as $file) {
