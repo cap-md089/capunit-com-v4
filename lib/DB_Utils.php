@@ -48,7 +48,10 @@
                     require_once(BASE_DIR."lib/Error.php");
                     ErrorMSG::Log($stmt->errorInfo()[2], $stmt->queryString);
                 }
-            } catch (PDOException $e) {}
+            } catch (PDOException $e) {
+                require_once(BASE_DIR."lib/Error.php");
+                ErrorMSG::Log($stmt->errorInfo()[2], $stmt->queryString);
+            }
             return $retdata;
         }
     }

@@ -375,6 +375,7 @@
                 $coc = $m->goToPage("/preview/Widgets/Commanders.aspx");
                 $newTime = time();
                 $account = $_ACCOUNT;
+                $ORGID = Util_Collection::CommandersUnit(var_export($coc,true), $m);
 
                 $pdo = DB_Utils::CreateConnection();
                 $stmt = $pdo->prepare('SELECT AccessCount FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
@@ -391,7 +392,7 @@
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
-                    $stmt->bindValue(':oid', 0); //future capability
+                    $stmt->bindValue(':oid', $ORGID);
                     $stmt->bindValue(':coc', var_export($coc,true));
                     $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
@@ -418,7 +419,7 @@
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
-                    $stmt->bindValue(':oid', 0); //future capability
+                    $stmt->bindValue(':oid', $ORGID);
                     $stmt->bindValue(':coc', var_export($coc,true));
                     $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {

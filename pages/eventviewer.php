@@ -181,6 +181,9 @@
 				if ($attendance->has($m)) {
 					return "You're already signed up!";
 				}
+				//add in here a flag to add an entry to an event signup table
+
+				//change this from 'best' email to 'all' emails
 				UtilCollection::sendFormattedEmail([
 					'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
 					'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])

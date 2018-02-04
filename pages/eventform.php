@@ -252,6 +252,12 @@
 			if ($eventdata['form-data']['function'] == 'create') {
 				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
 
+				if ($member->AccessLevel == 'CadetStaff') {
+					$correctedEventStatus = 'Draft';
+				} else {
+					$correctedEventStatus = $eventdata['form-data']['eventStatus'];
+				}
+
 				$poc1 = Member::Estimate($eventdata['form-data']['CAPPOC1ID']);
 				$poc2 = Member::Estimate($eventdata['form-data']['CAPPOC2ID']);
 
@@ -306,8 +312,6 @@
 					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
 					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
 					'Complete' => $eventdata['form-data']['entryComplete'] == 'true',
-					'Administration' => $eventdata['form-data']['adminComments'],
-					'Debrief' => $eventdata['form-data']['Debrief'],
 					'CAPPOC1ID' => $eventdata['form-data']['CAPPOC1ID'],
 					'CAPPOC1Name' => !!$poc1 ? $poc1->memberRank . ' ' . $poc1->memberName : '',
 					'CAPPOC1Phone' => $eventdata['form-data']['CAPPOC1Phone'],
@@ -368,6 +372,7 @@
 				return JSSnippet::PageRedirect('calendar');
 
 			} else if ($eventdata['form-data']['function'] == 'edit') {
+				if (!$member->hasPermission('EditEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
 				$ev = $eventdata['form-data']['eventnumber'];
 				$event = Event::Get($ev);
 
@@ -375,7 +380,7 @@
 					return $event->error;
 				}
 
-				if (!$event->isPOC($member)) {
+				if (($member->AccessLevel == 'CadetStaff') && (!$event->isPOC($member))) {
 					return ['error' => 402];
 				}
 
