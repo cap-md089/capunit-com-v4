@@ -691,7 +691,7 @@
                 $stmt->bindValue(':cid', $this->uname);
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) > 0) {
-                    $o = $data[0][''];
+                    $o = $data[0]['ORGID'];
                     $stmt = $pdo->prepare('SELECT `Region`, `Wing`, `Unit` FROM '.DB_TABLES['Organization'].' WHERE CAPID = :cid;');
                     $stmt->bindValue(':cid', $this->uname);
                     $data = DB_Utils::ExecutePDOStatement($stmt);
