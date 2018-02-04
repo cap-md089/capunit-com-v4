@@ -96,8 +96,10 @@
 				$html .= "Event administration comments: ".$event->Administration.'<br />';
 				$html .= "<br /><br />";
 				$dlist = new DetailedListPlus("Current Attendance");
-				$alist = new AsyncButton(null, "Short attendance listing", "attendanceListingPopup");
+				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
+				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");
 				$html .= $alist->getHtml('atdir'.$event->EventNumber);
+				$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
 				$attendance = $event->getAttendance();
 				foreach ($attendance as $capid => $data) {
 					$member = Member::Estimate($capid);
@@ -120,7 +122,10 @@
 								'cid' => $capid,
 								'eid' => $event->EventNumber	
 							));
-							if ($member) $dlist->addElement("$capid: $member->memberRank $member->memberName".(($event->isPOC($m) || $m->hasPermission("EditEvent")?" (".$member->getBestEmail().")": "")), $form->getHtml(), $ab);
+							$memberinfo = "$capid: $member->memberRank $member->memberName";
+							if(strlen($member->Squadron)>1) $memberinfo .= "[".$member->Squadron."]";
+							$memberinfo .= (($event->isPOC($m) || $m->hasPermission("EditEvent")?" [".$member->getBestEmail().", ".$member->getBestPhone()."]": ""));
+							if ($member) $dlist->addElement($memberinfo, $form->getHtml(), $ab);
 						} else {	
 							$color = ($data['Status'] == 'Committed/Attended' ? 'color:green' :
 								($data['Status'] == 'Rescinded commitment to attend' ? 'color:yellow' :
@@ -184,12 +189,14 @@
 				//add in here a flag to add an entry to an event signup table
 
 				//change this from 'best' email to 'all' emails
-				UtilCollection::sendFormattedEmail([
-					'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
-					'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])
-				], 'You have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
-				View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
-				'Event signup: Event '.$ev->EventNumber);
+				if (strpos(php_uname('r'), 'amzn1') !== false) {
+					UtilCollection::sendFormattedEmail([
+						'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
+						'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])
+					], 'You have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
+					View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
+					'Event signup: Event '.$ev->EventNumber);
+				}
 				return $attendance->add($m, 
 					$e['form-data']['capTransport'] == 'true', 
 					$e['form-data']['comments']) === true ? 
@@ -279,6 +286,17 @@
 				$att = $event->getAttendance();
 				foreach ($att as $cid => $data) {
 					$html .= $cid.', ';
+				}
+				return rtrim($html, ', ');
+			} else if (($func == 'ateml')) {
+				$html = '';
+				$event = Event::Get((int)$data);
+				$att = $event->getAttendance();
+				foreach ($att as $cid => $data) {
+					$attendee = Member::Estimate($cid);
+					if($attendee) {
+						$html .= $attendee->getBestEmail().', ';
+					}
 				}
 				return rtrim($html, ', ');
 			} else {

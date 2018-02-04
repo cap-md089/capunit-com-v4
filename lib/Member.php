@@ -563,8 +563,9 @@
             $mem = new self ($data);
 
 
-            // As there is no webscraping to get contact info, instead load the data from the database
-            $mem->getCAPWATCHContact();
+            // load the data from sign-in information or CAPWATCH, as available
+            $mem->getContact();
+            $mem->getSquadron();
             // Load extra variables...
             $mem->perms = $mem->getAccessLevels();
             $mem->dutyPositions = $mem->getDutyPositions();
@@ -623,41 +624,80 @@
         /**
          * Gets contact info from CAPWATCH files
          */
-        public function getCAPWATCHContact () {
-            $this->contact = array (
-                "ALPHAPAGER" => [],
-                "ASSISTANT" => [],
-                "CADETPARENTEMAIL" => [],
-                "CADETPARENTPHONE" => [],
-                "CELLPHONE" => [],
-                "DIGITALPAGER" => [],
-                "EMAIL" => [],
-                "HOMEFAX" => [],
-                "HOMEPHONE" => [],
-                "INSTANTMESSAGER" => [],
-                "ISDN" => [],
-                "RADIO" => [],
-                "TELEX" => [],
-                "WORKFAX" => [],
-                "WORKPHONE" => []
-            );
-
-            // Same as webscraping program, just pull from the database
-
-            foreach ($this->contact as $k => $v) {
-                $this->contact[$k] = array (
-                    "PRIMARY" => [],
-                    "SECONDARY" => [],
-                    "EMERGENCY" => []
-                );
-            }
-
+        public function getContact () {
             $pdo = DB_Utils::CreateConnection();
-            $stmt = $pdo->prepare('SELECT `Type`, `Priority`, `Contact` FROM '.DB_TABLES['MemberContact'].' WHERE CAPID = :cid;');
+            $stmt = $pdo->prepare('SELECT `Contacts` FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY `LastAccessTime` DESC;');
             $stmt->bindValue(':cid', $this->uname);
             $data = DB_Utils::ExecutePDOStatement($stmt);
-            foreach ($data as $datum) {
-                $this->contact[str_replace(' ', '', $datum['Type'])][$datum['Priority']][] = $datum['Contact'];
+
+            if (count($data) > 0) {
+                //we have a recent sign-in
+                $this->contact = json_decode($data[0]['Contacts'], true);
+            } else {
+                //no recent sign-in so pull from CAPWATCH file data
+                $this->contact = array (
+                    "ALPHAPAGER" => [],
+                    "ASSISTANT" => [],
+                    "CADETPARENTEMAIL" => [],
+                    "CADETPARENTPHONE" => [],
+                    "CELLPHONE" => [],
+                    "DIGITALPAGER" => [],
+                    "EMAIL" => [],
+                    "HOMEFAX" => [],
+                    "HOMEPHONE" => [],
+                    "INSTANTMESSAGER" => [],
+                    "ISDN" => [],
+                    "RADIO" => [],
+                    "TELEX" => [],
+                    "WORKFAX" => [],
+                    "WORKPHONE" => []
+                );
+
+                // Same as webscraping program, just pull from the database
+
+                foreach ($this->contact as $k => $v) {
+                    $this->contact[$k] = array (
+                        "PRIMARY" => [],
+                        "SECONDARY" => [],
+                        "EMERGENCY" => []
+                    );
+                }
+
+                $pdo = DB_Utils::CreateConnection();
+                $stmt = $pdo->prepare('SELECT `Type`, `Priority`, `Contact` FROM '.DB_TABLES['MemberContact'].' WHERE CAPID = :cid;');
+                $stmt->bindValue(':cid', $this->uname);
+                $data = DB_Utils::ExecutePDOStatement($stmt);
+                foreach ($data as $datum) {
+                    $this->contact[str_replace(' ', '', $datum['Type'])][$datum['Priority']][] = $datum['Contact'];
+                }
+            }
+        }
+
+        /**
+         * Gets contact info from CAPWATCH files
+         */
+        public function getSquadron () {
+            $pdo = DB_Utils::CreateConnection();
+            $stmt = $pdo->prepare('SELECT `Squadron` FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY `LastAccessTime` DESC;');
+            $stmt->bindValue(':cid', $this->uname);
+            $data = DB_Utils::ExecutePDOStatement($stmt);
+
+            if (count($data) > 0) {
+                //we have sign-in data
+                $this->Squadron = $data[0]['Squadron'];
+            } else {
+                //no sign-in data, search database
+                $stmt = $pdo->prepare('SELECT `ORGID` FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
+                $stmt->bindValue(':cid', $this->uname);
+                $data = DB_Utils::ExecutePDOStatement($stmt);
+                if (count($data) > 0) {
+                    $o = $data[0][''];
+                    $stmt = $pdo->prepare('SELECT `Region`, `Wing`, `Unit` FROM '.DB_TABLES['Organization'].' WHERE CAPID = :cid;');
+                    $stmt->bindValue(':cid', $this->uname);
+                    $data = DB_Utils::ExecutePDOStatement($stmt);
+                    $data = $data[0];
+                    $this->Squadron = $data['Region']."-".$data['Wing']."-".$data['Unit'];
+                }
             }
         }
 

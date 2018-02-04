@@ -387,8 +387,12 @@ function alertReload (data) {
     getHtml();
 }
 
-function attendanceListingPopup (data) {
-    customDialog("Short Attendance Listing", data);
+function attendanceIDPopup (data) {
+    customDialog("CAPID List", data);
+}
+
+function attendanceEmailPopup (data) {
+    customDialog("Email List", data);
 }
 
 function pageLink_prepush (a, data) {

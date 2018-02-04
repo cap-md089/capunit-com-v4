@@ -34,11 +34,13 @@
             if ($form->CAPPOC1ID != 0) $contact[$form->CAPPOC1Name] = $form->CAPPOC1Email;
             if ($form->CAPPOC2ID != 0) $contact[$form->CAPPOC2Name] = $form->CAPPOC2Email;
             if ($form->ExtPOCName != '') $contact[$form->ExtPOCName] = $form->ExtPOCEmail;
-            return UtilCollection::sendFormattedEmail(
-                $contact,
-                $html,
-                "New event created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
-            );
+            if (strpos(php_uname('r'), 'amzn1') !== false) {
+                return UtilCollection::sendFormattedEmail(
+                    $contact,
+                    $html,
+                    "New event created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
+                );
+            }
         } else { // Event was changed, data is available for comparison
             if($form->Status=='Complete' && $form->EndDateTime < time()) {
                 if($form->Debrief != '') {
@@ -76,7 +78,8 @@
                     }
                 }
 
-                $html = $member->RankName." has updated event $_ACCOUNT-$form->EventNumber.<br /><ul>";
+                $html = $member->RankName." has updated event $_ACCOUNT-$form->EventNumber: $form->EventName.<br />";
+                $html .= "On ".date('h:i A n/j/Y', $form->$StartDateTime)."<br /><ul>";
 
                 foreach ($fields as $field => $vals) {
                     if ($vals[0] == '') {
@@ -103,11 +106,13 @@
 
                 if ($form->AdditionalEmailAddresses != '') $contact[$form->AdditionalEmailAddresses] = $form->AdditionalEmailAddresses;
                 
-                return UtilCollection::sendFormattedEmail(
-                    $contact,
-                    $html,
-                    "Event update for $_ACCOUNT-$form->EventNumber"
-                );
+                if (strpos(php_uname('r'), 'amzn1') !== false) {
+                    return UtilCollection::sendFormattedEmail(
+                        $contact,
+                        $html,
+                        "Event update for $_ACCOUNT-$form->EventNumber"
+                    );
+                }
             }
         }
     }
