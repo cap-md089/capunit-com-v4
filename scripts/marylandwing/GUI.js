@@ -354,7 +354,7 @@ window.loaded.push(function() {
         $("textarea").keyup(resizeTextareas);
     });
     addFunction(function() {
-        $("#signin_link").on("click touch", function() {
+        $(".signin_link").on("click touch", function() {
             $("#signIn_box").css("display", "block");
             $(this).blur();
             $("#mother").append('<div id="cover"></div>');

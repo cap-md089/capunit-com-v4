@@ -22,7 +22,7 @@
 		 * @return str HTML to use
 		 */
 		public static function SigninLink ($text) {
-			return "<a href=\"#\" id=\"signin_link\">$text</a>";
+			return "<a href=\"#\" class=\"signin_link\">$text</a>";
 		}
 
 

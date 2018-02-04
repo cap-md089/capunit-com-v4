@@ -30,7 +30,7 @@ window.stuckMenu = false;
 var initializeMobile = function () {
     window.mobile = true;
     $(".desktop").addClass("mobile").removeClass("desktop");
-    $("#body").prepend("<div id=\"mobilemenublock\"><div id=\"mobileopener\"><span class=\"arrow\"></span></div><div id=\"mobilemenu\"></div></div><div id=\"mobilemenuhelper\"></div>");
+    $("#body").prepend("<div id=\"mobilemenublock\"><div id=\"mobileopener\"><span class=\"arrow\"></span><span id=\"menuMenu\">Menu</span></div><div id=\"mobilemenu\"></div></div><div id=\"mobilemenuhelper\"></div>");
     $("#mobileopener").on('click touch', function () {
         (ulopen ? closemenu : slidemenu)();
     });
@@ -353,17 +353,17 @@ window.loaded.push(function() {
         var html = "<h2>Oops! Error #" + code[1] + " occurred, for more details ask the webmaster</h2>";
         html += '<p style="font-family:monospace;">' + code[0] + '</p>';
         if (code[1] == 411) {
-            html += "<p><a href=\"#\" id=\"signin_link\">Sign in now</a></p>";
+            html += "<p><a href=\"#\" class=\"signin_link\">Sign in now</a></p>";
         }
         $("#pageblock").html(html);
         $("#sidenav").html("");
         $("#breadcrumbs").html("");
 
-        $("#signin_link").on("click touch", displaySignIn);
+        $(".signin_link").on("click touch", displaySignIn);
     };
 
     addFunction(function () {
-        $("#signin_link").on("click touch", displaySignIn);
+        $(".signin_link").on("click touch", displaySignIn);
         $("#signout_link").on("click touch", function () {
             localStorage.removeItem("LOGIN_DETAILS");
             getHtml();
@@ -429,7 +429,7 @@ window.loaded.push(function() {
         $("#signin_box").css({
             'display':'none'
         });
-        $("#signin_link").on("click touch", displaySignIn);
+        $(".signin_link").on("click touch", displaySignIn);
     });
     addFunction(function() {
         $("textarea").each(resizeTextareas);
