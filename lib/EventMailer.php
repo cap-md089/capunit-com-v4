@@ -78,8 +78,8 @@
                     }
                 }
 
-                $html = $member->RankName." has updated event $_ACCOUNT-$form->EventNumber: $form->EventName.<br />";
-                $html .= "On ".date('h:i A n/j/Y', $form->$StartDateTime)."<br /><ul>";
+                $html = $member->RankName." has updated event $_ACCOUNT-$form->EventNumber: $form->EventName";
+                $html .= " On ".date('h:i A n/j/Y', $form->StartDateTime)."<br /><ul>";
 
                 foreach ($fields as $field => $vals) {
                     if ($vals[0] == '') {
