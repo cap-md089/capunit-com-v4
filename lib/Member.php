@@ -103,6 +103,11 @@
         public $AccessLevel = '';
 
         /**
+         * @var string Name of unit to which assigned
+         */
+        public $Squadron = '';
+
+        /**
          * @var string $firstName First name
          * @var string $middleName Middle name
          * @var string $lastName Last name
@@ -242,6 +247,7 @@
                     $mn = $h->getElementById("txtMI");
                     $ln = $h->getElementById("txtLastName");
                     $s = $h->getElementById("txtSuffix");
+                    $sq = $h->getElementById("txtSquadron");
 
                     $m->memberName = "No name";
 
@@ -265,6 +271,9 @@
                     if ($s && $s->hasAttribute("value") && $s->getAttribute("value") != '') {
                         $m->memberName .= ' '.$s->getAttribute("value");
                         $m->suffix = $s->getAttribute("value");
+                    }
+                    if ($sq && $sq->hasAttribute("value") && $sq->getAttribute("value") != '') {
+                        $m->Squadron = $sq->getAttribute("value");
                     }
 
                     // Get the member rank
@@ -372,10 +381,9 @@
                 $m->capid = $m->uname; // Alias
 
                 //populate/update SignInData table
-                $coc = $m->goToPage("/preview/Widgets/Commanders.aspx");
                 $newTime = time();
                 $account = $_ACCOUNT;
-                $ORGID = Util_Collection::CommandersUnit(var_export($coc,true), $m);
+                $coc = $m->goToPage("/CAP.eServices.Web/MyAccount/GeneralInfo.aspx");
 
                 $pdo = DB_Utils::CreateConnection();
                 $stmt = $pdo->prepare('SELECT AccessCount FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
@@ -384,7 +392,7 @@
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :mrank, :contacts, :oid, :coc);");
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :mrank, :contacts, :sqn, :coc);");
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
@@ -392,7 +400,7 @@
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
-                    $stmt->bindValue(':oid', $ORGID);
+                    $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', var_export($coc,true));
                     $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
@@ -409,7 +417,7 @@
                     $newCount = $data['AccessCount'];
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
-                    $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, ORGID=:oid, ChainOfCommand=:coc ";
+                    $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, Squadron=:sqn, ChainOfCommand=:coc ";
                     $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
@@ -419,7 +427,7 @@
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
-                    $stmt->bindValue(':oid', $ORGID);
+                    $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', var_export($coc,true));
                     $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
