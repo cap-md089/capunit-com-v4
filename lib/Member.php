@@ -622,7 +622,7 @@
 
 
         /**
-         * Gets contact info from CAPWATCH files
+         * Gets contact info from sign-in table or CAPWATCH files, as available
          */
         public function getContact () {
             $pdo = DB_Utils::CreateConnection();
@@ -674,7 +674,7 @@
         }
 
         /**
-         * Gets contact info from CAPWATCH files
+         * Gets squadron from sign-in table if present, otherwise from CAPWATCH
          */
         public function getSquadron () {
             $pdo = DB_Utils::CreateConnection();
@@ -689,14 +689,16 @@
                 //no sign-in data, search database
                 $stmt = $pdo->prepare('SELECT `ORGID` FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
                 $stmt->bindValue(':cid', $this->uname);
-                $data = DB_Utils::ExecutePDOStatement($stmt);
-                if (count($data) > 0) {
-                    $o = $data[0]['ORGID'];
-                    $stmt = $pdo->prepare('SELECT `Region`, `Wing`, `Unit` FROM '.DB_TABLES['Organization'].' WHERE CAPID = :cid;');
-                    $stmt->bindValue(':cid', $this->uname);
-                    $data = DB_Utils::ExecutePDOStatement($stmt);
-                    $data = $data[0];
-                    $this->Squadron = $data['Region']."-".$data['Wing']."-".$data['Unit'];
+                $ORGdata = DB_Utils::ExecutePDOStatement($stmt);
+                if (count($ORGdata) > 0) {
+                    $o = $ORGdata[0]['ORGID'];
+                    $stmt = $pdo->prepare('SELECT `Region`, `Wing`, `Unit` FROM '.DB_TABLES['Organization'].' WHERE ORGID = :oid;');
+                    $stmt->bindValue(':oid', $o);
+                    $OrganizationData = DB_Utils::ExecutePDOStatement($stmt);
+                    if(count($OrganizationData) > 0) {
+                        $OrganizationData = $OrganizationData[0];
+                        $this->Squadron = $OrganizationData['Region']."-".$OrganizationData['Wing']."-".$OrganizationData['Unit'];
+                    }
                 }
             }
         }
