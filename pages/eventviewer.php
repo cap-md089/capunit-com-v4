@@ -272,7 +272,7 @@
 					//need to indicate to user that calendar update failed
 				}
 				//eventMailer should return an execution status and be reported/error recorded
-				// eventMailer($m, $ne);
+				eventMailer($m, $ne);
 				return [
 					'body' => [
 						'MainBody' => $ne->EventNumber
