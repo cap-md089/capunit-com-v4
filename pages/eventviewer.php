@@ -102,7 +102,7 @@
 				$html .= "Meals: ".$event->Meals.'<br />';
 			}
 			if(strlen($event->EventWebsite) > 0) {
-				$html .= "Event Website: <A HREF=\"".$event->EventWebsite."\">$event->EventWebsite</A>".'<br />';
+				$html .= "Event Website: <A HREF=\"".$event->EventWebsite."\" target=\"_blank\">$event->EventWebsite</A>".'<br />';
 			}
 			if($event->TeamID > 0) {
 				$pdo = DB_Utils::CreateConnection();
