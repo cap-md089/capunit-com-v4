@@ -135,7 +135,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
             $html = ''; 
             
             $leftsection1 = <<<leftsection
-            <section class="halfSection">
+            <section class="halfSection" style="float:left">
                 <div>
             
                 </div>
@@ -180,7 +180,7 @@ leftsection;
             $es = new Link ("page", "<img style=\"display:block;margin:0 auto;\" src=\"/{$dir}images/emergency.png\" /><p style=\"text-align:center;\">Emergency Services</p>", ['emergencyservices']);
 
             $rightsection1 = <<<rightsection
-<section class="halfSection">
+<section class="halfSection" style="float:right">
     <div style="width:180px;margin:10px auto;">
         $ae
     </div>
@@ -195,7 +195,7 @@ leftsection;
 </section>
 rightsection;
             
-            $html .= $leftsection1 . $rightsection1 . "<div class=\"divider\"></div>";
+            // $html .= $leftsection1 . $rightsection1 . "<div class=\"divider\"></div>";
 
             $pdo = DBUtils::CreateConnection();
             $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND Activity LIKE '%Recurring Meeting%' LIMIT 1;");
@@ -234,6 +234,9 @@ rightsection;
             }
             $html .= "</section>";
 
+            $html .= "<div class=\"divider\"></div>";
+            $html .= $leftsection1 . $rightsection1 . "<div class=\"divider\"></div>";
+
             $count = 0;
             $con = Registry::Get("Contact");
             $count = !!$con->FaceBook ?
@@ -241,7 +244,7 @@ rightsection;
                 (!!$con->Twitter ? 1 : 0);
 
             if ($count > 0) {
-                $html .= "<div class=\"divider\"></div>";
+                // $html .= "<div class=\"divider\"></div>";
                 $class = $count == 2 ? 'halfSection' : 'fullSection';
                 if (!!$con->Twitter) {
                     $html .= <<<EOD
