@@ -161,7 +161,7 @@
 						$count = count($Events[$CTD]);
 					} else {
 						foreach ($Events[$CTD] as $event) {
-							$count += $event['Status'] == 'Draft' || $event['Author'] == $m->uname ? 0 : 1;
+							$count += $event['Status'] == 'Draft' || ($l && $event['Author'] == $m->uname) ? 0 : 1;
 						}
 					}
 					if ($e['parameter']['mobile'] == 'true' && $count == 0) {
