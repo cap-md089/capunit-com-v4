@@ -297,13 +297,13 @@
 					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
 					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
+						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
 						'CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication',
-						'CAP Identification Card',
 						'Other'
 					]),
 					'Comments' => $eventdata['form-data']['comments'],
@@ -425,13 +425,13 @@
 					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
 					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
+						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
 						'CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication',
-						'CAP Identification Card',
 						'Other'
 					]),
 					'Comments' => $eventdata['form-data']['comments'],
