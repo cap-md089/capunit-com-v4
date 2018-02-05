@@ -276,7 +276,8 @@
 					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
 					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 
+						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					]),
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
@@ -409,7 +410,8 @@
 					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
 					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 
+						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					]),
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
@@ -466,7 +468,6 @@
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
-					'Author' => $member->uname,
 					'PartTime' => true,
 					'TeamID' => $eventdata['form-data']['TeamID']
 				));
