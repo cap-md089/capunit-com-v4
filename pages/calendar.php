@@ -157,11 +157,11 @@
 						continue;
 					}
 					$count = 0;
-					if ($l && ($m->hasPermission('EditEvent') || $event['Author'] == $m->uname)) {
+					if ($l && ($m->hasPermission('EditEvent')) {
 						$count = count($Events[$CTD]);
 					} else {
 						foreach ($Events[$CTD] as $event) {
-							$count += $event['Status'] == 'Draft' ? 0 : 1;
+							$count += $event['Status'] == 'Draft' || $event['Author'] == $m->uname ? 0 : 1;
 						}
 					}
 					if ($e['parameter']['mobile'] == 'true' && $count == 0) {

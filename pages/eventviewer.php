@@ -150,6 +150,21 @@
 
 
 			if ($l) {
+				$pdo = DBUtils::CreateConnection();
+				$stmt = $pdo->prepare("SELECT FileID FROM ".DB_TABLES['FileEventAssignments']." WHERE EID = :ev AND AccountID = :aid;");
+				$stmt->bindValue(':aid', $a->id);
+				$stmt->bindValue(':ev', $event->EventNumber);
+				$data = DBUtils::ExecutePDOStatement($stmt);
+				if (count($data) > 0) {
+					$html .= "<br /><br /><h3>Event Files</h3>";
+				}
+				print_r($data);
+				foreach ($data as $row) {
+					$file = File::Get($row["FileID"]);
+					if ($file) {
+						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()."<br />";
+					}
+				}
 				$html .= "<br /><br />";
 				$html .= "Event administration comments: ".$event->Administration.'<br />';
 				$html .= "<br /><br />";
