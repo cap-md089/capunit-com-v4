@@ -42,7 +42,7 @@
 					->addField ('', 'Activity Information', 'label')
 					->addField ('comments', 'Comments', 'textarea', Null, Null, $event->Comments)
 					->addField ('activity', 'Activity Type', 'multcheckbox', Null, [
-						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Squadron Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					], explode(', ', $event->Activity))
 					->addField ('lodging', 'Lodging Arrangements', 'multcheckbox', Null, [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -52,16 +52,17 @@
 					->addField ('', 'Logistics Information', 'label')
 					->addField ('uniform', '*Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 
+						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					], explode(', ', $event->Uniform))
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
+						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
 						'CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication',
-						'CAP Identification Card',
 						'Other'
 					], explode(', ', $event->RequiredForms))
 					->addField ('requiredEquipment', 'Required Equipment', 'text', Null, Null, $event->RequiredEquipment)
@@ -141,7 +142,7 @@
 					->addField ('', 'Activity Information', 'label')
 					->addField ('comments', 'Comments', 'textarea')
 					->addField ('activity', 'Activity Type', 'multcheckbox', Null, [
-						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Squadron Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					])
 					->addField ('lodging', 'Lodging Arrangements', 'multcheckbox', Null, [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -151,16 +152,17 @@
 					->addField ('', 'Logistics Information', 'label')
 					->addField ('uniform', '*Uniform', 'multcheckbox', Null, [
 						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 'Civilian Attire', 'Not Applicable'
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 
+						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					], ['Battle Dress Uniform or Airman Battle Uniform (BDU ABU)'])
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
+						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
 						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
 						'CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication',
-						'CAP Identification Card',
 						'Other'
 					], ['CAP Identification Card'])
 					->addField ('requiredEquipment', 'Required Equipment', 'text')
