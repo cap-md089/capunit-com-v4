@@ -176,6 +176,7 @@
 					$TD .= "</div>";
 					$TD .= "<div class=\"td-data\"><ul>";
 					foreach ($Events[$CTD] as $event) {
+						$stat = -1;
 						switch ($event['Status']) {
 
 							case 'Deleted' :

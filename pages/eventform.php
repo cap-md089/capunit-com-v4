@@ -333,18 +333,12 @@
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
 					'PartTime' => true,
+					'Status' => $correctedEventStatus,
 					'TeamID' => $eventdata['form-data']['TeamID']
 				), Null, $member);
 
-
 				if (gettype($event) == gettype('string')) {
 					return $event;
-				}
-
-				if ($member->AccessLevel == 'Cadet Staff') {
-					$event->set(array (
-						'Status' => $eventdata['form-data']['eventStatus'],
-					), Null, $member);
 				}
 
 				$event->save();
