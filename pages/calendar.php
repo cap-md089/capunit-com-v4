@@ -157,7 +157,7 @@
 						continue;
 					}
 					$count = 0;
-					if ($l && ($m->hasPermission('EditEvent')) {
+					if ($l && ($m->hasPermission('EditEvent'))) {
 						$count = count($Events[$CTD]);
 					} else {
 						foreach ($Events[$CTD] as $event) {
