@@ -3,6 +3,7 @@
 	
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
+			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
 
 			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
@@ -64,15 +65,59 @@
 			$html .= "End at ".date('h:i A \o\n n/j/Y', $event->EndDateTime).'<br />';
 			$html .= "Pickup at ".date('h:i A \o\n n/j/Y', $event->PickupDateTime).' at '.$event->PickupLocation.'<br /><br />';
 
-			// Third (fourth?) block
+			// Third block
 			$html .= "Transportation provided: ".($event->TransportationProvided == 1 ? 'YES' : 'NO').'<br />';
+			if(strlen($event->TransportationDescription) > 0) {
+				$html .= "Transportation Description: ".$event->TransportationDescription.'<br />';
+			}
 			$html .= "Uniform: ".$event->Uniform.'<br />';
-			$html .= "Comments: ".$event->Comments.'<br />';
-			$html .= "Activity: ".$event->Activity.'<br />';
-			$html .= "Required forms: ".$event->RequiredForms.'<br />';  
-			$html .= "Required equipment: ".$event->RequiredEquipment.'<br />';
-			$html .= "Registration Deadline: ".date('n/j/Y', $event->RegistrationDeadline).'<br />';
-			$html .= "Meals: ".$event->Meals.'<br />';
+			if(strlen($event->Comments) > 0) {
+				$html .= "Comments: ".$event->Comments.'<br />';
+			}
+			if(strlen($event->Activity) > 0) {
+				$html .= "Activity: ".$event->Activity.'<br />';
+			}
+			if(strlen($event->RequiredForms) > 0) {
+				$html .= "Required forms: ".$event->RequiredForms.'<br />';  
+			}
+			if(strlen($event->RequiredEquipment) > 0) {
+				$html .= "Required equipment: ".$event->RequiredEquipment.'<br />';
+			}
+			if(strlen($event->HighAdventureDescription) > 0) {
+				$html .= "High Adventure Description: ".$event->HighAdventureDescription.'<br />';
+			}
+			if($event->RegistrationDeadline > 0) {
+				$html .= "Registration Deadline: ".date('n/j/Y', $event->RegistrationDeadline).'<br />';
+			}
+			if(strlen($event->RegistrationInformation) > 0) {
+				$html .= "Registration Information: ".$event->RegistrationInformation.'<br />';
+			}
+			if($event->ParticipationFeeDue > 0) {
+				$html .= "Participation Fee Deadline: ".date('n/j/Y', $event->ParticipationFeeDue).'<br />';
+			}
+			if($event->ParticipationFee > 0) {
+				$html .= "Participation Fee: ".$event->ParticipationFee.'<br />';
+			}
+			if(strlen($event->Meals) > 0) {
+				$html .= "Meals: ".$event->Meals.'<br />';
+			}
+			if(strlen($event->EventWebsite) > 0) {
+				$html .= "Event Website: <A HREF=\"".$event->EventWebsite."\">$event->EventWebsite</A>".'<br />';
+			}
+			if($event->TeamID > 0) {
+				$pdo = DB_Utils::CreateConnection();
+				$stmt = $pdo->prepare('SELECT `TeamName` FROM '.DB_TABLES['Team'].' WHERE TeamID = :tid AND AccountID = :aid;');
+				$stmt->bindValue(':tid', $event->TeamID);
+				$stmt->bindValue(':aid', $_ACCOUNT->id);
+				$data = DB_Utils::ExecutePDOStatement($stmt);
+				if(count($data) > 0) {
+					$html .= "Team Name: ".$data[0]['TeamName'].'<br />';
+				}
+			}
+			$html .= "Desired number of Participants: ".$event->DesiredNumParticipants.'<br />';
+			$html .= "Event status: ".$event->Status.'<br /><br />';
+
+			// Fourth block
 			if ($event->CAPPOC1ID != 0) {
 				$html .= "CAP Point of Contact: ".$event->CAPPOC1Name."<br />";
 				$html .= "CAP Point of Contact phone: ".$event->CAPPOC1Phone."<br />";
@@ -88,8 +133,21 @@
 				$html .= "CAP Point of Contact phone: ".$event->ExtPOCPhone."<br />";
 				$html .= "CAP Point of Contact email: ".$event->ExtPOCEmail."<br />";
 			}
-			$html .= "Desired number of Participants: ".$event->DesiredNumParticipants.'<br />';
-			$html .= "Event status: ".$event->Status.'<br />';
+			if ($l) {
+				$member = Member::Estimate($event->Author);
+				if($member && strlen($member->RankName) > 0) {
+					$html .= "Event Author: ".$member->RankName."<br />";
+				}
+				if (strlen($event->AdditionalEmailAddresses) > 0) {
+					$html .= "Additional Email Addresses: ".$event->AdditionalEmailAddresses.'<br />';
+				}
+				if ($event->PublishToWingCalendar == 1) {
+					$html .= "Publish to Wing Calendar: Yes<br />";
+				} else {
+					$html .= "Publish to Wing Calendar: No<br />";
+				}
+			}
+
 
 			if ($l) {
 				$pdo = DBUtils::CreateConnection();
@@ -204,14 +262,12 @@
 				//add in here a flag to add an entry to an event signup table
 
 				//change this from 'best' email to 'all' emails
-				if (strpos(php_uname('r'), 'amzn1') !== false) {
-					UtilCollection::sendFormattedEmail([
-						'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
-						'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])
-					], 'You have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
-					View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
-					'Event signup: Event '.$ev->EventNumber);
-				}
+				UtilCollection::sendFormattedEmail([
+					'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
+					'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])
+				], 'You have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
+				View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
+				'Event signup: Event '.$ev->EventNumber);
 				return $attendance->add($m, 
 					$e['form-data']['capTransport'] == 'true', 
 					$e['form-data']['comments']) === true ? 
