@@ -100,7 +100,7 @@
 					->addField ('groupEventNumber', 'Group Event Number', 'radio', Null, [
 						'Not Required', 'To Be Applied For', 'Applied For', 'Other'
 					], $event->GroupEventNumber)
-					->addField ('eventStatus', 'Event Status*', 'radio', Null, $member->AccessLevel == 'CadetStaff' ? ['Draft'] : [
+					->addField ('eventStatus', 'Event Status*', 'radio', Null, [
 						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
 					], $event->Status)
 					->addField ('entryComplete', 'Entry Complete', 'checkbox', Null, Null, $event->Complete)
@@ -200,7 +200,7 @@
 					->addField ('groupEventNumber', 'Group Event Number', 'radio', Null, [
 						'Not Required', 'To Be Applied For', 'Applied For', 'Other'
 					], 'Not Required')
-					->addField ('eventStatus', 'Event Status*', 'radio', Null, $member->AccessLevel == 'CadetStaff' ? ['Draft'] : [
+					->addField ('eventStatus', 'Event Status*', 'radio', Null, [
 						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
 					], 'Draft')
 					->addField ('entryComplete', 'Entry Complete', 'checkbox')
@@ -253,12 +253,6 @@
 
 			if ($eventdata['form-data']['function'] == 'create') {
 				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
-
-				if ($member->AccessLevel == 'CadetStaff') {
-					$correctedEventStatus = 'Draft';
-				} else {
-					$correctedEventStatus = $eventdata['form-data']['eventStatus'];
-				}
 
 				$poc1 = Member::Estimate($eventdata['form-data']['CAPPOC1ID']);
 				$poc2 = Member::Estimate($eventdata['form-data']['CAPPOC2ID']);
@@ -333,7 +327,7 @@
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
 					'PartTime' => true,
-					'Status' => $correctedEventStatus,
+					'Status' => $eventdata['form-data']['eventStatus'],
 					'TeamID' => $eventdata['form-data']['TeamID']
 				), Null, $member);
 
@@ -462,15 +456,10 @@
 					'ExtPOCPhone' => $eventdata['form-data']['ExtPOCPhone'],
 					'ExtPOCEmail' => $eventdata['form-data']['ExtPOCEmail'],
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
+					'Status' => $eventdata['form-data']['eventStatus'],
 					'PartTime' => true,
 					'TeamID' => $eventdata['form-data']['TeamID']
 				));
-
-				if ($member->AccessLevel == 'Cadet Staff') {
-					$event->set(array (
-						'Status' => $eventdata['form-data']['eventStatus'],
-					), Null, $member);
-				}
 
 				if (isset($eventdata['form-data']['eventFiles'])) {
 					foreach ($eventdata['form-data']['eventFiles'] as $file) {
