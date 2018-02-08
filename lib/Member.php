@@ -1043,6 +1043,7 @@
          * @return str Best contact based on list given
          */
         public function getBestContact ($cl) {
+	    if(!$cl) return false;
             for ($i = 0, $p = Null; $i < count($cl) && !isset($p); $i++) {
                 $p = isset($p) ? $p : isset($this->contact[$cl[$i]]["PRIMARY"][0]) ? $this->contact[$cl[$i]]["PRIMARY"][0] : Null;
             }
