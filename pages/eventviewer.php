@@ -197,7 +197,29 @@
 							));
 							$memberinfo = "$capid: $member->memberRank $member->memberName";
 							if(strlen($member->Squadron)>1) $memberinfo .= "[".$member->Squadron."]";
-							$memberinfo .= (($event->isPOC($m) || $m->hasPermission("EditEvent")?" [".$member->getBestEmail().", ".$member->getBestPhone()."]": ""));
+							$memEmail = '';
+							$memPhone = '';
+							if($member->contact) {
+								$memEmail = $member->getBestEmail();
+								$memPhone = $member->getBestPhone();
+							}
+							if($memEmail || $memPhone) {
+								//set contactstring
+								//" [".$member->getBestEmail().", ".$member->getBestPhone()."]"
+								$contactString = " [";
+								if($memEmail && $memPhone) {
+									$contactString .= $member->getBestEmail().", ".$member->getBestPhone();
+								} elseif ($memEmail) {
+									$contactString .= $member->getBestEmail();
+								} else {
+									$contactString .= $member->getBestPhone();
+								}
+								$contactString .= "]";
+							} else {
+								$contactString = "";
+							}
+							
+							$memberinfo .= (($event->isPOC($m) || $m->hasPermission("EditEvent")?$contactString: ""));
 							if ($member) $dlist->addElement($memberinfo, $form->getHtml(), $ab);
 						} else {	
 							$color = ($data['Status'] == 'Committed/Attended' ? 'color:green' :
