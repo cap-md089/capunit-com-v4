@@ -29,14 +29,13 @@
 		public function add (\Member $member, $plantouse=false, $comments='') {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :contacts, :comments, :status, :plantouse, :accountid, :reqs, :sent);');
+			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent);');
 			$time = time();
 			$stmt->bindValue(':plantouse', $plantouse ? 1 : 0);
 			$stmt->bindValue(':time', $time);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':cid', $member->uname);
 			$stmt->bindValue(':crank', $member->memberRank . ' ' . $member->memberName);
-			$stmt->bindValue(':contacts', json_encode($member->contact));
 			$stmt->bindValue(':comments', $comments);
 			$stmt->bindValue(':status', 'Committed/Attended');
 			$stmt->bindValue(':accountid', $_ACCOUNT->id);
@@ -48,7 +47,6 @@
 				'EventID' => $this->EventNumber,
 				'CAPID' => $member->uname,
 				'MemberRankName' => $member->memberRank . ' ' . $member->memberName,
-				'Contacts' => $member->contact,
 				'Comments' => $comments,
 				'Status' => 'Commited/Attended',
 				'Requirements' => '',
