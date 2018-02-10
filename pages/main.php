@@ -211,7 +211,8 @@ rightsection;
 				if (!!$e) {
                 $link = new Link('eventviewer', "View details", [$e->EventNumber]);
                 $html .= "<section class=\"halfSection\" style=\"text-align: left\">
-                	    <h3 style=\"text-align: center\">Next Meeting</h3>
+                        <h3 style=\"text-align: center\">Next Meeting</h3>
+                        <strong>Event:</strong> $e->EventName<br />
                     	<strong>Time:</strong> ".date('D, d M Y H:i:s', $e->MeetDateTime)."<br />
             	        <strong>Location:</strong> $e->MeetLocation<br />
         	            <strong>Uniform of the Day:</strong> $e->Uniform<br />

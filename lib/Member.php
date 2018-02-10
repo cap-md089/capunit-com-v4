@@ -83,6 +83,11 @@
         public $contact;
 
         /**
+         * @var string Raw contact information
+         */
+        public $rawContact = '';
+
+        /**
          * @var string Cookie data used to sign into NHQ as this user
          */
         public $cookieData = '';
@@ -298,6 +303,8 @@
                     // Is the argument there? If so, skip a bit of webscraping
                     error_reporting(E_ALL ^ E_WARNING); // NHQ has some nasty html
                     $h = $m->goToPage("/CAP.eServices.Web/MyAccount/ContactInfo.aspx");
+                    $m->rawContact = $h['body'];
+                    $logger->Log("gvContactInformation: ".$h['body'], 8);
                     $h = Util_Collection::ParseHTML($h['body']);
                     error_reporting(E_ALL);
                     $table = $h->getElementById("gvContactInformation");
@@ -392,7 +399,7 @@
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :mrank, :contacts, :sqn, :coc);");
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :mrank, :contacts, :raw, :sqn, :coc);");
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
@@ -400,9 +407,10 @@
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
+                    $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', var_export($coc,true));
-                    $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
+                    // $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
                             $logger->Warn("$m->uname couldn't execute set SignInData, ". var_export($stmt->errorInfo(), true), 3);
@@ -417,7 +425,7 @@
                     $newCount = $data['AccessCount'];
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
-                    $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, Squadron=:sqn, ChainOfCommand=:coc ";
+                    $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, Squadron=:sqn, ChainOfCommand=:coc ";
                     $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
@@ -427,9 +435,10 @@
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
+                    $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', var_export($coc,true));
-                    $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
+                    // $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
                             $logger->Warn("$m->uname couldn't execute update SignInData, ". var_export($stmt->errorInfo(), true), 3);
@@ -1043,6 +1052,7 @@
          * @return str Best contact based on list given
          */
         public function getBestContact ($cl) {
+            if(!$this->contact) return false;
             for ($i = 0, $p = Null; $i < count($cl) && !isset($p); $i++) {
                 $p = isset($p) ? $p : isset($this->contact[$cl[$i]]["PRIMARY"][0]) ? $this->contact[$cl[$i]]["PRIMARY"][0] : Null;
             }

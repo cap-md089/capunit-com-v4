@@ -55,54 +55,54 @@
 			}
 
 			// First block
-			$html .= "Event: ".$event->EventName.'<br />';
-			$html .= "Event ID Number: $a-$ev<br />";
+			$html .= "<b>Event:</b> ".$event->EventName.'<br />';
+			$html .= "<b>Event ID Number:</b> $a-$ev<br />";
 			$html .= "Please contact the event POC listed below directly with any questions or comments<br />";
 			
 			// Second block
-			$html .= "Meet at ".date('h:i A \o\n n/j/Y', $event->MeetDateTime).' at '.$event->MeetLocation.'<br />';
-			$html .= "Start at ".date('h:i A \o\n n/j/Y', $event->StartDateTime).' at '.$event->EventLocation.'<br />';
-			$html .= "End at ".date('h:i A \o\n n/j/Y', $event->EndDateTime).'<br />';
-			$html .= "Pickup at ".date('h:i A \o\n n/j/Y', $event->PickupDateTime).' at '.$event->PickupLocation.'<br /><br />';
+			$html .= "<b>Meet</b> at ".date('h:i A \o\n n/j/Y', $event->MeetDateTime).' at '.$event->MeetLocation.'<br />';
+			$html .= "<b>Start</b> at ".date('h:i A \o\n n/j/Y', $event->StartDateTime).' at '.$event->EventLocation.'<br />';
+			$html .= "<b>End</b> at ".date('h:i A \o\n n/j/Y', $event->EndDateTime).'<br />';
+			$html .= "<b>Pickup</b> at ".date('h:i A \o\n n/j/Y', $event->PickupDateTime).' at '.$event->PickupLocation.'<br /><br />';
 
 			// Third block
-			$html .= "Transportation provided: ".($event->TransportationProvided == 1 ? 'YES' : 'NO').'<br />';
+			$html .= "<b>Transportation provided:</b> ".($event->TransportationProvided == 1 ? 'YES' : 'NO').'<br />';
 			if(strlen($event->TransportationDescription) > 0) {
-				$html .= "Transportation Description: ".$event->TransportationDescription.'<br />';
+				$html .= "<b>Transportation Description:</b> ".$event->TransportationDescription.'<br />';
 			}
-			$html .= "Uniform: ".$event->Uniform.'<br />';
+			$html .= "<b>Uniform:</b> ".$event->Uniform.'<br />';
 			if(strlen($event->Comments) > 0) {
-				$html .= "Comments: ".$event->Comments.'<br />';
+				$html .= "<b>Comments:</b> ".$event->Comments.'<br />';
 			}
 			if(strlen($event->Activity) > 0) {
-				$html .= "Activity: ".$event->Activity.'<br />';
+				$html .= "<b>Activity:</b> ".$event->Activity.'<br />';
 			}
 			if(strlen($event->RequiredForms) > 0) {
-				$html .= "Required forms: ".$event->RequiredForms.'<br />';  
+				$html .= "<b>Required forms:</b> ".$event->RequiredForms.'<br />';  
 			}
 			if(strlen($event->RequiredEquipment) > 0) {
-				$html .= "Required equipment: ".$event->RequiredEquipment.'<br />';
+				$html .= "<b>Required equipment:</b> ".$event->RequiredEquipment.'<br />';
 			}
 			if(strlen($event->HighAdventureDescription) > 0) {
-				$html .= "High Adventure Description: ".$event->HighAdventureDescription.'<br />';
+				$html .= "<b>High Adventure Description:</b> ".$event->HighAdventureDescription.'<br />';
 			}
 			if($event->RegistrationDeadline > 0) {
-				$html .= "Registration Deadline: ".date('n/j/Y', $event->RegistrationDeadline).'<br />';
+				$html .= "<b>Registration Deadline:</b> ".date('n/j/Y', $event->RegistrationDeadline).'<br />';
 			}
 			if(strlen($event->RegistrationInformation) > 0) {
-				$html .= "Registration Information: ".$event->RegistrationInformation.'<br />';
+				$html .= "<b>Registration Information:</b> ".$event->RegistrationInformation.'<br />';
 			}
 			if($event->ParticipationFeeDue > 0) {
-				$html .= "Participation Fee Deadline: ".date('n/j/Y', $event->ParticipationFeeDue).'<br />';
+				$html .= "<b>Participation Fee Deadline:</b> ".date('n/j/Y', $event->ParticipationFeeDue).'<br />';
 			}
 			if($event->ParticipationFee > 0) {
-				$html .= "Participation Fee: ".$event->ParticipationFee.'<br />';
+				$html .= "<b>Participation Fee:</b> ".$event->ParticipationFee.'<br />';
 			}
 			if(strlen($event->Meals) > 0) {
-				$html .= "Meals: ".$event->Meals.'<br />';
+				$html .= "<b>Meals:</b> ".$event->Meals.'<br />';
 			}
 			if(strlen($event->EventWebsite) > 0) {
-				$html .= "Event Website: <A HREF=\"".$event->EventWebsite."\" target=\"_blank\">$event->EventWebsite</A>".'<br />';
+				$html .= "<b>Event Website:</b> <A HREF=\"".$event->EventWebsite."\" target=\"_blank\">$event->EventWebsite</A>".'<br />';
 			}
 			if($event->TeamID > 0) {
 				$pdo = DB_Utils::CreateConnection();
@@ -111,40 +111,40 @@
 				$stmt->bindValue(':aid', $_ACCOUNT->id);
 				$data = DB_Utils::ExecutePDOStatement($stmt);
 				if(count($data) > 0) {
-					$html .= "Team Name: ".$data[0]['TeamName'].'<br />';
+					$html .= "<b>Team Name:</b> ".$data[0]['TeamName'].'<br />';
 				}
 			}
-			$html .= "Desired number of Participants: ".$event->DesiredNumParticipants.'<br />';
-			$html .= "Event status: ".$event->Status.'<br /><br />';
+			$html .= "<b>Desired number of Participants:</b> ".$event->DesiredNumParticipants.'<br />';
+			$html .= "<b>Event status:</b> ".$event->Status.'<br /><br />';
 
 			// Fourth block
 			if ($event->CAPPOC1ID != 0) {
-				$html .= "CAP Point of Contact: ".$event->CAPPOC1Name."<br />";
-				$html .= "CAP Point of Contact phone: ".$event->CAPPOC1Phone."<br />";
-				$html .= "CAP Point of Contact email: ".$event->CAPPOC1Email."<br />";
+				$html .= "<b>CAP Point of Contact:</b> ".$event->CAPPOC1Name."<br />";
+				$html .= "<b>CAP Point of Contact phone:</b> ".$event->CAPPOC1Phone."<br />";
+				$html .= "<b>CAP Point of Contact email:</b> ".$event->CAPPOC1Email."<br />";
 			}
 			if ($event->CAPPOC2ID != 0) {
-				$html .= "CAP Point of Contact: ".$event->CAPPOC2Name."<br />";
-				$html .= "CAP Point of Contact phone: ".$event->CAPPOC2Phone."<br />";
-				$html .= "CAP Point of Contact email: ".$event->CAPPOC2Email."<br />";
+				$html .= "<b>CAP Point of Contact:</b> ".$event->CAPPOC2Name."<br />";
+				$html .= "<b>CAP Point of Contact phone:</b> ".$event->CAPPOC2Phone."<br />";
+				$html .= "<b>CAP Point of Contact email:</b> ".$event->CAPPOC2Email."<br />";
 			}
 			if ($event->ExtPOCName != '') {
-				$html .= "CAP Point of Contact: ".$event->ExtPOCName."<br />";
-				$html .= "CAP Point of Contact phone: ".$event->ExtPOCPhone."<br />";
-				$html .= "CAP Point of Contact email: ".$event->ExtPOCEmail."<br />";
+				$html .= "<b>CAP Point of Contact:</b> ".$event->ExtPOCName."<br />";
+				$html .= "<b>CAP Point of Contact phone:</b> ".$event->ExtPOCPhone."<br />";
+				$html .= "<b>CAP Point of Contact email:</b> ".$event->ExtPOCEmail."<br />";
 			}
 			if ($l) {
 				$member = Member::Estimate($event->Author);
 				if($member && strlen($member->RankName) > 0) {
-					$html .= "Event Author: ".$member->RankName."<br />";
+					$html .= "<b>Event Author:</b> ".$member->RankName."<br />";
 				}
 				if (strlen($event->AdditionalEmailAddresses) > 0) {
-					$html .= "Additional Email Addresses: ".$event->AdditionalEmailAddresses.'<br />';
+					$html .= "<b>Additional Email Addresses:</b> ".$event->AdditionalEmailAddresses.'<br />';
 				}
 				if ($event->PublishToWingCalendar == 1) {
-					$html .= "Publish to Wing Calendar: Yes<br />";
+					$html .= "<b>Publish to Wing Calendar:</b> Yes<br />";
 				} else {
-					$html .= "Publish to Wing Calendar: No<br />";
+					$html .= "<b>Publish to Wing Calendar:</b> No<br />";
 				}
 			}
 
