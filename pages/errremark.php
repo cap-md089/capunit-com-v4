@@ -15,12 +15,8 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 			}
 
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare("select id, timestamp, context, enumber, errname, message, badfile, badline, remarks from ".DB_TABLES['ErrorMessages']." where id in (select min(id) from ".DB_TABLES['ErrorMessages']." where resolved = 0 and remarks is not null group by message, badfile, badline);");
-			$data = DBUtils::ExecutePDOStatement($stmt, true);
-			if (count($data) == 0) {
-				$stmt = $pdo->prepare("select id, timestamp, context, enumber, errname, message, badfile, badline, remarks from ".DB_TABLES['ErrorMessages']." where id in (select min(id) from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline);");
-				$data = DB_Utils::ExecutePDOStatement($stmt, true);
-			}
+			$stmt = $pdo->prepare("select id, timestamp, context, enumber, errname, message, badfile, badline, remarks from ".DB_TABLES['ErrorMessages']." where id in (select min(id) from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline);");
+			$data = DB_Utils::ExecutePDOStatement($stmt, true);
 			$html = '';
 	
 			$stmt = $pdo->prepare("select min(id) as id, count(*) as c from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline;");
@@ -31,8 +27,10 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 			$links = [];
 
 			foreach ($data as $datum) {
-				$stmt = $pdo->prepare("select capid from ".DB_TABLES['ErrorMessages']." where message = :msg and resolved = 0;");
+				$stmt = $pdo->prepare("select capid from ".DB_TABLES['ErrorMessages']." where message = :msg and resolved = 0 and badfile = :badfile and badline = :badline;");
 				$stmt->bindValue(':msg', $datum['message']);
+				$stmt->bindValue(':badfile', $datum['badfile']);
+				$stmt->bindValue(':badline', $datum['badline']);
 				$cdata = DBUtils::ExecutePDOStatement($stmt);
 				$ncdata = [];
 				foreach ($cdata as $c) {
@@ -52,6 +50,16 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 						$capids .= "$capid, ";
 					}
 				}
+				$stmt = $pdo->prepare("select remarks from ".DB_TABLES['ErrorMessages']." where message = :msg and resolved = 0 and badfile = :badfile and badline = :badline;");
+				$stmt->bindValue(':msg', $datum['message']);
+				$stmt->bindValue(':badfile', $datum['badfile']);
+				$stmt->bindValue(':badline', $datum['badline']);
+				$cdata = DBUtils::ExecutePDOStatement($stmt);
+				$remarks = '';
+				foreach ($cdata as $c) {
+					if ($c['remarks'] == '') continue;
+					$remarks .= "<p>".$c['remarks']."</p>";
+				}
 				$amount = 0;
 				foreach ($counts as $count) {
 					if ($count['id'] == $datum['id']) {
@@ -68,7 +76,6 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 				$message = $datum['message'];
 				$badfile = $datum['badfile'];
 				$badline = $datum['badline'];
-				$remark = $datum['remarks'];
 				$safemsg = urlencode($message);
 				$html .= <<<EOD
 <div style="clear:both">
@@ -84,7 +91,7 @@ $capids
 </p>
 User remarks:<br />
 <p style="margin: 15px">
-$remark
+$remarks
 </p>
 </section>
 <section style="overflow:scroll; max-height: 700px">
@@ -155,11 +162,12 @@ EOD;
 
 		public static function doPut ($e, $c, $l, $m) {
 			if ($l && $m->perms['Developer'] == 1) {
+
 				$pdo = DB_Utils::CreateConnection();
 				$stmt = $pdo->prepare("SELECT `message`, badfile, badline FROM ".DB_TABLES['ErrorMessages']." WHERE id = :id;");
 				$stmt->bindValue(":id", $e['parameter']['data']);
 				$data = DBUtils::ExecutePDOStatement($stmt);
-				$stmt = $pdo->prepare("UPDATE ".DB_TABLES['ErrorMessages']." SET resolved=1 WHERE message=:msg, badfile=:file, badline=:line;");
+				$stmt = $pdo->prepare("UPDATE ".DB_TABLES['ErrorMessages']." SET resolved=1 WHERE message=:msg and badfile=:file and badline=:line;");
 				$stmt->bindValue(':msg', $data[0]['message']);
 				$stmt->bindValue(':file', $data[0]['badfile']);
 				$stmt->bindValue(':line', $data[0]['badline']);
@@ -169,4 +177,3 @@ EOD;
 			}
 		}
 	}
-?>
