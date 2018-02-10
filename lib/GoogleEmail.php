@@ -3,7 +3,7 @@
     require_once (BASE_DIR."lib/vendor/autoload.php");
 	require_once (BASE_DIR."lib/logger.php");
 
-    class GoogleCalendar {
+    class GoogleEmail {
         public static $accountId;
         public static $client;
         public static $service;
@@ -12,7 +12,7 @@
         
         public static function init () {
 			self::$loglevel = 2;
-			self::$logger = new Logger("GoogleCalendarUpdate");
+			self::$logger = new Logger("GoogleEmail");
 			global $_ACCOUNT;
 			self::$accountId = $_ACCOUNT->id;
 
