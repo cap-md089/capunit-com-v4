@@ -500,7 +500,7 @@
                 $stmt = $pdo->prepare("UPDATE $sess SET `time` = :time WHERE sessionid = :sid;");
                 $stmt->bindValue(':time', time()+(1200));
                 $stmt->bindValue(':sid', $cookies['sid']);
-                DBUtils::ExecutePDOStatement($stmt);
+                DB_Utils::ExecutePDOStatement($stmt);
 
 
                 $data = [
@@ -541,24 +541,42 @@
          * @return \Member A member
          */
         public static function Estimate ($capid, $global=false, $account=null) {
+            $logger = New Logger ("EstimateMember");
+            $logger->Log("CAPID: ".$capid, 2);
             $pdo = DB_Utils::CreateConnection();
 
-            if ($global) {
-                $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
-            } else {
-                if (!isset($account)) {
-                    global $_ACCOUNT;
-                    $account = $_ACCOUNT;
-                }
-                $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
+            if (!isset($account)) {
+                global $_ACCOUNT;
+                $account = $_ACCOUNT;
             }
+            $stmt = $pdo->prepare('SELECT MemberName, MemberRank FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
             $stmt->bindValue(':cid', $capid);
+            $stmt->bindValue(':aid', $account->id);
             $data = DB_Utils::ExecutePDOStatement($stmt);
-            if (count($data) != 1) return false;
-            $data = $data[0];
+            if (count($data) == 1) {
+                $mname = $data[0]['MemberName'];
+                $mrank = $data[0]['MemberRank'];
+                $logger->Log("S ".$capid." ".$mrank." ".$mname, 2);
+            } else {
+                if ($global) {
+                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
+                } else {
+                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
+                }
+                $stmt->bindValue(':cid', $capid);
+                $data = DB_Utils::ExecutePDOStatement($stmt);
+                if (count($data) == 1) {
+                    $data = $data[0];
 
-            $mname = $data['NameFirst'] . ' ' . substr($data['NameMiddle'], 0, 1) . ' ' . $data['NameLast'] . ' ' . $data['NameSuffix'];
-            $mrank = $data['Rank'];
+                    $mname = $data['NameFirst'] . ' ' . substr($data['NameMiddle'], 0, 1) . ' ' . $data['NameLast'] . ' ' . $data['NameSuffix'];
+                    $mrank = $data['Rank'];
+                    $logger->Log("M ".$capid." ".$mrank." ".$mname, 2);
+                } else {
+                    $mname = '';
+                    $mrank = '';
+                }
+            }
+
 
             // Preparing data
             $data = [
@@ -575,6 +593,7 @@
             // load the data from sign-in information or CAPWATCH, as available
             $mem->getContact();
             $mem->getSquadron();
+            $logger->Log($mem->Squadron,2);
             // Load extra variables...
             $mem->perms = $mem->getAccessLevels();
             $mem->dutyPositions = $mem->getDutyPositions();
@@ -1052,19 +1071,22 @@
          * @return str Best contact based on list given
          */
         public function getBestContact ($cl) {
+            $logger = New Logger ("BestContact");
+            $logger->Log("CAPID: ".$this->capid, 2);
             if(!$this->contact) return false;
+            // $logger->Log("Contact: ".Util_Collection::implode_all(",",$this->contact), 2);
             for ($i = 0, $p = Null; $i < count($cl) && !isset($p); $i++) {
-                $p = isset($p) ? $p : isset($this->contact[$cl[$i]]["PRIMARY"][0]) ? $this->contact[$cl[$i]]["PRIMARY"][0] : Null;
+                $p = isset($p) ? $p : (isset($this->contact[$cl[$i]]["PRIMARY"][0]) ? $this->contact[$cl[$i]]["PRIMARY"][0] : Null);
             }
             if (isset($p)) return $p;
 
             for ($i = 0; $i < count($cl) && !isset($p); $i++) {
-                $p = isset($p) ? $p : isset($this->contact[$cl[$i]]["SECONDARY"][0]) ? $this->contact[$cl[$i]]["SECONDARY"][0] : Null;
+                $p = isset($p) ? $p : (isset($this->contact[$cl[$i]]["SECONDARY"][0]) ? $this->contact[$cl[$i]]["SECONDARY"][0] : Null);
             }
             if (isset($p)) return $p;
 
             for ($i = 0; $i < count($cl); $i++) {
-                $p = isset($p) ? $p : isset($this->contact[$cl[$i]]["EMERGENCY"][0]) ? $this->contact[$cl[$i]]["EMERGENCY"][0] : Null;
+                $p = isset($p) ? $p : (isset($this->contact[$cl[$i]]["EMERGENCY"][0]) ? $this->contact[$cl[$i]]["EMERGENCY"][0] : Null);
             }
             return isset($p) ? $p : false;
         }
@@ -1256,7 +1278,7 @@ BrowserAnalytics where CAPID = :cid));");
             $mem = DB_TABLES['Member'];
             $stmt = $pdo->prepare("SELECT AccountID FROM $acc AS A INNER JOIN $mem AS M ON A.UnitID = M.ORGID WHERE M.CAPID = :cid;");
             $stmt->bindValue(':cid', $this->uname);
-            $data = DBUTils::ExecutePDOStatement($stmt);
+            $data = DBUtils::ExecutePDOStatement($stmt);
             $ret = [];
 
             foreach ($data as $datum) {

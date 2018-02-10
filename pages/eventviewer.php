@@ -166,14 +166,30 @@
 					}
 				}
 				$html .= "<br /><br />";
-				$html .= "Event administration comments: ".$event->Administration.'<br />';
-				$html .= "<br /><br />";
+				if(strlen($event->Administration) > 0) {
+					$html .= "<b>Event administration comments:</b> ".$event->Administration.'<br />';
+					$html .= "<br /><br />";
+				}
+
+				$attendance = $event->getAttendance();
+				if (!$attendance->has($m)) {
+					$form = new AsyncForm (Null, 'Sign up');
+					$form->addField('comments', 'Comments', 'textarea')->
+						addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
+						addHiddenField('eid', $ev)->
+						addHiddenField('func', 'signup');
+					$form->reload = true;
+					$html .= $form;
+					$html .= "<br /><br />";
+				}
+
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
 				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");
-				$html .= $alist->getHtml('atdir'.$event->EventNumber);
-				$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
-				$attendance = $event->getAttendance();
+				if(count($attendance->EventAttendance) > 0) {
+					$html .= $alist->getHtml('atdir'.$event->EventNumber);
+					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
+				}
 				foreach ($attendance as $capid => $data) {
 					$member = Member::Estimate($capid);
 					if ($member) {
@@ -196,7 +212,13 @@
 								'eid' => $event->EventNumber	
 							));
 							$memberinfo = "$capid: $member->memberRank $member->memberName";
-							if(strlen($member->Squadron)>1) $memberinfo .= "[".$member->Squadron."]";
+							if(strlen($member->Squadron)>1) { 
+								if($a->hasMember($member)) {
+									$memberinfo .= " [".$member->Squadron."]"; 
+								} else {
+									$memberinfo .= " <b>[".$member->Squadron."]</b>"; 
+								}
+							}
 							$memEmail = '';
 							$memPhone = '';
 							if($member->contact) {
@@ -230,17 +252,10 @@
 						}
 					}
 				}
-				$html .= $dlist;
-
-				if (!$attendance->has($m)) {
-					$form = new AsyncForm (Null, 'Sign up');
-					$form->addField('comments', 'Comments', 'textarea')->
-						addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
-						addHiddenField('eid', $ev)->
-						addHiddenField('func', 'signup');
-					$form->reload = true;
-					$html .= $form;
+				if(count($attendance->EventAttendance) > 0) {
+					$html .= $dlist;
 				}
+
 			} else {
 				$html .= "<h4>Please sign in to view restricted content</h4>";
 				$html .= JSSnippet::SigninLink("Sign in now");
