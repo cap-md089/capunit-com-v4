@@ -11,7 +11,7 @@
 		public static $loglevel;
         
         public static function init () {
-			self::$loglevel = 2;
+			self::$loglevel = 8;
 			self::$logger = new Logger("GoogleCalendarUpdate");
 			global $_ACCOUNT;
 			self::$accountId = $_ACCOUNT->id;

@@ -21,14 +21,20 @@
 			if(!self::$client) {self::$logger->Log("init:: client creator returned false", self::$loglevel);} else {self::$logger->Log("init:: client creator returned true", self::$loglevel);}
 
 			//self::$client->setAuthConfig(BASE_DIR.'../credentials/'.$_ACCOUNT->id.'.json');			
-			self::$client->setApplicationName("capunit.com Calendar Update");
+			self::$client->setApplicationName("capunit.com Emailer");
             self::$client->useApplicationDefaultCredentials();
-            self::$client->setScopes(Google_Service_Calendar::CALENDAR);
+            self::$client->setScopes(Google_Service_Gmail::GMAIL_SEND);
 
-            self::$service = new Google_Service_Calendar(self::$client);
-			if(!self::$service) {self::$logger->Log("init:: Calendar Service creator returned false", self::$loglevel);} else {self::$logger->Log("init:: Calendar Service creator returned true", self::$loglevel);}
+            self::$service = new Google_Service_Gmail(self::$client);
+			if(!self::$service) {self::$logger->Log("init:: Gmail Service creator returned false", self::$loglevel);} else {self::$logger->Log("init:: Calendar Service creator returned true", self::$loglevel);}
 
 		}
+
+
+        public static function sendMail ($mail) {
+            // self::service->setDisplayName("CAPUnit.com");
+            // self::service->setReplyToAddress("events@capunit.com");
+        }
 
         public static function updateCalendarEvent (Event $CUevent) {
             if ($CUevent->Status == 'Draft') {

@@ -141,6 +141,9 @@
 				if (strlen($event->AdditionalEmailAddresses) > 0) {
 					$html .= "<b>Additional Email Addresses:</b> ".$event->AdditionalEmailAddresses.'<br />';
 				}
+				if ((strlen($event->GroupEventNumber) > 0) && ($event->GroupEventNumber != "Not Required")) {
+					$html .= "<b>Group Event Number:</b> ".$event->GroupEventNumber.'<br />';
+				}
 				if ($event->PublishToWingCalendar == 1) {
 					$html .= "<b>Publish to Wing Calendar:</b> Yes<br />";
 				} else {
