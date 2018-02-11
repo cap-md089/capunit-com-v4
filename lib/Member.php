@@ -542,7 +542,7 @@
          */
         public static function Estimate ($capid, $global=false, $account=null) {
             $logger = New Logger ("EstimateMember");
-            $logger->Log("CAPID: ".$capid, 2);
+            $logger->Log("CAPID: ".$capid, 8);
             $pdo = DB_Utils::CreateConnection();
 
             if (!isset($account)) {
@@ -593,7 +593,7 @@
             // load the data from sign-in information or CAPWATCH, as available
             $mem->getContact();
             $mem->getSquadron();
-            $logger->Log($mem->Squadron,2);
+            $logger->Log($mem->Squadron,8);
             // Load extra variables...
             $mem->perms = $mem->getAccessLevels();
             $mem->dutyPositions = $mem->getDutyPositions();
@@ -1072,7 +1072,7 @@
          */
         public function getBestContact ($cl) {
             $logger = New Logger ("BestContact");
-            $logger->Log("CAPID: ".$this->capid, 2);
+            $logger->Log("CAPID: ".$this->capid, 8);
             if(!$this->contact) return false;
             // $logger->Log("Contact: ".Util_Collection::implode_all(",",$this->contact), 2);
             for ($i = 0, $p = Null; $i < count($cl) && !isset($p); $i++) {
