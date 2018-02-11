@@ -38,7 +38,8 @@
 			$m->memberName = $mem->memberName;
 			$m->memberRank = $mem->memberRank;
 			$m->seniorMember = $mem->seniorMember;
-			$m->getCAPWATCHContact();
+			$m->getContact();
+
 			$m->perms = $mem->getAccessLevels();
 			$m->flight = $mem->getFlight();
 			$m->setSessionId();
