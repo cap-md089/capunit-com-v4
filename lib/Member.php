@@ -345,7 +345,7 @@
                         $el = $trs->item($i);
                         $children = $el->getElementsByTagName("td");
 
-                        if (getEText($children, 4) == "True") {
+                        if (getEText($children, 4) === "True") {
                             continue;
                         }
                         $t = getEText($children, 2);
