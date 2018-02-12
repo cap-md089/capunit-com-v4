@@ -120,7 +120,7 @@
 			$html = "";
 
 			$GcalLink = $a->getGoogleCalendarShareLink();
-			$html .= '<p align="center">Link to our <a href='.$GcalLink.'>Google Calendar</a> and see events on your calendar</p>';
+			$html .= '<p align="center">Link to our <a href='.$GcalLink.' target=\"_blank\">Google Calendar</a> and see events on your calendar</p>';
 
 			if ($l && $m->hasPermission('AddEvent')) {
 				$html .= new Link ('eventform', 'Add an event'). "<br />";
