@@ -10,19 +10,26 @@
             $team = Team::Get($e['uri'][0]);
 
             $form = new AsyncForm(Null, 'Edit Team');
+            $teamMentor = Member::Estimate($team->Mentor);
+            $teamCoach = Member::Estimate($team->Coach);
+            $teamLead = Member::Estimate($team->Lead);
             $form
                 ->addField('teamName', 'Team name', 'text', Null, Null, $team->Name)
                 ->addField('description', 'Description', 'textarea', Null, Null, $team->Description)
                 ->addField('teamMentor', 'Team Mentor ('.$butt->getHtml('mentor').')', 'text', 'mentor', Null, $team->Mentor)
+                ->addField("names[]", 'Name', 'text', Null, Null, $teamMentor->RankName)
                 ->addField('teamCoach', 'Team Coach ('.$butt->getHtml('coach').')', 'text', 'coach', Null, $team->Coach)
+                ->addField("names[]", 'Name', 'text', Null, Null, $teamCoach->RankName)
                 ->addField('teamLeader', 'Team Leader ('.$butt->getHtml('leader').')', 'text', 'leader', Null, $team->Lead)
+                ->addField("names[]", 'Name', 'text', Null, Null, $teamLead->RankName)
                 ->addField("capids[]", (new AsyncButton(Null, 'Remove person', 'removeTeamUserMultiAdd'))->getHtml(), Null, Null, Null, Null, 'templateAdder')
                 ->addField('roles[]', 'Role', 'text', Null, Null, Null, 'templateAdder');
             
             foreach ($team->Members as $cid => $role) {
                 $teamMember = Member::Estimate($cid);
                 $form
-                    ->addField("capids[]", (new AsyncButton(Null, 'Remove '.$teamMember->RankName, 'removeTeamUserMultiAdd'))->getHtml(), Null, Null, Null, $cid)
+                    ->addField("capids[]", (new AsyncButton(Null, 'Remove person', 'removeTeamUserMultiAdd'))->getHtml(), Null, Null, Null, $cid)
+                    ->addField("names[]", 'Name', 'text', Null, Null, $teamMember->RankName)
                     ->addField('roles[]', 'Role', 'text', Null, Null, $role);
             }
             
