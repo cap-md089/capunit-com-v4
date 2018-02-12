@@ -172,6 +172,11 @@
         public $GroupEventNumber = 0;
 
         /**
+         * @var int Event number from Wing
+         */
+        public $WingEventNumber = 0;
+
+        /**
          * @var bool Whether or not the event has passed
          */
         public $Complete = false;

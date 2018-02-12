@@ -20,8 +20,9 @@
                 ->addField('roles[]', 'Role', 'text', Null, Null, Null, 'templateAdder');
             
             foreach ($team->Members as $cid => $role) {
+                $teamMember = Member::Estimate($cid);
                 $form
-                    ->addField("capids[]", (new AsyncButton(Null, 'Remove person', 'removeTeamUserMultiAdd'))->getHtml(), Null, Null, Null, $cid)
+                    ->addField("capids[]", (new AsyncButton(Null, 'Remove '.$teamMember->RankName, 'removeTeamUserMultiAdd'))->getHtml(), Null, Null, Null, $cid)
                     ->addField('roles[]', 'Role', 'text', Null, Null, $role);
             }
             

@@ -63,6 +63,11 @@
         public $memberName = '';
 
         /**
+         * @var string Name of the member
+         */
+        public $memberNameLast = '';
+
+        /**
          * @var string Rank of the member
          */
         public $memberRank = 'C/AB';
@@ -399,12 +404,13 @@
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :mrank, :contacts, :raw, :sqn, :coc);");
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :last, :mrank, :contacts, :raw, :sqn, :coc);");
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
                     $stmt->bindValue(':count', 1);
                     $stmt->bindValue(':mname', $m->memberName);
+                    $stmt->bindValue(':last', $m->lastName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
                     $stmt->bindValue(':raw', $m->rawContact);
@@ -425,14 +431,15 @@
                     $newCount = $data['AccessCount'];
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
-                    $sql .= "MemberName=:mname, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, Squadron=:sqn, ChainOfCommand=:coc ";
-                    $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
+                    $sql .= "MemberName=:mname, MemberNameLast=:last, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, ";
+                    $sql .= "Squadron=:sqn, ChainOfCommand=:coc WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
                     $stmt->bindValue(':count', $newCount);
                     $stmt->bindValue(':mname', $m->memberName);
+                    $stmt->bindValue(':last', $m->lastName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
                     $stmt->bindValue(':raw', $m->rawContact);
@@ -503,18 +510,23 @@
                 DB_Utils::ExecutePDOStatement($stmt);
 
 
-                $data = [
-                    "uname" => $cookies['uname'],
-                    "capid" => $cookies['uname'],
-                    "success" => true,
-                    "memberName" => $ret[0]['mname'],
-                    "memberRank" => $ret[0]['mrank'],
-                    "sid" => $cookies['sid'],
-                    "contact" => json_decode($ret[0]['contacts'], true),
-                    "cookieData" => $ret[0]['cdata'],
-                    'seniorMember' => !(preg_match('/C\/.{2,6}/', $ret[0]['mrank']) || substr($ret[0]['mrank'], 0, 5) == 'CADET')
-                ];
-                $m = new self ($data);
+                // $data = [
+                //     "uname" => $cookies['uname'],
+                //     "capid" => $cookies['uname'],
+                //     "success" => true,
+                //     "memberName" => $ret[0]['mname'],
+                //     "memberRank" => $ret[0]['mrank'],
+                //     "sid" => $cookies['sid'],
+                //     "contact" => json_decode($ret[0]['contacts'], true),
+                //     "cookieData" => $ret[0]['cdata'],
+                //     'seniorMember' => !(preg_match('/C\/.{2,6}/', $ret[0]['mrank']) || substr($ret[0]['mrank'], 0, 5) == 'CADET')
+                // ];
+                // $m = new self ($data);
+
+                $m = self::Estimate($cookies['uname']);
+                $m->sid = $cookies['sid'];
+                $m->cookieData = $ret[0]['cdata'];
+
                 $m->perms = $m->getAccessLevels($su); // If someone is trying to su, check there
                 // Admittedly, su is kind of redundant now because of the new su program which
                 // overrides the CAPID in the session database
@@ -549,12 +561,13 @@
                 global $_ACCOUNT;
                 $account = $_ACCOUNT;
             }
-            $stmt = $pdo->prepare('SELECT MemberName, MemberRank FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
+            $stmt = $pdo->prepare('SELECT MemberName, MemberNameLast, MemberRank FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
             $stmt->bindValue(':cid', $capid);
             $stmt->bindValue(':aid', $account->id);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) == 1) {
                 $mname = $data[0]['MemberName'];
+                $mnamelast = $data[0]['MemberNameLast'];
                 $mrank = $data[0]['MemberRank'];
                 $logger->Log("S ".$capid." ".$mrank." ".$mname, 2);
             } else {
@@ -569,10 +582,12 @@
                     $data = $data[0];
 
                     $mname = $data['NameFirst'] . ' ' . substr($data['NameMiddle'], 0, 1) . ' ' . $data['NameLast'] . ' ' . $data['NameSuffix'];
+                    $mnamelast = $data['NameLast'];
                     $mrank = $data['Rank'];
                     $logger->Log("M ".$capid." ".$mrank." ".$mname, 2);
                 } else {
                     $mname = '';
+                    $mnamelast = '';
                     $mrank = '';
                 }
             }
@@ -582,6 +597,7 @@
             $data = [
                 'uname' => $capid,
                 'memberName' => $mname,
+                'lastName' => $mnamelast,
                 'memberRank' => $mrank,
                 'seniorMember' => !(preg_match('/C\/.{2,6}/', $mrank) || substr($mrank, 0, 5) == 'CADET'),
                 'success' => true
