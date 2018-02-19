@@ -15,6 +15,20 @@
 
 			$organizations = $member->getCAPWATCHList();
 
+			$html = '';
+
+			if (!$data['success']) {
+				switch ($data['error']) {
+					case Member::CAPWATCH_ERRORS['NEEDS_PERMISSION'] :
+						$html = 'You need to request permission from CAP NHQ before using this feature, or request that someone from your squadron that has this permission does so';
+					break;
+
+					default :
+						$html = 'CAP NHQ is unable to process your request at this moment';
+					break;
+				}
+			} else {
+
 			$form = new AsyncForm ();
 			$i = 0;
 			$form->addField('','The download and import process takes several minutes.  Results will be displayed when the process is complete.','textRead');
@@ -23,7 +37,7 @@
 			} else {
 				$form->addHiddenField('importOrgs','true');
 			}
-			foreach ($organizations as $org => $name) {
+			foreach ($organizations['data'] as $org => $name) {
 				$form->addField("orgs".$i."[]", $name, 'checkbox');
 				$form->addHiddenField("orgids[]", $org);
 				$form->addHiddenField("orgnam[]", $name);
@@ -43,10 +57,12 @@
 			// }
 
 			$form->reload = false;
+			$html = $form.'';	
+			}
 
 			return [
 				'body' => [
-					'MainBody' => $form.'',
+					'MainBody' => $html.'',
 					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
 						[
 							'Target' => '/',

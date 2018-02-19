@@ -46,6 +46,10 @@
         const TestMode = true; // Should just be left at true
         const SkipNHQ = false; // Whether to return an admin Member object when creating a member
 
+		const CAPWATCH_ERRORS = [
+			'NEEDS_PERMISSION' => 1
+		];
+
         /**
          * @var int $uname Contains username, converted to a CAPID if in text form, e.g. lastname + firstinitial + middleinitial
          * @var int $capid CAPID
@@ -1116,6 +1120,26 @@
 			$retdata = [];
 
 			$data = $this->goToPage('/cap.capwatch.web/splash.aspx');
+
+			// They don't have permission
+			if ($data['headers']['Location'] == '/cap.capwatch.web/Modules/CapwatchRequest.aspx') {
+				return array (
+					'error' => self::CAPWATCH_ERRORS['NEEDS_PERMISSION'],
+					'success' => false,
+					'data' => []
+				);
+			}
+
+			
+			// catchall
+			else if ($data['headers']['Location'] !== '/cap.capwatch.web/Default.aspx') {
+				return array (
+					'error' => -1,
+					'success' => false,
+					'data' => []
+				);
+			}
+
 			$data = $this->goToPage('/cap.capwatch.web/Default.aspx');
 
 			$h = Util_Collection::ParseHTML($data['body']);
@@ -1136,7 +1160,11 @@
 				}
 			}
 
-			return $retdata;
+			return array(
+				'success' => true,
+				'error' => 0,
+				'data' => $retdata
+			);
 		}
 
 		/**
