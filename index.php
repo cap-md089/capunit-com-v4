@@ -152,7 +152,6 @@ HTM;
         }
         $_LOGGEDIN = $_USER['valid'];
 		$_USER = $_LOGGEDIN ? $_USER['mem'] : Null;
-        header ("X-UserLogin: ".($_LOGGEDIN?"true":"false"));
 	}
  
     if ($_FUNC != 'gettemplates') {
@@ -251,7 +250,6 @@ HTM;
     $fromindex = true;
 
     $data = Output::$fmethod($e, $_COOKIE, $_LOGGEDIN, $_USER, $_ACCOUNT);
-    // header ("X-User-LoggedIn: ".$_LOGGEDIN ? 'true' : 'false');
 
     if ($data === false) {
         header('X-User-Error: 411');
@@ -334,16 +332,6 @@ HTM;
         $html = "--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING\nName: MainBody\n\n$data\n\n\n";
     }
 
-    header ("X-Account: ".$_ACCOUNT->id);
-
     header ("Access-Control-Allow-Origin: *");
 
-    header ("UserLoggedIn: ".$_LOGGEDIN ? 'true' : 'false');
-    if (isset($_METHODD['embed']) && $_METHODD['embed'] == 'true') {
-        require_once(BASE_DIR."templates/".Registry::get("Styling.Preset")."/head.php");
-        $html = "<div id=\"content\">$html</div>";
-        echo HEAD_HTML;
-    }
-    header ("X-UserLoggedIn: ".($_LOGGEDIN ? 'true' : 'false'));
-    
     echo $html;

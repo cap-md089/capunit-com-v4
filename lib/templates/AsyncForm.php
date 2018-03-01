@@ -58,8 +58,8 @@
 			$this->pid = ltrim($this->pid, '/');
 			$this->pid = '/' . HOST_SUB_DIR . $this->pid;
 			$this->method = $method;
-			$this->id = isset($id) ? $id : "";
-            $this->class = isset($class) ? $class : "asyncForm";
+            $this->id = $id;
+			$this->class = isset($class) ? $class : "asyncForm";
 			$this->html = "";
 			$this->fields = [];
 			$this->hfields = [];
@@ -87,10 +87,11 @@
 				 $this->html .= "<div id=\"output\"></div>\n";
 			}
 			$this->html .= "<form data-persists=\"garlic\" method=\"$this->method\" enctype=\"multipart/form-data\" ";
-			$this->html .= ($this->id == 'signin' || $this->id == "signIn") ? "data-signin-form=\"true\" " : '';
+			$this->html .= (isset($this->id) && ($this->id == 'signin' || $this->id == "signIn")) ? "data-signin-form=\"true\" " : '';
             $this->html .= "data-form-reload=\"" . ($this->reload ? "true" : "false") . "\" ";
 			$this->html .= "data-form-beforesend=\"" . (isset($this->beforeSend) ? $this->beforeSend : "") .'" ';
-			$this->html .= "action=\"$this->pid\" onsubmit=\"return handleFormSubmit(this, ".($this->submit['takeOutput']?'true':'false').");\" class=\"$this->class asyncForm\" id=\"$this->id\">";
+			$this->html .= "action=\"$this->pid\" onsubmit=\"return handleFormSubmit(this, ".($this->submit['takeOutput']?'true':'false').");\" class=\"$this->class asyncForm\"";
+			$this->html .= isset($this->id) ? "  id=\"$this->id\">" : ">";
 			$this->html .= "\n";
 
 			foreach ($this->fields as $field) {
