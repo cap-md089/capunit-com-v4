@@ -65,7 +65,7 @@
 			</li>
 		</div>
 		<div style="color: white;" class="onlyBox">
-			<div style="float: left;font-size: 12px">&copy; <?php echo date('Y').' '.Registry::Get("Website.Name"); ?></div>
+			<div style="float: left;font-size: 12px">&copy; 2017-<?php echo date('Y') ?> CAPUnit.com</div>
 			<div style="float: right; font-size: 12px"><a href="http://www.capmembers.com/">CAP Members.com</a> | <a href="http://www.cap.news/">CAP News</a> | <a href="#" onclick="$('html').animate({scrollTop:0},'slow');return false;">Top</a></div>
 		</div>
 	</div>
