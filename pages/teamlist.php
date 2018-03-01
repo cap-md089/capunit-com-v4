@@ -20,22 +20,38 @@
                     $str .= "</h3>";
                 }
                 $str .= "<p>$team->Description</p>";
+				$emails = '';
                 if ($team->Coach !== 0) {
                     $coach = Member::Estimate($team->Coach);
                     if ($coach) {
                         $str .= "Team Coach: ".$coach->RankName." (".$coach->getBestEmail().")<br />";
+						$emails .= $coach->getBestEmail()."; ";
+						$_email = $coach->getBestContact(['CADETPARENTEMAIL']);
+						if (isset($_email) && $_email) {
+							$emails .= "$_email; ";
+						}
                     }
                 }
                 if ($team->Mentor !== 0) {
                     $mentor = Member::Estimate($team->Mentor);
                     if ($mentor) {
                         $str .= "Team Mentor: ".$mentor->RankName." (".$mentor->getBestEmail().")<br /><br />";
+						$emails .= $mentor->getBestEmail()."; ";
+						$_email = $mentor->getBestContact(['CADETPARENTEMAIL']);
+						if (isset($_email) && $_email) {
+							$emails .= "$_email; ";
+						}
                     }
                 }
 				if ($team->Lead !== 0) {
                 	$lead = (Member::Estimate($team->Lead));
                 	if ($lead) {
 						$str .= "Team Leader: ".$lead->RankName." (".$lead->getBestEmail().")<br />";
+						$emails .= $lead->getBestEmail()."; ";
+						$_email = $lead->getBestContact(['CADETPARENTEMAIL']);
+						if (isset($_email) && $_email) {
+							$emails .= "$_email; ";
+						}
 					}
                 }
 				foreach ($team->Members as $mem => $role) {
@@ -46,7 +62,6 @@
 
                 if ($l && $team->isLeader($m)) {
                     $flightmembers = [];
-                    $emails = '';
                     foreach ($team->Members as $id => $role) {
                         if (!isset($flightmembers[$id])) {
                             $mem = Member::Estimate($id);
@@ -83,7 +98,9 @@
                         for ($i = 0; $i < count($mem['Contact']); $i++) {
                             $cont = $mem['Contact'][$i]['Contact'];
                             if (!$mem['Contact'][$i]['DoNotContact']) {
-                                if (is_numeric($cont)) {
+								$cont2 = str_replace(['(', ' ', ')', '-'], '', $cont);
+                                if (is_numeric($cont2)) {
+									$cont = $cont2;
                                     $phones .= '('.substr($cont, 0, 3).') '.substr($cont, 3, 3).'-'.substr($cont, 6, 4).' ('.strtoupper($mem['Contact'][$i]['Priority'] . ' '.$mem['Contact'][$i]['Type']).')<br />';
                                 } else {
                                     if (!in_array($cont, $elist)) {
@@ -99,6 +116,9 @@
                         $dl->addElement($mem['RankName'], $phones);
                     }
                     $emails = rtrim($emails, '; ');
+					$emails = explode('; ', $emails);
+					$emails = array_unique($emails);
+					$emails = implode('; ', $emails);
                     $html .= '<div style="margin:10px;font-style:italic;" id="emailList">'.$emails.'</div>';
                     $html .= $dl; 
                 }

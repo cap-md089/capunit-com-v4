@@ -14,7 +14,7 @@
 			if (!$member->hasPermission("AddEvent")) {return ['error' => 402];}
 
 			$organizations = $member->getCAPWATCHList();
-
+			$data = $organizations;
 			$html = '';
 
 			if (!$data['success']) {

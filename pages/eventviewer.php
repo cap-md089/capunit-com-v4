@@ -161,7 +161,6 @@
 				if (count($data) > 0) {
 					$html .= "<br /><br /><h3>Event Files</h3>";
 				}
-				print_r($data);
 				foreach ($data as $row) {
 					$file = File::Get($row["FileID"]);
 					if ($file) {
@@ -396,14 +395,32 @@
 			} else if (($func == 'atdir')) {
 				$html = '';
 				$event = Event::Get((int)$data);
+				if ($event->CAPPOC1ID != '') {
+					$html .= $event->CAPPOC1ID.", ";
+				}
+				if ($event->CAPPOC2ID != '') {
+					$html .= $event->CAPPOC2Email.", ";
+				}
 				$att = $event->getAttendance();
 				foreach ($att as $cid => $data) {
 					$html .= $cid.', ';
 				}
+				$emails = explode(", ", $html);
+				$emails = array_unique($emails);
+				$html = implode(", ", $emails);
 				return rtrim($html, ', ');
 			} else if (($func == 'ateml')) {
 				$html = '';
 				$event = Event::Get((int)$data);
+				if ($event->CAPPOC1Email != '') {
+					$html .= $event->CAPPOC1Email.", ";
+				}
+				if ($event->CAPPOC2Email != '') {
+					$html .= $event->CAPPOC2Email.", ";
+				}
+				if ($event->ExtPOCEmail != 0) {
+					$html .= $event->ExtPOCEmail.", ";
+				}
 				$att = $event->getAttendance();
 				foreach ($att as $cid => $data) {
 					$attendee = Member::Estimate($cid);
@@ -411,6 +428,9 @@
 						$html .= $attendee->getBestEmail().', ';
 					}
 				}
+				$emails = explode(", ", $html);
+				$emails = array_unique($emails);
+				$html = implode(", ", $emails);
 				return rtrim($html, ', ');
 			} else {
 				return ['error' => '402'];

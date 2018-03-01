@@ -115,7 +115,12 @@ ORDER BY Absent;");
 					'Contact' => $datum['Contact'],
 					'Priority' => $datum['Priority'],
 					'Type' => $datum['Type'],
-					'DoNotContact' => $datum['DoNotContact'] == 1
+					'DoNotContact' => $datum['DoNotContact'] == 1,
+					'Absent' => false,
+					'_Absent' => 0,
+					'TAbsent' => 'f',
+					'AbsentUntil' => 0,
+					'AbsentNotes' => ''
 				];
 			}
 			$elist = [];
