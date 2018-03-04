@@ -166,7 +166,6 @@
 				if (count($data) > 0) {
 					$html .= "<br /><br /><h3>Event Files</h3>";
 				}
-				print_r($data);
 				foreach ($data as $row) {
 					$file = File::Get($row["FileID"]);
 					if ($file) {
@@ -201,6 +200,7 @@
 					if ($member) {
 						if (($event->isPOC($m) || $m->hasPermission('SignUpEdit')) || $capid == $m->uname) {
 							$form = new AsyncForm(Null, Null, "nopadtop");
+
 							$form->reload = true;
 							$form->addField("comments", "Comments", "textarea", Null, ['value' => $data['Comments']], $data['Comments']);
 							$form->addField("plantouse", "Plan to use CAP transportation", "checkbox", Null, Null, $data['PlanToUseCAPTransportation']);
@@ -306,7 +306,7 @@
 				}
 				//add in here a flag to add an entry to an event signup table
 
-				//change this from 'best' email to 'all' emails
+				/// @TODO: change this from 'best' email to 'all' emails
 				UtilCollection::sendFormattedEmail([
 					'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
 					'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])
@@ -315,7 +315,7 @@
 				'Event signup: Event '.$ev->EventNumber);
 				return $attendance->add($m, 
 					$e['form-data']['capTransport'] == 'true', 
-					$e['form-data']['comments']) === true ? 
+					$e['form-data']['comments']) ? 
 						"You're signed up!" : "Something went wrong!";
 			} else if ($e['raw']['func'] == 'signupedit') {
 				$attendance = new Attendance($e['form-data']['eid']);
@@ -462,14 +462,32 @@
 			} else if (($func == 'atdir')) {
 				$html = '';
 				$event = Event::Get((int)$data);
+				if ($event->CAPPOC1ID != '') {
+					$html .= $event->CAPPOC1ID.", ";
+				}
+				if ($event->CAPPOC2ID != '') {
+					$html .= $event->CAPPOC2ID.", ";
+				}
 				$att = $event->getAttendance();
 				foreach ($att as $cid => $data) {
 					$html .= $cid.', ';
 				}
+				$emails = explode(", ", $html);
+				$emails = array_unique($emails);
+				$html = implode(", ", $emails);
 				return rtrim($html, ', ');
 			} else if (($func == 'ateml')) {
 				$html = '';
 				$event = Event::Get((int)$data);
+				if ($event->CAPPOC1Email != '') {
+					$html .= $event->CAPPOC1Email.", ";
+				}
+				if ($event->CAPPOC2Email != '') {
+					$html .= $event->CAPPOC2Email.", ";
+				}
+				if ($event->ExtPOCEmail != 0) {
+					$html .= $event->ExtPOCEmail.", ";
+				}
 				$att = $event->getAttendance();
 				foreach ($att as $cid => $data) {
 					$attendee = Member::Estimate($cid);
@@ -477,6 +495,9 @@
 						$html .= $attendee->getBestEmail().', ';
 					}
 				}
+				$emails = explode(", ", $html);
+				$emails = array_unique($emails);
+				$html = implode(", ", $emails);
 				return rtrim($html, ', ');
 			} else {
 				return ['error' => '402'];
