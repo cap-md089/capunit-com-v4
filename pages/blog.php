@@ -3,7 +3,14 @@
 	
     class Output {
         public static function doGet ($e, $c, $l, $m, $a) {
-			if (!$a->paid) {return ['error' => 501];}
+			if (!$a->paid) {
+				//need to come up with a page that shows what could be if it were a paid account
+				return ['error' => 501];
+			}
+			if ($a->expired) {
+				//need to come up with a page that shows what could be if the account were renewed
+				return ['error' => 501];
+			}
 
 
 			$parse = new Parsedown();

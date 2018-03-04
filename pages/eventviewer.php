@@ -26,7 +26,7 @@
 				if ($m->hasPermission("CopyEvent")) {
 					$html .= " | ".(new AsyncButton(Null, 'Copy event', 'copyEvent'))->getHtml("clone".$ev)."<span style=\"display:none\" id=\"dateTimeOfCurrentEvent\">".date('Y-m-d\TH:i:s',$event->StartDateTime)."</span>";
 				}
-				if ($m->hasPermission("SignUpEdit") && $a->paid) {
+				if ($m->hasPermission("SignUpEdit")) {
 					$html .= " | ".new Link ("multiadd", "Add attendees", [$ev]);
 				}
 				$breaks = 'true';
@@ -153,6 +153,11 @@
 
 
 			if ($l) {
+				if(strlen($event->Administration) > 0) {
+					$html .= "<b>Event administration comments:</b> ".$event->Administration.'<br />';
+					$html .= "<br /><br />";
+				}
+
 				$pdo = DBUtils::CreateConnection();
 				$stmt = $pdo->prepare("SELECT FileID FROM ".DB_TABLES['FileEventAssignments']." WHERE EID = :ev AND AccountID = :aid;");
 				$stmt->bindValue(':aid', $a->id);
@@ -169,11 +174,9 @@
 					}
 				}
 				$html .= "<br /><br />";
-				if(strlen($event->Administration) > 0) {
-					$html .= "<b>Event administration comments:</b> ".$event->Administration.'<br />';
-					$html .= "<br /><br />";
-				}
+			}
 
+			if ($l && $a->hasMember($m)) {
 				$attendance = $event->getAttendance();
 				if (!$attendance->has($m)) {
 					$form = new AsyncForm (Null, 'Sign up');
@@ -259,6 +262,8 @@
 					$html .= $dlist;
 				}
 
+			} else if ($l) {
+				$html .= "<h4>Attendance information display is restricted to unit members</h4>";
 			} else {
 				$html .= "<h4>Please sign in to view restricted content</h4>";
 				$html .= JSSnippet::SigninLink("Sign in now");
@@ -360,12 +365,70 @@
 				return ['error' => '311'];
 			}
 
-			if ($a->paid && $func == "delete" && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
+			if ($func == "delete" && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
 				$data = $event->remove();
 				var_export($data);
 				echo "$event->EventNumber\n";
 				return JSSnippet::PageRedirect('Calendar') . ($data ? "Event deleted" : "Some error occurred");
-			} else if (($a->paid || $a->getEventCount() < 5) && $func == "clone" && ($m->hasPermission("CopyEvent"))) {
+			} else if ($func == "clone" && ($m->hasPermission("CopyEvent"))) {
+
+				$allowed = false;
+				$monthevents = Null;
+				$eventlist = '';
+				$eventLimit = 0;
+
+				$account = $a;
+
+				//check to see if within event limit, if applicable
+				if(!$account->paid || ($account->paid && $account->expired)) {
+					$pdo = DB_Utils::CreateConnection();
+		
+					//get month date range
+					$monthNumber = (int)date('n',$e['raw']['predata'])-1;
+					$thisYear = (int)date('Y',$e['raw']['predata']);
+					$nextMonth = UtilCollection::createDate($thisYear, $monthNumber+1);
+					$thisMonth = UtilCollection::createDate($thisYear, $monthNumber);
+
+					$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+					$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
+					$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
+					$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
+					$stmt = $pdo->prepare($sqlin);
+					$stmt->bindValue(':monthend', $nextMonth->getTimestamp(), PDO::PARAM_INT);
+					$stmt->bindValue(':monthstart', $thisMonth->getTimestamp(), PDO::PARAM_INT);
+					$stmt->bindValue(':aid', $account->id);
+					$monthevents = DB_Utils::ExecutePDOStatement($stmt);
+
+					$eventLimit = $account->unpaidEventLimit;
+				} else {
+					$eventLimit = $account->paidEventLimit;
+				}
+		
+				//check monthevents to prevent access error when Null
+				if(!is_null($monthevents) && (count($monthevents) > $eventLimit)) {
+					$months = ['January','February','March','April','May','June','July',
+						'August','September','October','November','December'];
+					$response = "This account has exceeded the allowable event count limit for the month of ";
+					$response .= $months[$monthNumber]." ".$thisYear." and this event cannot be copied at this time.  ";
+					$response .= "Please contact someone on your account administrative staff (";
+					foreach ($account->adminName as $capid => $rankname) {
+						$response .= "<a href=\"mailto:".$account->adminEmail[$capid];
+						$response .= "?subject=Upgrade our CAPUnit.com account, please";
+						$response .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account ";
+						$response .= "so that we can have more events on our calendar!\">";
+						$response .= $rankname."</a>, ";
+					}
+					$response = rtrim($response, ', ');
+					$response .= ") to request a CAPUnit.com account upgrade.";
+					return [
+						'title' => 'Copy Event - Unauthorized',
+						'body' => $response,
+						'headers' => [
+							'X-Event-Copy-Status' => 'denieded'
+						]
+					];
+				}
+
 				$d = $event->data;
 				unset($d['EventNumber']);
 				$ne = Event::Create($d);
@@ -386,7 +449,10 @@
 				eventMailer($m, $ne);
 				return [
 					'body' => [
-						'MainBody' => $ne->EventNumber
+						'MainBody' => $ne->EventNumber,
+						'headers' => [
+							'X-Event-Copy-Status' => 'accepteded'
+						]
 					]
 				];
 			} else if ($func == 'atmod' && ($m->hasPermissionLevel("SignUpEdit") || $event->isPOC($m))) {

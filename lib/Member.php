@@ -764,7 +764,7 @@
 				$id = $acc->id;
 			}
             // Get the access levels, but only for the current account (e.g., no global access levels)
-            $stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['AccessLevel']." WHERE CAPID = :CAPID AND (".DB_TABLES['AccessLevel'].".AccountID = :aid OR ".DB_TABLES['AccessLevel'].".AccountID = 'www');");
+            $stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['AccessLevel']." WHERE CAPID = :CAPID AND (".DB_TABLES['AccessLevel'].".AccountID = :aid);");
             $stmt->bindParam(":CAPID", $this->uname);
             $stmt->bindParam(":aid", $id);
             $rows = array ();

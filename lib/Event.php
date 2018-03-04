@@ -22,6 +22,11 @@
         public $TimeModified = 0;
         
         /**
+         * @var int UNIX timestamp of date/time event was created
+         */
+        public $TimeCreated = 0;
+        
+        /**
          * @var int Event number of event
          */
         public $EventNumber = 0;
@@ -337,7 +342,7 @@
             }
 
             $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['EventInformation']." (
-					AccountID, EventNumber, EventName, MeetDateTime, MeetLocation, StartDateTime, EventLocation, 
+					Created, AccountID, EventNumber, EventName, MeetDateTime, MeetLocation, StartDateTime, EventLocation, 
 					EndDateTime, PickupLocation, PickupDateTime, TransportationProvided, TransportationDescription, 
 					Uniform, DesiredNumParticipants, RegistrationDeadline, RegistrationInformation, ParticipationFeeDue, 
                     ParticipationFee, LodgingArrangements, Meals, Activity, HighAdventureDescription, RequiredEquipment, 
@@ -347,7 +352,7 @@
                     CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, 
                     AdditionalEmailAddresses, ExtPOCName, ExtPOCPhone, ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID
 				) VALUES (
-                    :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
+                    :created, :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
                     :endDate, :pickupLocation, :pickupDate, :transportationProvided, :transportationDescription, 
                     :uniform, :desiredParticipants, :registrationDeadline, :registrationInformation, :participationFeeDeadline, 
                     :participationFee, :lodging, :meals, :activity, :highAdventureDescription, :requiredEquipment, 
@@ -358,6 +363,7 @@
                     :additionalEmailAddresses, :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid
 				);");
 
+            $stmt->bindValue(':created', time());
             $stmt->bindValue(':accountid', $_ACCOUNT->id);
             $stmt->bindValue(':eventnumber', $event->EventNumber);
             $stmt->bindValue(':eventName', $event->EventName);

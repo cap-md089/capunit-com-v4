@@ -141,10 +141,15 @@ function copyEvent_prepush(a) {
 
 function copyEvent(data, status, jqxhr, a) {
     console.log(data);
-    if (data == 0) {
-        customDialog("Event failed to copy");
+    console.log(jqxhr.getResponseHeader('X-Event-Copy-Status'));
+    if (jqxhr.getResponseHeader('X-Event-Copy-Status') && jqxhr.getResponseHeader('X-Event-Copy-Status') == 'accepteded') {
+        if (data == 0) {
+            customDialog(undefined, "Event failed to copy");
+        } else {
+            getHtml('/eventviewer/'+data);
+        }
     } else {
-        getHtml('/eventviewer/'+data);
+        setTimeout(customDialog, 500, undefined, data);
     }
 }
 

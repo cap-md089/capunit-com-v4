@@ -21,11 +21,14 @@
          */
         public static function CreateConnection () {
             if (!isset(self::$PDO)) {
- //               try {
+               try {
                     self::$PDO = new PDO (DB_PROTOCOL . ":host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME, DB_UNAME, DB_UPASS, array (
                         PDO::ATTR_PERSISTENT => false
                     ));
-   //             } catch (PDOException $e) {}
+               } catch (PDOException $e) {
+                   //need to provide error message to user/web server log here.  
+                   // !!! First troubleshooting step: check database address in config.php !!!
+               }
             }
             return self::$PDO;
         }

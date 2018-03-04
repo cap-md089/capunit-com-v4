@@ -196,8 +196,65 @@ leftsection;
 rightsection;
             
             // $html .= $leftsection1 . $rightsection1 . "<div class=\"divider\"></div>";
+            if($l && $a->hasMember($m)) {
+                // $html .= "paid: ".$a->paid." expiresIn: ".$a->expiresIn." expired: ".$a->expired;
+                if($a->paid) {
+                    if($a->expiresIn < 0){
+                        $html .= "<section><h3 style=\"text-align: center\"><font color=\"red\">";
+                        //need to add unit admin email addresses as a link here
+                        $html .= "This subscription has expired!!  Please contact someone on your account administrative staff (";
+                        foreach ($a->adminName as $capid => $rankname) {
+                            $html .= "<a href=\"mailto:".$a->adminEmail[$capid];
+                            $html .= "?subject=Upgrade our CAPUnit.com account, please";
+                            $html .= "&body=".$rankname.", please contact sales@capunit.com to renew our CAPUnit.com account!\">";
+                            $html .= $rankname."</a>, ";
+                        }
+                        $html = rtrim($html, ', ');
+                        $html .= ") to request a CAPUnit.com account renewal.";
+                        $html .= "</font></h3></section>";
+                        $html .= "<div class=\"divider\"></div>";
+                    } else if($a->expiresIn < 32){
+                        $html .= "<section><h3 style=\"text-align: center\"><font color=\"red\">";
+                        $html .= "This subscription expires ";
+                        if ($a->expiresIn > 1 ) { 
+                            $html .= "in ".$a->expiresIn." days!  ";
+                        } else if ($a->expiresIn > 0 ) {
+                            $html .= "tomorrow!!  ";
+                        } else {
+                            $html .= "today!!  "; 
+                        }
+                        //need to add unit admin email addresses as a link here
+                        $html .= "Please contact someone on your account administrative staff (";
+                        foreach ($a->adminName as $capid => $rankname) {
+                            $html .= "<a href=\"mailto:".$a->adminEmail[$capid];
+                            $html .= "?subject=Upgrade our CAPUnit.com account, please";
+                            $html .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account!\">";
+                            $html .= $rankname."</a>, ";
+                        }
+                        $html = rtrim($html, ', ');
+                        $html .= ") to avoid an interruption in CAPUnit.com premium account features.";
+                        $html .= "</font></h3></section>";
+                        $html .= "<div class=\"divider\"></div>";
+                    }
+                } else {
+                    $html .= "<section><h3 style=\"text-align: center\">";
+                    //need to add unit admin email addresses as a link here
+                    $html .= "This is the FREE version of CAPUnit.com.  To gain access to many additional features, please ";
+                    $html .= "contact someone on your account administrative staff (";
+                    foreach ($a->adminName as $capid => $rankname) {
+                        $html .= "<a href=\"mailto:".$a->adminEmail[$capid];
+                        $html .= "?subject=Upgrade our CAPUnit.com account, please";
+                        $html .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account!\">";
+                        $html .= $rankname."</a>, ";
+                    }
+                    $html = rtrim($html, ', ');
+                    $html .= ") to request a CAPUnit.com account upgrade.";
+                    $html .= "</h3></section>";
+                    $html .= "<div class=\"divider\"></div>";
+                }
+            }
 
-            $pdo = DBUtils::CreateConnection();
+			$pdo = DBUtils::CreateConnection();
             $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND Activity LIKE '%Recurring Meeting%' LIMIT 1;");
             $stmt->bindValue (':now', time());
 			$stmt->bindValue (':aid', $a->id);
@@ -205,7 +262,7 @@ rightsection;
 			print_r($event);
 			echo "\n";
             if (count($event) !== 1) {
-                $html .= "<section class=\"halfSection\" style=\"text-align: center\">No upcoming meeting</section>";
+                $html .= "<section class=\"halfSection\" style=\"text-align: center\"><h3 style=\"text-align: center\">No Upcoming Meeting</h3></section>";
             } else {
                 $e = Event::Get($event[0]['EventNumber']);
 				if (!!$e) {
@@ -213,7 +270,7 @@ rightsection;
                 $html .= "<section class=\"halfSection\" style=\"text-align: left\">
                         <h3 style=\"text-align: center\">Next Meeting</h3>
                         <strong>Event:</strong> $e->EventName<br />
-                    	<strong>Time:</strong> ".date('D, d M Y H:i:s', $e->MeetDateTime)."<br />
+                    	<strong>Time:</strong> ".date('D, d M Y H:i', $e->MeetDateTime)."<br />
             	        <strong>Location:</strong> $e->MeetLocation<br />
         	            <strong>Uniform of the Day:</strong> $e->Uniform<br />
     	                $link
@@ -228,7 +285,11 @@ rightsection;
             $stmt->bindValue(':limit', (int)Registry::get('Website.ShowUpcomingEvents'), PDO::PARAM_INT);
             $data = DBUtils::ExecutePDOStatement($stmt);
             $html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">";
-            $html .= "<h3 style=\"text-align:center;line-height:initial\">Upcoming Events</h3>";
+            if (count($data) > 0) {
+                $html .= "<h3 style=\"text-align:center;line-height:initial\">Upcoming Events</h3>";
+            } else {
+                $html .= "<h3 style=\"text-align:center;line-height:initial\">No Upcoming Events</h3>";
+            }
             foreach ($data as $datum) {
                 $e = Event::Get($datum['EventNumber']);
                 if($e->Status == "Cancelled") $html .= "<font color=\"red\">";
