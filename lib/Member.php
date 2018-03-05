@@ -296,7 +296,7 @@
                     if ($r) {
                         $m->memberRank = $r->getAttribute("value");
                         // Does the member rank start with C/...? If so, it is a cadet.
-                        $m->seniorMember = !(preg_match('/C\/.{2,6}/', $m->memberRank) || substr($m->memberRank, 0, 5) == 'CADET');
+                        if ($h->getElementByID("txtType") == "Cadet") { $m->seniorMember = false; } else { $m->seniorMember = true; }
                     } else {
                         $m->memberRank = "CADET";
                         $m->seniorMember = false;
@@ -573,12 +573,16 @@
                 $mname = $data[0]['MemberName'];
                 $mnamelast = $data[0]['MemberNameLast'];
                 $mrank = $data[0]['MemberRank'];
-                $logger->Log("S ".$capid." ".$mrank." ".$mname, 2);
+                if (!$mrank) { $msenior = false; $mrank = 'CADET'; } else {
+                    if (substr($mrank, 0, 2) == "C/") { $msenior = false; } else { $msenior = true; }
+                }
+                
+                // $logger->Log("S ".$capid." ".$mrank." ".$mname, 2);
             } else {
                 if ($global) {
-                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
+                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
                 } else {
-                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
+                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
                 }
                 $stmt->bindValue(':cid', $capid);
                 $data = DB_Utils::ExecutePDOStatement($stmt);
@@ -588,11 +592,15 @@
                     $mname = $data['NameFirst'] . ' ' . substr($data['NameMiddle'], 0, 1) . ' ' . $data['NameLast'] . ' ' . $data['NameSuffix'];
                     $mnamelast = $data['NameLast'];
                     $mrank = $data['Rank'];
-                    $logger->Log("M ".$capid." ".$mrank." ".$mname, 2);
+                    if ($mrank == 'CADET') { $msenior = false; } else {
+                        if (substr($mrank, 0, 2) == "C/") { $msenior = false; } else { $msenior = true; }
+                    }
+                        // $logger->Log("M ".$capid." ".$mrank." ".$mname, 2);
                 } else {
                     $mname = '';
                     $mnamelast = '';
                     $mrank = '';
+                    $msenior = false;
                 }
             }
 
@@ -603,7 +611,7 @@
                 'memberName' => $mname,
                 'lastName' => $mnamelast,
                 'memberRank' => $mrank,
-                'seniorMember' => !(preg_match('/C\/.{2,6}/', $mrank) || substr($mrank, 0, 5) == 'CADET'),
+                'seniorMember' => $msenior,
                 'success' => true
             ];
 

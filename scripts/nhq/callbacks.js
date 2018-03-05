@@ -140,8 +140,6 @@ function copyEvent_prepush(a) {
 }
 
 function copyEvent(data, status, jqxhr, a) {
-    console.log(data);
-    console.log(jqxhr.getResponseHeader('X-Event-Copy-Status'));
     if (jqxhr.getResponseHeader('X-Event-Copy-Status') && jqxhr.getResponseHeader('X-Event-Copy-Status') == 'accepteded') {
         if (data == 0) {
             customDialog(undefined, "Event failed to copy");
