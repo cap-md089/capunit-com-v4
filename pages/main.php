@@ -231,11 +231,11 @@ rightsection;
             $html .= "<h3 style=\"text-align:center;line-height:initial\">Upcoming Events</h3>";
             foreach ($data as $datum) {
                 $e = Event::Get($datum['EventNumber']);
-                if($e->Status == "Cancelled") $html .= "<font color=\"red\">";
+                if($e->Status == "Cancelled") $html .= "<span style=\"color:red\">";
                 $html .= "<strong>".date('j F', $e->MeetDateTime)."</strong> ";
-                if($e->Status == "Cancelled") $html .= "</font>";
+                if($e->Status == "Cancelled") $html .= "</span>";
                 $html .= (new Link('eventviewer', $e->EventName, [$e->EventNumber]));
-                if($e->Status == "Cancelled") $html .= " <strong><font color=\"red\">Cancelled!</font></strong>";
+                if($e->Status == "Cancelled") $html .= " <strong><span style=\"color:red\">Cancelled!</span></strong>";
                 $html .= '<br />';
             }
             $html .= "</section>";
