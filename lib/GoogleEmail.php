@@ -31,335 +31,198 @@
 		}
 
 
-        public static function sendMail ($mail) {
+        public static function sendMail ($addresses, $bodyText, $subject) {
             // self::service->setDisplayName("CAPUnit.com");
             // self::service->setReplyToAddress("events@capunit.com");
+            $chunkSizeBytes = 1 * 1024 * 1024; // size of chunks we are going to send to google
+
+            //need to implement the multi-part emailer, sample code at link below
+            //https://kevinjmcmahon.net/articles/22/html-and-plain-text-multipart-email-/
+            $mailBody = <<<EOD
+<div style="background-color:#f0f8ff;padding: 20px">
+<header style="background:#28497e;padding:10px;height:200px;width:100%;margin:0;padding:0">
+    <div style="padding:0;margin:0;background-image:url('https://$_ACCOUNT->id.capunit.com/images/header.png');width:100%;height:100%;background-size:contain;background-repeat:no-repeat;background-position:50% 50%"></div>
+</header>
+<div style="border: 5px solid #28497e;margin:0;padding: 20px">
+$bodyText
+</div>
+<footer style="background:#28497e;padding:25px;color: white">
+    &copy; CAPUnit.com 2017
+</footer>
+</div>
+EOD;
+            $bodyText = preg_replace('/<a.*href="(.*)".*>(.*)<\/a>/', '$2 ($1)', $bodyText);
+            $mailAltBody = "CAPUnit.com notification\n\n".strip_tags(preg_replace('/<br.*>/', "\n", $bodyText))."\n\nCopyright 2017 CAPUnit.com";
+
+            $mailMessage = $makeMessage($bodyText);
+            // code to create mime message
+            $message = new Google_Service_Gmail_Message();
+            $message->setRaw($mailMessage);
+
+            $result = $mailService->users_messages->send('me', $message);
+            self::$logger->Log("result string: ".$result);
+            $googleMessageId = $status->getId();
+            self::$logger->Log("message id: ".$googleMessageId);
         }
 
-        public static function updateCalendarEvent (Event $CUevent) {
-            if ($CUevent->Status == 'Draft') {
-				self::$logger->Log("Draft event, deleting from Google Calendar", self::$loglevel);
-                self::removeCalendarEvent($CUevent);
-                return;
-            }
-            global $_ACCOUNT;
-            $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
-            $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
-            $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
-			self::$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
-            
-            $optParams = array(
-                'q' => 'Event ID Number: '.$eventId,
-                'orderBy' => 'startTime',
-                'singleEvents' => TRUE,
-            );
-			self::$logger->Log("Update Calendar Event::  optParams: ".implode($optParams), self::$loglevel);
-            $results = self::$service->events->listEvents($calendarId, $optParams);
-            $wingResults = self::$service->events->listEvents($wingCalendarId, $optParams);
-            
-            $returnString = '';
+        public static function makeMessage ($addresses, $bodyText, $subject) {
+            $envelope["from"]= "events@capunit.com";
+            $envelope["to"]  = $addresses;
+            $envelope["cc"]  = "grioux.cap@gmail.com";
+            $envelope["subject"] = $subject;
 
-            //remove all event items from both calendars
-            $results = $results->getItems();
-            foreach ($results as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove event: ".$Gevent->summary, self::$loglevel);
-                self::$service->events->delete($calendarId, $Gevent->getId());
-            }
-            $wingResults = $wingResults->getItems();
-            foreach ($wingResults as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove wing event: ".$Gevent->summary, self::$loglevel);
-                self::$service->events->delete($wingCalendarId, $Gevent->getId());
-            }
+            $part1["type"] = TYPEMULTIPART;
+            $part1["subtype"] = "mixed";
 
-            //remove all registration items
-            $optParams = array(
-                'q' => 'Event ID Number: '.$eventId.'-Reg',
-                'orderBy' => 'startTime',
-                'singleEvents' => TRUE,
-            );
-            $results = self::$service->events->listEvents($calendarId, $optParams);
-            $results = $results->getItems();
-            foreach ($results as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove event registration: ".$Gevent->summary, self::$loglevel);
-                self::$service->events->delete($calendarId, $Gevent->getId());
-            }
-            //remove all registration fee items
-            $optParams = array(
-                'q' => 'Event ID Number: '.$eventId.'-Fee',
-                'orderBy' => 'startTime',
-                'singleEvents' => TRUE,
-            );
-            $results = self::$service->events->listEvents($calendarId, $optParams);
-            $results = $results->getItems();
-            foreach ($results as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove event fee: ".$Gevent->summary, self::$loglevel);
-                self::$service->events->delete($calendarId, $Gevent->getId());
-            }
+            $part2["type"] = TYPETEXT;
+            $part2["subtype"] = "plain";
+            $part2["description"] = "mail body";
+            $part2["contents.data"] = $bodyText."\n\n\n\t";
+            /*
+            $filename = "/tmp/imap.c.gz";
+            $fp = fopen($filename, "r");
+            $contents = fread($fp, filesize($filename));
+            fclose($fp);
 
-            if (!($CUevent->Status == 'Deleted' || $CUevent->Status == 'Draft')) {
-                //build event data and create Google event
+            $part3["type"] = TYPEAPPLICATION;
+            $part3["encoding"] = ENCBINARY;
+            $part3["subtype"] = "octet-stream";
+            $part3["description"] = basename($filename);
+            $part3["contents.data"] = $contents;
+            */
+            $body[1] = $part1;
+            $body[2] = $part2;
+            // $body[3] = $part3;
 
-                $descriptionString = "--Please contact the POC listed below directly with questions or comments.\n\n";
-                $descriptionString .= "Event Information Link\n(Page includes event information and any applicable download links):\n";
-                $descriptionString .= "https://".$_ACCOUNT->id.".capunit.com/eventviewer/".$CUevent->EventNumber."/\n\n";
-                
-                // Second block
-                $descriptionString .= "--Meet at ".date('h:i A \o\n n/j/Y', $CUevent->MeetDateTime).' at '.$CUevent->MeetLocation."\n";
-                $descriptionString .= "--Start at ".date('h:i A \o\n n/j/Y', $CUevent->StartDateTime).' at '.$CUevent->EventLocation."\n";
-                $descriptionString .= "--End at ".date('h:i A \o\n n/j/Y', $CUevent->EndDateTime)."\n";
-                $descriptionString .= "--Pickup at ".date('h:i A \o\n n/j/Y', $CUevent->PickupDateTime).' at '.$CUevent->PickupLocation."\n\n";
+            $message = imap_mail_compose($envelope, $body);
+            self::$logger->Log("imap mail: ".$message);
 
-                // Third (fourth?) block
-                $descriptionString .= "--Transportation provided: ".($CUevent->TransportationProvided == 1 ? 'YES' : 'NO')."\n";
-                $descriptionString .= "--Uniform: ".$CUevent->Uniform."\n";
-                $descriptionString .= "--Comments: ".$CUevent->Comments."\n";
-                $descriptionString .= "--Activity: ".$CUevent->Activity."\n";
-                $descriptionString .= "--Required forms: ".$CUevent->RequiredForms."\n";
-                $descriptionString .= "--Required equipment: ".$CUevent->RequiredEquipment."\n";
-                $descriptionString .= "--Registration Deadline: ".date('n/j/Y', $CUevent->RegistrationDeadline)."\n";
-                $descriptionString .= "--Meals: ".$CUevent->Meals."\n";
-                if ($CUevent->CAPPOC1ID != 0) {
-                    $descriptionString .= "--CAP Point of Contact: ".$CUevent->CAPPOC1Name."\n";
-                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->CAPPOC1Phone."\n";
-                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->CAPPOC1Email."\n";
-                }
-                if ($CUevent->CAPPOC2ID != 0) {
-                    $descriptionString .= "--CAP Point of Contact: ".$CUevent->CAPPOC2Name."\n";
-                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->CAPPOC2Phone."\n";
-                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->CAPPOC2Email."\n";
-                }
-                if ($CUevent->ExtPOCName != '') {
-                    $descriptionString .= "--CAP Point of Contact: ".$CUevent->ExtPOCName."\n";
-                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->ExtPOCPhone."\n";
-                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->ExtPOCEmail."\n";
-                }
-                $descriptionString .= "--Desired number of Participants: ".$CUevent->DesiredNumParticipants."\n";
-                $descriptionString .= "--Event status: ".$CUevent->Status;
-
-				/*
-				Google Calendar API V3 event colors:
-				Draft			5
-				Tentative		7
-				Confirmed		9
-				Complete		9
-				Cancelled		11
-				Info Only		1
-				Team			10
-				*/
-                $colorId = '9';
-                if ($CUevent->Status == 'Tentative') {
-                    $colorId = '7';
-                } else if ($CUevent->Status == 'Cancelled') {
-                    $colorId = '11';
-                } else if ($CUevent->Status == 'Information Only') {
-                    $colorId = '1';
-                }
-				if($CUevent->TeamID != 0) { $colorId = '10'; }
-
-                //create new event
-                $Gevent = new Google_Service_Calendar_Event(array(
-                    'summary' => $CUevent->EventName,
-                    'location' => $CUevent->EventLocation,
-                    'description' => '--Event ID Number: '.$eventId."\n".$descriptionString,
-                    'start' => array(
-                      'dateTime' => date('c', $CUevent->MeetDateTime),
-                      'timeZone' => date('e', $CUevent->MeetDateTime),
-                    ),
-                    'end' => array(
-                        'dateTime' => date('c', $CUevent->PickupDateTime),
-                        'timeZone' => date('e', $CUevent->PickupDateTime),
-                      ),
-                    'colorId' => $colorId,
-                  ));
-                //insert new event into main calendar
-                $Gevent = self::$service->events->insert($calendarId, $Gevent);
-
-                //create new event
-                $GwingEvent = new Google_Service_Calendar_Event(array(
-                    'summary' => $CUevent->EventName,
-                    'location' => $CUevent->EventLocation,
-                    'description' => '--Event ID Number: '.$eventId."\n".$descriptionString,
-                    'start' => array(
-                      'dateTime' => date('c', $CUevent->MeetDateTime),
-                      'timeZone' => date('e', $CUevent->MeetDateTime),
-                    ),
-                    'end' => array(
-                        'dateTime' => date('c', $CUevent->PickupDateTime),
-                        'timeZone' => date('e', $CUevent->PickupDateTime),
-                      ),
-                  ));
-                //insert new event into wing calendar, if selected
-                if ($CUevent->PublishToWingCalendar == true) {
-                    $GwingEvent = self::$service->events->insert($wingCalendarId, $GwingEvent);
-                }
-
-                //build event registration data and create Google event, if applicable
-                if ($CUevent->RegistrationDeadline > 0){
-                    //create new event
-                    $GregEvent = new Google_Service_Calendar_Event(array(
-                        'summary' => "Registration Deadline for ".$CUevent->EventName,
-                        'location' => $CUevent->EventLocation,
-                        'description' => '--Event ID Number: '.$eventId."-Reg\n".$descriptionString,
-                        'start' => array(
-                        'dateTime' => date('c', $CUevent->RegistrationDeadline),
-                        'timeZone' => date('e', $CUevent->RegistrationDeadline),
-                        ),
-                        'end' => array(
-                            'dateTime' => date('c', $CUevent->RegistrationDeadline+60),
-                            'timeZone' => date('e', $CUevent->RegistrationDeadline+60),
-                            ),
-                        'colorId' => '10',
-                    ));
-                    //insert new event into main calendar
-                    $GregEvent = self::$service->events->insert($calendarId, $GregEvent);
-                }
-
-                //build event registration fee data and create Google event, if applicable
-                if ($CUevent->ParticipationFeeDue > 0) {
-                    //create new event
-                    $GfeeEvent = new Google_Service_Calendar_Event(array(
-                        'summary' => "Registration Fee Deadline for ".$CUevent->EventName,
-                        'location' => $CUevent->EventLocation,
-                        'description' => '--Event ID Number: '.$eventId."-Fee\n".$descriptionString,
-                        'start' => array(
-                        'dateTime' => date('c', $CUevent->ParticipationFeeDue),
-                        'timeZone' => date('e', $CUevent->ParticipationFeeDue),
-                        ),
-                        'end' => array(
-                            'dateTime' => date('c', $CUevent->ParticipationFeeDue+60),
-                            'timeZone' => date('e', $CUevent->ParticipationFeeDue+60),
-                        ),
-                        'colorId' => '10',
-                    ));
-                    //insert new event into main calendar
-                    $GfeeEvent = self::$service->events->insert($calendarId, $GfeeEvent);
-                }
-            }
-
-            return $returnString;
+            return $message;
         }
 
+    }
 
+            // Call the API with the media upload, defer so it doesn't immediately return.
+            //https://developers.google.com/api-client-library/php/guide/media_upload
+            //https://developers.google.com/gmail/api/v1/reference/users/messages/send
+            //https://stackoverflow.com/questions/24503483/reading-messages-from-gmail-in-php-using-gmail-api
+            //https://michiel.vanbaak.eu/2016/02/27/sending-big-email-using-google-php-api-client-and-gmail/
+            //https://developers.google.com/gmail/api/v1/reference/users/messages
+            //https://developers.google.com/gmail/api/v1/reference/users/drafts
 
-        public static function removeCalendarEvent (Event $CUevent) {
-            global $_ACCOUNT;
-            $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
-            $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
-            $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
-            
-            $optParams = array(
-                'q' => 'Event ID Number: '.$eventId,
-                'orderBy' => 'startTime',
-                'singleEvents' => TRUE,
+            /*
+            $googleClient->setDefer(true);
+            $result = $mailService->users_messages->send('events@capunit.com', $message);
+            // create mediafile upload
+            $media = new Google_Http_MediaFileUpload(
+                $googleClient,
+                $result,
+                'message/rfc822',
+                $mailMessage,
+                true,
+                $chunkSizeBytes
             );
-            $results = self::$service->events->listEvents($calendarId, $optParams);
-            $wingResults = self::$service->events->listEvents($wingCalendarId, $optParams);
-            
-            $returnString = '';
+            $media->setFileSize(strlen($mailMessage));
+            // Upload the various chunks. $status will be false until the process is complete.
+            $status = false;
+            while(!$status) {
+                $status = $media->nextChunk();
+            }
+            $result = false;
+            if($status != false) {
+              $result = $status;
+            }
+            // Reset to the client to execute requests immediately in the future.
+            $googleClient->setDefer(false);
+            */
 
-            //remove all event items from both calendars
-            $results = $results->getItems();
-            foreach ($results as $Gevent) {
-                self::$service->events->delete($calendarId, $Gevent->getId());
-            }
-            $wingResults = $wingResults->getItems();
-            foreach ($wingResults as $Gevent) {
-                self::$service->events->delete($wingCalendarId, $Gevent->getId());
-            }
-        }
+    
+
 
 /*
-Example code from API website
 
+remail
+return_path
+date
+from
+reply_to
+in_reply_to
+subject
+to
+cc
+bcc
+message_id
+custom_headers
 
-//add an event
+If you can't find a header you need in this list, you can use 'custom_headers'. It is just an array of lines to be appended to the header without any formatting, like this:
 
-$event = new Google_Service_Calendar_Event(array(
-  'summary' => 'Google I/O 2015',
-  'location' => '800 Howard St., San Francisco, CA 94103',
-  'description' => 'A chance to hear more about Google\'s developer products.',
-  'start' => array(
-    'dateTime' => '2015-05-28T09:00:00-07:00',
-    'timeZone' => 'America/Los_Angeles',
-  ),
-  'end' => array(
-    'dateTime' => '2015-05-28T17:00:00-07:00',
-    'timeZone' => 'America/Los_Angeles',
-  ),
-  'recurrence' => array(
-    'RRULE:FREQ=DAILY;COUNT=2'
-  ),
-  'attendees' => array(
-    array('email' => 'lpage@example.com'),
-    array('email' => 'sbrin@example.com'),
-  ),
-  'reminders' => array(
-    'useDefault' => FALSE,
-    'overrides' => array(
-      array('method' => 'email', 'minutes' => 24 * 60),
-      array('method' => 'popup', 'minutes' => 10),
-    ),
-  ),
-));
+$envelope["custom_headers"] = Array("User-Agent: My Mail Client", "My-Header: My Value");
+$envelope = [
+    //...
+    "custom_headers" => [
+        "X-SES-CONFIGURATION-SET: example",
+        "X-SES-MESSAGE-TAGS: emailType=example"
+    ]
+];
+*/
 
-$calendarId = 'primary';
-$event = $service->events->insert($calendarId, $event);
-printf('Event created: %s\n', $event->htmlLink);
-
-
-//add an attachment to an event
-
-function addAttachment($calendarService, $driveService, $calendarId, $eventId, $fileId) {
-  $file = $driveService->files->get($fileId);
-  $event = $calendarService->events->get($calendarId, $eventId);
-  $attachments = $event->attachments;
-
-  $attachments[] = array(
-    'fileUrl' => $file->alternateLink,
-    'mimeType' => $file->mimeType,
-    'title' => $file->title
-  );
-  $changes = new Google_Service_Calendar_Event(array(
-    'attachments' => $attachments
-  ));
-
-  $calendarService->events->patch($calendarId, $eventId, $changes, array(
-    'supportsAttachments' => TRUE
-  ));
+/*
+    {
+  "id": string,
+  "threadId": string,
+  "labelIds": [
+    string
+  ],
+  "snippet": string,
+  "historyId": unsigned long,
+  "internalDate": long,
+  "payload": {
+    "partId": string,
+    "mimeType": string,
+    "filename": string,
+    "headers": [
+      {
+        "name": string,
+        "value": string
+      }
+    ],
+    "body": users.messages.attachments Resource,
+    "parts": [
+      (MessagePart)
+    ]
+  },
+  "sizeEstimate": integer,
+  "raw": bytes
 }
 
 
+$envelope["from"]= "joe@example.com";
+$envelope["to"]  = "foo@example.com";
+$envelope["cc"]  = "bar@example.com";
 
-//add a recurring event
+$part1["type"] = TYPEMULTIPART;
+$part1["subtype"] = "mixed";
 
-$event = new Google_Service_Calendar_Event();
-$event->setSummary('Appointment');
-$event->setLocation('Somewhere');
-$start = new Google_Service_Calendar_EventDateTime();
-$start->setDateTime('2011-06-03T10:00:00.000-07:00');
-$start->setTimeZone('America/Los_Angeles');
-$event->setStart($start);
-$end = new Google_Service_Calendar_EventDateTime();
-$end->setDateTime('2011-06-03T10:25:00.000-07:00');
-$end->setTimeZone('America/Los_Angeles');
-$event->setEnd($end);
-$event->setRecurrence(array('RRULE:FREQ=WEEKLY;UNTIL=20110701T170000Z'));
-$attendee1 = new Google_Service_Calendar_EventAttendee();
-$attendee1->setEmail('attendeeEmail');
-// ...
-$attendees = array($attendee1,
-                   // ...
-                   );
-$event->attendees = $attendees;
-$recurringEvent = $service->events->insert('primary', $event);
+$filename = "/tmp/imap.c.gz";
+$fp = fopen($filename, "r");
+$contents = fread($fp, filesize($filename));
+fclose($fp);
 
-echo $recurringEvent->getId();
+$part2["type"] = TYPEAPPLICATION;
+$part2["encoding"] = ENCBINARY;
+$part2["subtype"] = "octet-stream";
+$part2["description"] = basename($filename);
+$part2["contents.data"] = $contents;
 
+$part3["type"] = TYPETEXT;
+$part3["subtype"] = "plain";
+$part3["description"] = "description3";
+$part3["contents.data"] = "contents.data3\n\n\n\t";
 
-
+$body[1] = $part1;
+$body[2] = $part2;
+$body[3] = $part3;
 
 
-*/
 
-
-    }
+    */

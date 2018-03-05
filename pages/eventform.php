@@ -1,5 +1,7 @@
 <?php
 	define ("USER_REQUIRED", true);
+	require_once (BASE_DIR."lib/logger.php");
+	require_once (BASE_DIR."lib/general.php");
 	
 	function mdate ($time) {
 		if ($time>0) {
@@ -23,8 +25,76 @@
 				$event = false;
 			}
 
-            if (!!$event) {
+            if (!!$event) {  //go here if we have an event number and therefore requesting to edit
+				$allowed = false;
 				if (!($member->hasPermission("EditEvent") || $event->isPOC($member))) {return ['error' => 402];}
+
+				$monthevents = Null;
+				$eventlist = '';
+				$eventLimit = 0;
+
+				//check to see if within event limit, if applicable
+				if(!$account->paid || ($account->paid && $account->expired)) {
+					$pdo = DB_Utils::CreateConnection();
+		
+					//get month date range
+					$monthNumber = (int)date('n',$event->StartDateTime)-1;
+					$thisYear = (int)date('Y',$event->StartDateTime);
+					$nextMonth = UtilCollection::createDate($thisYear, $monthNumber+1);
+					$thisMonth = UtilCollection::createDate($thisYear, $monthNumber);
+
+					$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+					$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
+					$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
+					$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
+					$stmt = $pdo->prepare($sqlin);
+					$stmt->bindValue(':monthend', $nextMonth->getTimestamp(), PDO::PARAM_INT);
+					$stmt->bindValue(':monthstart', $thisMonth->getTimestamp(), PDO::PARAM_INT);
+					$stmt->bindValue(':aid', $account->id);
+					$monthevents = DB_Utils::ExecutePDOStatement($stmt);
+
+					$eventLimit = $account->unpaidEventLimit;
+				} else {
+					$eventLimit = $account->paidEventLimit;
+				}
+		
+				//check monthevents to prevent access error when Null
+				if(count($monthevents)) {
+					//compare to event limit and allow edit if not over limit				
+					for ($i = 0; ($i < $eventLimit && $i < count($monthevents)); $i++) {
+						if ($monthevents[$i]['EventNumber'] == $event->EventNumber) { $allowed = true; }
+						$eventlist .= $event->EventNumber.', ';
+					}
+				} else { // then monthevents was Null or count = 0, this is the first event of the month and is allowed
+					$allowed = true;
+				}
+
+				$eventlist = rtrim($eventlist, ', ');
+				$response = 'Events this month: '.count($monthevents).' event limit: '.$eventLimit.' eventlist: '.$eventlist.'</br>';
+
+				if (!$allowed) {
+
+					$months = ['January','February','March','April','May','June','July',
+						'August','September','October','November','December'];
+					$response .= "This account has exceeded the allowable event count limit for the month of ";
+					$response .= $months[$monthNumber]." ".$thisYear." and this event cannot be edited at this time.  ";
+					$response .= "Please contact someone on your account administrative staff (";
+					foreach ($account->adminName as $capid => $rankname) {
+						$response .= "<a href=\"mailto:".$account->adminEmail[$capid];
+						$response .= "?subject=Upgrade our CAPUnit.com account, please";
+						$response .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account ";
+						$response .= "so that we can have more events on our calendar!\">";
+						$response .= $rankname."</a>, ";
+					}
+					$response = rtrim($response, ', ');
+					$response .= ") to request a CAPUnit.com account upgrade.";
+					return [
+						'title' => 'Edit Event - Unauthorized',
+						'body' => $response
+					];
+				}
+	
+
 				$form = new AsyncForm ('eventform', 'Edit Event', Null, 'eventForm');
 
 				$form->addField('', '(* Indicates Required Field)', 'textread')
@@ -123,9 +193,26 @@
 				return [
 					'title' => 'Edit Event',
 					'body' => $form.''
+					// 'body' => $response.$form.''
 				];
 			} else {
 				$form = new AsyncForm ('eventform', 'Create an Event', Null, 'eventForm');
+
+				$messagetext = '';
+				if(!$account->paid) {
+					$messagetext = 'This is a free account and therefore, depending on the ';
+					$messagetext .= 'date on which an event is attempted to be added, account ';
+					$messagetext .= 'restrictions may prevent the addition.  There is currently ';
+					$messagetext .= 'a limit on this account of '.$account->unpaidEventLimit.' events per month.';
+					// $form->addField('', $messagetext, 'textread');
+				}
+				if($account->paid && $account->expired) {
+					$messagetext = 'The premium features associated with this account have expired and therefore, depending on the ';
+					$messagetext .= 'date on which an event is attempted to be added, account ';
+					$messagetext .= 'restrictions may prevent the addition.  There is currently ';
+					$messagetext .= 'a limit on this account of '.$account->unpaidEventLimit.' events per month.';
+					// $form->addField('', $messagetext, 'textread');
+				}
 
 				$form->addField('', '(* Indicates Required Field)', 'textread')
 					->addField ('eventName', '*Event Name', 'text')
@@ -219,10 +306,15 @@
 
 				$form->setSubmitInfo('Submit', null, null, null, false);
 
+				if ( strlen($messagetext) > 0 ) { 
+					$messagetext = "</br><div class=\"divider\"></div>".$messagetext;
+					$messagetext .= "<div class=\"divider\"></div></br>"; 
+				}
+
 				return [
 					'title' => 'Create Event',
 					'body' => [
-						'MainBody' => $form.'',
+						'MainBody' => $messagetext.$form.$messagetext,
 						'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
 							[
 								'Target' => '/',
@@ -249,10 +341,59 @@
 				];
 			}
 
+			//get month date range
+			$monthNumber = (int)date('n',$eventdata['form-data']['startDate'])-1;
+			$thisYear = (int)date('Y',$eventdata['form-data']['startDate']);
+			$nextMonth = UtilCollection::createDate($thisYear, $monthNumber+1);
+			$thisMonth = UtilCollection::createDate($thisYear, $monthNumber);
+
 			$pdo = DBUtils::CreateConnection();
+			$monthevents = Null;
+			$eventLimit = 0;
+			//check to see if within event limit, if applicable
+			if(!$account->paid || ($account->paid && $account->expired)) {
+
+				//query for events in this month
+				$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+				$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
+				$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
+				$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
+				$stmt = $pdo->prepare($sqlin);
+				$stmt->bindValue(':monthend', $nextMonth->getTimestamp());
+				$stmt->bindValue(':monthstart', $thisMonth->getTimestamp());
+				$stmt->bindValue(':aid', $account->id);
+				$monthevents = DB_Utils::ExecutePDOStatement($stmt);
+
+				$eventLimit = $account->unpaidEventLimit;
+			} else {
+				$eventLimit = $account->paidEventLimit;
+			}
 
 			if ($eventdata['form-data']['function'] == 'create') {
 				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
+
+				//compare to event limit and deny add/edit if at or over limit				
+				if (count($monthevents) >= $eventLimit) {
+					$months = ['January','February','March','April','May','June','July',
+						'August','September','October','November','December'];
+					// $response = 'Events this month: '.count($monthevents).' event limit: '.$eventLimit.'</br>';
+					$response .= "This account has exceeded the allowable event count limit for the month of ";
+					$response .= $months[$monthNumber]." ".$thisYear." and your requested event cannot be added at this time.  ";
+					$response .= "Please contact someone on your account administrative staff (";
+					foreach ($account->adminName as $capid => $rankname) {
+						$response .= "<a href=\"mailto:".$account->adminEmail[$capid];
+						$response .= "?subject=Upgrade our CAPUnit.com account, please";
+						$response .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account ";
+						$response .= "so that we can have more events on our calendar!\">";
+						$response .= $rankname."</a>, ";
+					}
+					$response = rtrim($response, ', ');
+					$response .= ") to request a CAPUnit.com account upgrade.";
+					return [
+						'title' => 'Create Event - Unauthorized',
+						'body' => $response
+					];
+				}
 
 				$poc1 = Member::Estimate($eventdata['form-data']['CAPPOC1ID']);
 				$poc2 = Member::Estimate($eventdata['form-data']['CAPPOC2ID']);
@@ -375,15 +516,34 @@
 					return ['error' => 402];
 				}
 
+				//compare to event limit and deny add/edit if at or over limit				
+				$allowed = false;
+				for ($i = 0; ($i < $eventLimit && $i < count($monthevents)); $i++) {
+					if ($monthevents[$i]['EventNumber'] == $ev) { $allowed = true; }
+					$eventlist .= $event['EventNumber'].', ';
+				}
+				$eventlist = rtrim($eventlist, ', ');
+				if (!$allowed) {
+					$months = ['January','February','March','April','May','June','July',
+						'August','September','October','November','December'];
+					$response = 'events this month: '.count($monthevents).' event limit: '.$eventLimit.' event numbers: '.$eventlist.' </br>';
+					$response .= "This account has exceeded the allowable event count limit for the month of ";
+					$response .= $months[$monthNumber]." ".$thisYear." and your requested event cannot be added at this time.  ";
+					$response .= "Please contact someone on your account administrative staff (";
+					foreach ($account->adminName as $capid => $rankname) {
+						$response .= "<a href=\"mailto:".$account->adminEmail[$capid];
+						$response .= "?subject=Upgrade our CAPUnit.com account, please";
+						$response .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account ";
+						$response .= "so that we can have more events on our calendar!\">";
+						$response .= $rankname."</a>, ";
+					}
+					$response = rtrim($response, ', ');
+					$response .= ") to request a CAPUnit.com account upgrade.";
+					return $response;
+				}
+
 				$poc1 = Member::Estimate($eventdata['form-data']['CAPPOC1ID']);
 				$poc2 = Member::Estimate($eventdata['form-data']['CAPPOC2ID']);
-
-				// if ($eventdata['form-data']['Debrief'] != '') {
-				// 	$debrief = rtrim($event->Debrief . "\n\n$member->RankName\n\n" . $eventdata['form-data']['Debrief'], "\n");
- 				// } else {
-				// 	$debrief = $event->Debrief;
-				// }
-
 
 				$event->set(array (
 					'EventName' => $eventdata['form-data']['eventName'],

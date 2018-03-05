@@ -100,6 +100,8 @@
                 // Second block
                 $descriptionString .= "--Meet at ".date('h:i A \o\n n/j/Y', $CUevent->MeetDateTime).' at '.$CUevent->MeetLocation."\n";
                 $descriptionString .= "--Start at ".date('h:i A \o\n n/j/Y', $CUevent->StartDateTime).' at '.$CUevent->EventLocation."\n";
+                // make link to insert location here                                                                 ^^^^^^^
+                // https://www.google.com/maps/place/30+N+Cranberry+Rd,+Westminster,+MD+21157
                 $descriptionString .= "--End at ".date('h:i A \o\n n/j/Y', $CUevent->EndDateTime)."\n";
                 $descriptionString .= "--Pickup at ".date('h:i A \o\n n/j/Y', $CUevent->PickupDateTime).' at '.$CUevent->PickupLocation."\n\n";
 
