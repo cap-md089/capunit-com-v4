@@ -349,21 +349,20 @@
 
 			$pdo = DBUtils::CreateConnection();
 			$monthevents = Null;
+			//query for events in this month
+			$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+			$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
+			$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
+			$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
+			$stmt = $pdo->prepare($sqlin);
+			$stmt->bindValue(':monthend', $nextMonth->getTimestamp());
+			$stmt->bindValue(':monthstart', $thisMonth->getTimestamp());
+			$stmt->bindValue(':aid', $account->id);
+			$monthevents = DB_Utils::ExecutePDOStatement($stmt);
+
 			$eventLimit = 0;
 			//check to see if within event limit, if applicable
 			if(!$account->paid || ($account->paid && $account->expired)) {
-
-				//query for events in this month
-				$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
-				$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
-				$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
-				$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
-				$stmt = $pdo->prepare($sqlin);
-				$stmt->bindValue(':monthend', $nextMonth->getTimestamp());
-				$stmt->bindValue(':monthstart', $thisMonth->getTimestamp());
-				$stmt->bindValue(':aid', $account->id);
-				$monthevents = DB_Utils::ExecutePDOStatement($stmt);
-
 				$eventLimit = $account->unpaidEventLimit;
 			} else {
 				$eventLimit = $account->paidEventLimit;
@@ -372,7 +371,7 @@
 			if ($eventdata['form-data']['function'] == 'create') {
 				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
 
-				//compare to event limit and deny add/edit if at or over limit				
+				//compare to event limit and deny add if at or over limit				
 				if (count($monthevents) >= $eventLimit) {
 					$months = ['January','February','March','April','May','June','July',
 						'August','September','October','November','December'];
@@ -521,7 +520,7 @@
 				$eventlist = '';
 				for ($i = 0; ($i < $eventLimit && $i < count($monthevents)); $i++) {
 					if ($monthevents[$i]['EventNumber'] == $ev) { $allowed = true; }
-					$eventlist .= $event['EventNumber'].', ';
+					$eventlist .= $monthevents[$i]['EventNumber'].', ';
 				}
 				$eventlist = rtrim($eventlist, ', ');
 				if (!$allowed) {
@@ -529,7 +528,7 @@
 						'August','September','October','November','December'];
 					$response = 'events this month: '.count($monthevents).' event limit: '.$eventLimit.' event numbers: '.$eventlist.' </br>';
 					$response .= "This account has exceeded the allowable event count limit for the month of ";
-					$response .= $months[$monthNumber]." ".$thisYear." and your requested event cannot be added at this time.  ";
+					$response .= $months[$monthNumber]." ".$thisYear." and your requested event cannot be edited at this time.  ";
 					$response .= "Please contact someone on your account administrative staff (";
 					foreach ($account->adminName as $capid => $rankname) {
 						$response .= "<a href=\"mailto:".$account->adminEmail[$capid];
