@@ -340,6 +340,7 @@
                 $data = DBUtils::ExecutePDOStatement($stmt);
                 $event->EventNumber = (int)$data[0]['EventNumber'];
             }
+            if ($event->EventNumber == 0) { $event->EventNumber = 1; }
 
             $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['EventInformation']." (
 					Created, AccountID, EventNumber, EventName, MeetDateTime, MeetLocation, StartDateTime, EventLocation, 
