@@ -37,7 +37,7 @@
 				$stmt->bindValue(":fly", $flight);
 				$data = DBUtils::ExecutePDOStatement($stmt);
 				foreach ($data as $datum) {
-					$mem = Member::Estimate($datum['capid']);
+					$mem = Member::Estimate($datum['capid'], true);
 					if ($mem) {
 						$fhtml .= "<div id=\"{$datum['capid']}\" class=\"cadet\">";
 						$fhtml .= "$mem->RankName<input name=\"capids[]\" type=\"hidden\" value=\"$mem->uname:$flight\" />";
