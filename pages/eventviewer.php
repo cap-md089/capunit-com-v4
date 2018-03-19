@@ -319,7 +319,6 @@
 						"You're signed up!" : "Something went wrong!";
 			} else if ($e['raw']['func'] == 'signupedit') {
 				$attendance = new Attendance($e['form-data']['eid']);
-				print_r($attendance);
 				$mem = Member::Estimate($e['form-data']['capid']);
 				if (!$mem || !$attendance->has($mem)) {
 					return ['error' => 311];

@@ -518,6 +518,7 @@
 
 				//compare to event limit and deny add/edit if at or over limit				
 				$allowed = false;
+				$eventlist = '';
 				for ($i = 0; ($i < $eventLimit && $i < count($monthevents)); $i++) {
 					if ($monthevents[$i]['EventNumber'] == $ev) { $allowed = true; }
 					$eventlist .= $event['EventNumber'].', ';

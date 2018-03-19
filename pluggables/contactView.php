@@ -1,6 +1,7 @@
 <?php
 	function contactView ($e, $c, $l, $m, $a) {
 		$html = '';
+		$html .= ($m->hasDutyPosition(["Cadet Flight Sergeant", "Cadet Flight Commander"])) ? 'T' : 'F';
 		if ($m->hasDutyPosition(["Cadet Flight Sergeant", "Cadet Flight Commander"])) {
 			$pdo = DB_Utils::CreateConnection();
 			$emails = '';
@@ -82,6 +83,10 @@ EOD;
 <div style="margin:10px;font-style:italic;" id="emailList">$emails</div>
 $dl
 HTM;
+			return [
+				'text' => $html,
+				'title' => 'Contact View'
+			];
 		} else if ($m->hasDutyPosition(['Cadet Executive Officer', 'Cadet Deputy Commander', 'Cadet Commander'])) {
 			$pdo = DB_Utils::CreateConnection();
 			$emails = '';
@@ -161,6 +166,7 @@ EOD;
 				$dl->addElement($mem['Rank'] . ' ' . $mem['Name'].($mem['Absent']?" <span class=\"red\">This person is absent</span>":""), $phones, Null, Null, false);
 			}
 			$emails = rtrim($emails, '; ');
+			$dl->defaultopen = false;
 			$html .= <<<HTM
 <h2 class="title">Flight contact list</h2>
 <div style="margin:10px;font-style:italic;" id="emailList">$emails</div>
