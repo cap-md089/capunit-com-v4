@@ -68,9 +68,9 @@
 
                 foreach ($things as $thing) {
                     if ($form->$thing != $database->$thing) {
-                        if ($thing == 'MeetDateTime' || $thing == 'StartDateTime' || $thing == 'EndDateTime' || $thing == 'PickupDateTime' || $thing == 'RegistrationDeadline') {
+                        if ($thing == 'MeetDateTime' || $thing == 'StartDateTime' || $thing == 'EndDateTime' || $thing == 'PickupDateTime' || $thing == 'RegistrationDeadline' || $thing == 'ParticipationFeeDue') {
                             $fields[$thing] = [date('h:i A n/j/Y', $form->$thing),date('h:i A n/j/Y', $database->$thing)];
-                        } else if ($thing == 'TransportationProvided') {
+                        } else if ($thing == 'TransportationProvided' || $thing == 'AcceptSignUps' || $thing == 'Complete' || $thing == 'CAPPOC1ReceiveEventUpdates' || $thing == 'CAPPOC1ReceiveSignUpUpdates' || $thing == 'CAPPOC2ReceiveEventUpdates' || $thing == 'CAPPOC2ReceiveSignUpUpdates' || $thing == 'ExtPOCReceiveEventUpdates' || $thing == 'PartTime') {
                             $fields[$thing] = [$form->$thing ? 'YES' : 'NO', $database->$thing ? 'YES' : 'NO'];  
                         } else {
                             $fields[$thing] = [$form->$thing, $database->$thing];
