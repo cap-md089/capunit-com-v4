@@ -20,8 +20,8 @@
   const DB_PROTOCOL = "mysql";
   const DB_UNAME = "em";
   const DB_UPASS = "alongpassword2017";
-  const DB_HOST = "192.168.45.10";
-  const DB_NAME = "EventManagement";
+  const DB_HOST = "127.0.0.1";
+  const DB_NAME = "DEventManagement";
   const DB_PORT = "33389";
   define("DB_TABLES", parse_ini_file("tables.ini"));
   define("DBTABLES", parse_ini_file("tables.ini"));
