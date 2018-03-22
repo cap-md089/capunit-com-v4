@@ -81,11 +81,17 @@
 				$nc[] = explode(': ', $senior)[0];
 			}
 
+			$added = false;
 			foreach ($nc as $n) {
 				$mem = Member::Estimate($n);
 				if ($mem && $mem->uname != 0) {
 					$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+					$added = true;
 				}
+			}
+
+			if ($added == true) {
+				SignUps::Add($a->id, $event->EventNumber);
 			}
 
 			return JSSnippet::PageRedirect("eventviewer", [$ev]);

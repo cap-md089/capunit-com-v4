@@ -408,13 +408,14 @@
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :last, :mrank, :contacts, :raw, :sqn, :coc);");
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc);");
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
                     $stmt->bindValue(':count', 1);
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':last', $m->lastName);
+                    $stmt->bindValue(':first', $m->firstName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
                     $stmt->bindValue(':raw', $m->rawContact);
@@ -435,7 +436,7 @@
                     $newCount = $data['AccessCount'];
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
-                    $sql .= "MemberName=:mname, MemberNameLast=:last, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, ";
+                    $sql .= "MemberName=:mname, MemberNameLast=:last, MemberNameFirst=:first, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, ";
                     $sql .= "Squadron=:sqn, ChainOfCommand=:coc WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
@@ -444,6 +445,7 @@
                     $stmt->bindValue(':count', $newCount);
                     $stmt->bindValue(':mname', $m->memberName);
                     $stmt->bindValue(':last', $m->lastName);
+                    $stmt->bindValue(':first', $m->firstName);
                     $stmt->bindValue(':mrank', $m->memberRank);
                     $stmt->bindValue(':contacts', json_encode($m->contact));
                     $stmt->bindValue(':raw', $m->rawContact);
@@ -565,13 +567,14 @@
                 global $_ACCOUNT;
                 $account = $_ACCOUNT;
             }
-            $stmt = $pdo->prepare('SELECT MemberName, MemberNameLast, MemberRank FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
+            $stmt = $pdo->prepare('SELECT MemberName, MemberNameLast, MemberNameFirst, MemberRank FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
             $stmt->bindValue(':cid', $capid);
             $stmt->bindValue(':aid', $account->id);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) == 1) {
                 $mname = $data[0]['MemberName'];
                 $mnamelast = $data[0]['MemberNameLast'];
+                $mnamefirst = $data[0]['MemberNameFirst'];
                 $mrank = $data[0]['MemberRank'];
                 if (!$mrank) { $msenior = false; $mrank = 'CADET'; } else {
                     if (substr($mrank, 0, 2) == "C/") { $msenior = false; } else { $msenior = true; }
@@ -591,6 +594,7 @@
 
                     $mname = $data['NameFirst'] . ' ' . substr($data['NameMiddle'], 0, 1) . ' ' . $data['NameLast'] . ' ' . $data['NameSuffix'];
                     $mnamelast = $data['NameLast'];
+                    $mnamefirst = $data['NameFirst'];
                     $mrank = $data['Rank'];
                     if ($mrank == 'CADET') { $msenior = false; } else {
                         if (substr($mrank, 0, 2) == "C/") { $msenior = false; } else { $msenior = true; }
@@ -599,6 +603,7 @@
                 } else {
                     $mname = '';
                     $mnamelast = '';
+                    $mnamefirst = '';
                     $mrank = '';
                     $msenior = false;
                 }
@@ -610,6 +615,7 @@
                 'uname' => $capid,
                 'memberName' => $mname,
                 'lastName' => $mnamelast,
+                'firstName' => $mnamefirst,
                 'memberRank' => $mrank,
                 'seniorMember' => $msenior,
                 'success' => true

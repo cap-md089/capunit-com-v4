@@ -28,6 +28,7 @@
 				}
 				if ($m->hasPermission("SignUpEdit")) {
 					$html .= " | ".new Link ("multiadd", "Add attendees", [$ev]);
+					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
 				}
 				$breaks = 'true';
 			}
@@ -305,6 +306,7 @@
 					return "You're already signed up!";
 				}
 				//add in here a flag to add an entry to an event signup table
+				SignUps::Add($a->id, $ev->EventNumber);
 
 				/// @TODO: change this from 'best' email to 'all' emails
 				UtilCollection::sendFormattedEmail([
@@ -499,6 +501,9 @@
 				$emails = array_unique($emails);
 				$html = implode(", ", $emails);
 				return rtrim($html, ', ');
+			} else if (($func == 'sende')) {
+				$event = Event::Get((int)$data);
+				return SignUps::Send($a->id, $event->EventNumber, true);
 			} else {
 				return ['error' => '402'];
 			}	
