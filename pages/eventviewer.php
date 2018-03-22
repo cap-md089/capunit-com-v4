@@ -502,7 +502,7 @@
 				return rtrim($html, ', ');
 			} else if (($func == 'sende')) {
 				$event = Event::Get((int)$data);
-				return SignUps::Send($a->id, $event->EventNumber, true);
+				return SignUps::SendEvent($a->id, $event->EventNumber, true);
 			} else {
 				return ['error' => '402'];
 			}	
