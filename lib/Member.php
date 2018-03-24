@@ -1125,6 +1125,30 @@
             return isset($p) ? $p : false;
         }
 
+        /**
+         * Gets all email addresses for a member
+         *
+         * If ['EMAIL', 'CADETPARENTEMAIL'] was passed
+         * it would try to get the first primary email, then it would try the first secondary email, then the first
+         * primary cadet parent email, the second cadet parent email, the first emergency email, and finally the first
+         * emergency cadet parent email
+         *
+         * @param array $cl Contact list
+         *
+         * @return str[] array of email addresses
+         */
+        public function getAllEmailAddresses () {
+            $logger = New Logger ("AllEmailAddresses");
+            $logger->Log("CAPID: ".$this->capid, 8);
+            if(!$this->contact) return false;
+            $emails = [];
+            if(isset($this->contact["EMAIL"]["PRIMARY"][0])) { array_push($emails, $this->contact["EMAIL"]["PRIMARY"][0]); }
+            if(isset($this->contact["EMAIL"]["SECONDARY"][0])) { array_push($emails, $this->contact["EMAIL"]["SECONDARY"][0]); }
+            if(isset($this->contact["CADETPARENTEMAIL"]["PRIMARY"][0])) { array_push($emails, $this->contact["CADETPARENTEMAIL"]["PRIMARY"][0]); }
+            if(isset($this->contact["CADETPARENTEMAIL"]["SECONDARY"][0])) { array_push($emails, $this->contact["CADETPARENTEMAIL"]["SECONDARY"][0]); }
+            return $emails;
+        }
+
 		/**
 		 * Gets the list of available CAP WATCH files
 		 *
