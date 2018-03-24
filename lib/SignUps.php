@@ -73,15 +73,6 @@
                      $allattendeelist = rtrim($allattendeelist, ', ');
                 }
 
-                $orderby = "SELECT CAPID FROM ";
-                $orderby .= "(SELECT CAPID, MemberNameLast AS NameLast, MemberNameFirst AS NameFirst, MemberRank AS Rank, ";
-                $orderby .= "IF(MemberRank = \"\", 'CADET', IF(LEFT(MemberRank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type ";
-                $orderby .= "FROM ".DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account ";
-                $orderby .= "UNION ";
-                $orderby .= "SELECT CAPID, NameLast, NameFirst, Rank, IF(Rank = \"\", 'CADET', IF(LEFT(Rank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type FROM ";
-                $orderby .= DB_TABLES['Member']." WHERE CAPID IN (:attendeelist) AND CAPID NOT IN (SELECT CAPID FROM ";
-                $orderby .= DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account)) AS tj1 WHERE Type=:mytype ORDER BY NameLast, NameFirst;";
-
                 $subject = 'Signup Update ('.count($allattendees).' member';
                 if (count($allattendees) != 1) { $subject .= "s"; }
                 $subject .= '), Event '.$event['EventNumber'];
@@ -118,6 +109,15 @@
                 if($debug) { $html .= "new attendee IDs: ".$newattendeelist."<br />"; }
                 if($debug) { $html .= "all attendee IDs: ".$allattendeelist."<br />"; }
                 $memberhtml = 'There '.$newstatement.' for this event.  ';
+
+                $orderby = "SELECT CAPID FROM ";
+                $orderby .= "(SELECT CAPID, MemberNameLast AS NameLast, MemberNameFirst AS NameFirst, MemberRank AS Rank, ";
+                $orderby .= "IF(MemberRank = \"\", 'CADET', IF(LEFT(MemberRank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type ";
+                $orderby .= "FROM ".DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account ";
+                $orderby .= "UNION ";
+                $orderby .= "SELECT CAPID, NameLast, NameFirst, Rank, IF(Rank = \"\", 'CADET', IF(LEFT(Rank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type FROM ";
+                $orderby .= DB_TABLES['Member']." WHERE CAPID IN (:attendeelist) AND CAPID NOT IN (SELECT CAPID FROM ";
+                $orderby .= DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account)) AS tj1 WHERE Type=:mytype ORDER BY NameLast, NameFirst;";
                 $stmt = $pdo->prepare($orderby);
                 $stmt->bindValue(':account', $account);
                 $stmt->bindValue(':attendeelist', $newattendeelist);
@@ -131,6 +131,15 @@
                     }
                     if($debug) { $html .= "new cadet: ".$attendee['CAPID']."<br />"; }
                 }
+
+                $orderby = "SELECT CAPID FROM ";
+                $orderby .= "(SELECT CAPID, MemberNameLast AS NameLast, MemberNameFirst AS NameFirst, MemberRank AS Rank, ";
+                $orderby .= "IF(MemberRank = \"\", 'CADET', IF(LEFT(MemberRank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type ";
+                $orderby .= "FROM ".DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account ";
+                $orderby .= "UNION ";
+                $orderby .= "SELECT CAPID, NameLast, NameFirst, Rank, IF(Rank = \"\", 'CADET', IF(LEFT(Rank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type FROM ";
+                $orderby .= DB_TABLES['Member']." WHERE CAPID IN (:attendeelist) AND CAPID NOT IN (SELECT CAPID FROM ";
+                $orderby .= DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account)) AS tj1 WHERE Type=:mytype ORDER BY NameLast, NameFirst;";
                 $stmt = $pdo->prepare($orderby);
                 $stmt->bindValue(':account', $account);
                 $stmt->bindValue(':attendeelist', $newattendeelist);
@@ -146,6 +155,15 @@
                 }
 
                 $memberhtml .= '<br /><br />There '.$allstatement.' for this event.  ';
+
+                $orderby = "SELECT CAPID FROM ";
+                $orderby .= "(SELECT CAPID, MemberNameLast AS NameLast, MemberNameFirst AS NameFirst, MemberRank AS Rank, ";
+                $orderby .= "IF(MemberRank = \"\", 'CADET', IF(LEFT(MemberRank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type ";
+                $orderby .= "FROM ".DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account ";
+                $orderby .= "UNION ";
+                $orderby .= "SELECT CAPID, NameLast, NameFirst, Rank, IF(Rank = \"\", 'CADET', IF(LEFT(Rank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type FROM ";
+                $orderby .= DB_TABLES['Member']." WHERE CAPID IN (:attendeelist) AND CAPID NOT IN (SELECT CAPID FROM ";
+                $orderby .= DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account)) AS tj1 WHERE Type=:mytype ORDER BY NameLast, NameFirst;";
                 $stmt = $pdo->prepare($orderby);
                 $stmt->bindValue(':account', $account);
                 $stmt->bindValue(':attendeelist', $allattendeelist);
@@ -159,6 +177,15 @@
                     if($debug) { $html .= "all cadet: ".$attendee['CAPID']."<br />"; }
                     }
                 }
+
+                $orderby = "SELECT CAPID FROM ";
+                $orderby .= "(SELECT CAPID, MemberNameLast AS NameLast, MemberNameFirst AS NameFirst, MemberRank AS Rank, ";
+                $orderby .= "IF(MemberRank = \"\", 'CADET', IF(LEFT(MemberRank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type ";
+                $orderby .= "FROM ".DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account ";
+                $orderby .= "UNION ";
+                $orderby .= "SELECT CAPID, NameLast, NameFirst, Rank, IF(Rank = \"\", 'CADET', IF(LEFT(Rank, 2) = \"C/\", 'CADET', 'SENIOR')) AS Type FROM ";
+                $orderby .= DB_TABLES['Member']." WHERE CAPID IN (:attendeelist) AND CAPID NOT IN (SELECT CAPID FROM ";
+                $orderby .= DB_TABLES['SignInData']." WHERE CAPID IN (:attendeelist) AND AccountID=:account)) AS tj1 WHERE Type=:mytype ORDER BY NameLast, NameFirst;";
                 $stmt = $pdo->prepare($orderby);
                 $stmt->bindValue(':account', $account);
                 $stmt->bindValue(':attendeelist', $allattendeelist);
