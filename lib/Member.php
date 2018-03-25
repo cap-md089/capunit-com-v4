@@ -1141,11 +1141,11 @@
             $logger = New Logger ("AllEmailAddresses");
             $logger->Log("CAPID: ".$this->capid, 8);
             if(!$this->contact) return false;
-            $emails = [];
-            if(isset($this->contact["EMAIL"]["PRIMARY"][0])) { array_push($emails, $this->contact["EMAIL"]["PRIMARY"][0]); }
-            if(isset($this->contact["EMAIL"]["SECONDARY"][0])) { array_push($emails, $this->contact["EMAIL"]["SECONDARY"][0]); }
-            if(isset($this->contact["CADETPARENTEMAIL"]["PRIMARY"][0])) { array_push($emails, $this->contact["CADETPARENTEMAIL"]["PRIMARY"][0]); }
-            if(isset($this->contact["CADETPARENTEMAIL"]["SECONDARY"][0])) { array_push($emails, $this->contact["CADETPARENTEMAIL"]["SECONDARY"][0]); }
+            $emails = '';
+            if(isset($this->contact["EMAIL"]["PRIMARY"][0])) { $emails .= $this->contact["EMAIL"]["PRIMARY"][0].', '; }
+            if(isset($this->contact["EMAIL"]["SECONDARY"][0])) { $emails .= $this->contact["EMAIL"]["SECONDARY"][0].', '; }
+            if(isset($this->contact["CADETPARENTEMAIL"]["PRIMARY"][0])) { $emails .= $this->contact["CADETPARENTEMAIL"]["PRIMARY"][0].', '; }
+            if(isset($this->contact["CADETPARENTEMAIL"]["SECONDARY"][0])) { $emails .= $this->contact["CADETPARENTEMAIL"]["SECONDARY"][0].', '; }
             return $emails;
         }
 

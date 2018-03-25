@@ -46,11 +46,11 @@
             if(count($event) == 1) {
                 $event = $event[0];
                 if (!$force && time()>$event->StartDateTime) { return Null; }
-                $emails = [];
-                if ($event['CAPPOC1Email']) { array_push($emails, $event['CAPPOC1Email']); }
-                if ($event['CAPPOC2Email']) { array_push($emails, $event['CAPPOC2Email']); }
-                if ($event['AdditionalEmailAddresses']) { array_push($emails, $event['AdditionalEmailAddresses']); }
-                if ($event['ExtPOCEmail']) { array_push($emails, $event['ExtPOCEmail']); }
+                $sendemails = []; $allemails = [];
+                if ($event['CAPPOC1Email']) { array_push($sendemails, $event['CAPPOC1Email']); }
+                if ($event['CAPPOC2Email']) { array_push($sendemails, $event['CAPPOC2Email']); }
+                if ($event['AdditionalEmailAddresses']) { array_push($sendemails, $event['AdditionalEmailAddresses']); }
+                if ($event['ExtPOCEmail']) { array_push($sendemails, $event['ExtPOCEmail']); }
 
                 $sqlin = 'CALL ListIDsAlpha(:account, :event);';
                 $stmt = $pdo->prepare($sqlin);
@@ -81,7 +81,7 @@
                             $allCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
                             $allcadetcount += 1;
                         }
-                        array_push($emails, $member->getAllEmailAddresses());
+                        array_push($allemails, $member->getAllEmailAddresses());
                         $allattendeecount += 1;
                     }
                 }
@@ -112,32 +112,31 @@
 
                 $memberhtml = 'There '.$newstatement.' for this event.  <br />';
                 if($newseniorcount > 0) {
-                    $memberhtml .= "Seniors:<br />".$newseniorattendees;
+                    $memberhtml .= "Seniors:<br />".$newSeniorHtml;
                 }
                 if($newcadetcount > 0) {
-                    $memberhtml .= "Cadets:<br />".$newcadetattendees;
+                    $memberhtml .= "Cadets:<br />".$newCadetHtml;
                 }
                 $memberhtml .= '<br /><br />There '.$allstatement.' for this event.  <br />';
                 if($allseniorcount > 0) {
-                    $memberhtml .= "Seniors:<br />".$allseniorattendees;
+                    $memberhtml .= "Seniors:<br />".$allSeniorHtml;
                 }
                 if($allcadetcount > 0) {
-                    $memberhtml .= "Cadets:<br />".$allcadetattendees;
+                    $memberhtml .= "Cadets:<br />".$allCadetHtml;
                 }
 
                 $plain = $html.$memberhtml;
-                $html .= '<a href=\"mailto:'.implode(', ', $emails).'?subject=CAP Event '.$EventNumber.': ';
-                $html .= $event['EventName'].'\">All participant emails</a><br /><br />';
-                if($debug) { $html .= "emails: ".implode(', ',$emails)."<br />"; }
+//                $html .= '<a href=\"mailto:'.implode(', ', $emails).'?subject=CAP Event '.$EventNumber.': ';
+  //              $html .= $event['EventName'].'\">All participant emails</a><br /><br />';
                 $html .= $memberhtml;
 
                 $stmtreset = "UPDATE Attendance SET SummaryEmailSent=1 WHERE EventID=:event AND AccountID=:account AND SummaryEmailSent=0;";
                 $stmt = $pdo->prepare($stmtreset);
                 $stmt->bindValue(':account', $account);
                 $stmt->bindValue(':event', $EventNumber);
-//                $updated = DBUtils::ExecutePDOStatement($stmt);
+                $updated = DBUtils::ExecutePDOStatement($stmt);
 
-                UtilCollection::sendFormattedEmail($emails, $html, $subject);
+                UtilCollection::sendFormattedEmail($sendemails, $html, $subject);
 
                 //update row in SignUpQueue to reflect when the signup summary email was sent
                 $stmtreset = "UPDATE SignUpQueue SET SummarySent=:nowtime WHERE EventNumber=:event AND AccountID=:account AND SummarySent=0;";
@@ -147,8 +146,8 @@
                 $stmt->bindValue(':event', $EventNumber);
                 $updaterow = DBUtils::ExecutePDOStatement($stmt);
 
-                $returnmessage = "Attendance summary email sent to ".count($emails)." address";
-                if(count($emails) != 1) {
+                $returnmessage = "Attendance summary email sent to ".count($sendemails)." address";
+                if(count($sendemails) != 1) {
                     $returnmessage .= "es.";
                 } else {
                     $returnmessage .= ".";
