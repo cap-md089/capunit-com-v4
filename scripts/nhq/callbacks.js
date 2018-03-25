@@ -125,6 +125,10 @@ function delEvent(data, status, jqxhr, a) {
     customDialog("Event deletion", data);
 }
 
+function sendAttendance(data, status, jqxhr, a) {
+    customDialog("Attendance Email Status", data);
+}
+
 function copyEvent_prepush(a) {
     form = "<form class=\"asyncForm\">";
     form += "<div class=\"formbar\">";

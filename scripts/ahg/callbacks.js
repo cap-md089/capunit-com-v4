@@ -97,6 +97,7 @@ function delEvent(data, status, jqxhr, a) {
 }
 
 function sendAttendance(data, status, jqxhr, a) {
+    console.log(arguments);
     customDialog("Attendance Email Status", data);
 }
 
