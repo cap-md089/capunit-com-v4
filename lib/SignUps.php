@@ -1,4 +1,8 @@
 <?php
+    require_once (BASE_DIR."lib/general.php");
+    require_once (BASE_DIR."lib/DB_Utils.php");
+    require_once (BASE_DIR."lib/Member.php");
+    require_once (BASE_DIR."lib/PHPMailer.php");
     Class SignUps {
         static function Add($account, $EventNumber) {
             $pdo = DBUtils::CreateConnection();
@@ -25,17 +29,37 @@
             $sqlin = 'SELECT AccountID, EventNumber FROM '.DB_TABLES['SignUpQueue'].' WHERE SummarySent=0;'; 
             $stmt = $pdo->prepare($sqlin);
             $signups = DBUtils::ExecutePDOStatement($stmt);
+            global $_ACCOUNT;
+            $retval = '';
             //if returns, 
-            foreach ($signups as $signup) {
-                self::SendEvent($signup['AccountID'], $signup['EventNumber']);
-                $sqlin = 'UPDATE '.DB_TABLES['SignUpQueue'].' SummarySent=1 WHERE AccountID=:account ';
-                $sqlin .= 'AND EventNumber=:evnum AND SummarySent=0;'; 
-                $stmt = $pdo->prepare($sqlin);
-                $stmt->bindValue(':account', $account);
-                $stmt->bindValue(':EventNumber', $EventNumber);
-                $response = DBUtils::ExecutePDOStatement($stmt);
+            if(count($signups) > 0) {
+                foreach ($signups as $signup) {
+                    $_ACCOUNT = new Account($signup['AccountID']);
+                    self::SendEvent($signup['AccountID'], $signup['EventNumber']);
+                    $sqlin = 'UPDATE '.DB_TABLES['SignUpQueue'].' SET SummarySent=:nowtime WHERE AccountID=:account ';
+                    $sqlin .= 'AND EventNumber=:evnum AND SummarySent=0;'; 
+                    $stmt = $pdo->prepare($sqlin);
+                    $stmt->bindValue(':nowtime', time());
+                    $stmt->bindValue(':account', $signup['AccountID']);
+                    $stmt->bindValue(':evnum', $signup['EventNumber']);
+  
+                    try {
+                        if (!$stmt->execute()) {
+                            $retval .= "Couldn't execute update signup, ". var_export($stmt->errorInfo(), true)."\n";
+                        } else {
+                            $retval .= "Statement executed.\n";
+                        }
+                    } catch (PDOException $e) {
+                        $retval .= "Couldn't execute update signup due to exception, ".$e->getMessage()."\n";
+                    }
+//                  $response = DBUtils::ExecutePDOStatement($stmt);
+                    $retval .= "AccountID: ".$signup['AccountID'].", EventNumber: ".$signup['EventNumber'];
+                    $retval .= ", nowtime: ".date(DATE_RSS, time())."\n";
+                }
+            } else {
+                $retval = "Nothing to do.\n";
             }
-
+            return $retval;
         }
 
         static function SendEvent($account, $EventNumber, $force=false) {
@@ -51,7 +75,7 @@
             $event = DBUtils::ExecutePDOStatement($stmt);
             if(count($event) == 1) {
                 $event = $event[0];
-                if (!$force && time()>$event->StartDateTime) { return Null; }
+                if (!$force && time() > $event['StartDateTime']) { return Null; }
                 $sendemails = []; $allemails = [];
                 if ($event['CAPPOC1Email']) { array_push($sendemails, $event['CAPPOC1Email']); }
                 if ($event['CAPPOC2Email']) { array_push($sendemails, $event['CAPPOC2Email']); }
@@ -143,14 +167,6 @@
                 $updated = DBUtils::ExecutePDOStatement($stmt);
 
                 UtilCollection::sendFormattedEmail($sendemails, $html, $subject);
-
-                //update row in SignUpQueue to reflect when the signup summary email was sent
-                $stmtreset = "UPDATE SignUpQueue SET SummarySent=:nowtime WHERE EventNumber=:event AND AccountID=:account AND SummarySent=0;";
-                $stmt = $pdo->prepare($stmtreset);
-                $stmt->bindValue(':nowtime', time());
-                $stmt->bindValue(':account', $account);
-                $stmt->bindValue(':event', $EventNumber);
-                $updaterow = DBUtils::ExecutePDOStatement($stmt);
 
                 $returnmessage = "Attendance summary email sent to ".count($sendemails)." address";
                 if(count($sendemails) != 1) {
