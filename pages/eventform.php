@@ -301,7 +301,8 @@
 
 				$form->addHiddenField('function', 'create');
 
-				$form->setOption('reload', false);
+//				$form->setOption('reload', false);
+				$form->reload = true;
 				$form->setOption('beforeSend', 'checkInputs');
 
 				$form->setSubmitInfo('Submit', null, null, null, false);

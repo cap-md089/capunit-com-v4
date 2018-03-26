@@ -174,11 +174,9 @@
 					}
 				}
 				$html .= "<br /><br />";
-			}
 
-			if ($l && $a->hasMember($m)) {
 				$attendance = $event->getAttendance();
-				if (!$attendance->has($m)) {
+				if (!$attendance->has($m) && (time() < $event->PickupDateTime) ) {
 					$form = new AsyncForm (Null, 'Sign up');
 					$form->addField('comments', 'Comments', 'textarea')->
 						addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
@@ -188,7 +186,9 @@
 					$html .= $form;
 					$html .= "<br /><br />";
 				}
+			}
 
+			if ($l && $a->hasMember($m)) {
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
 				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");

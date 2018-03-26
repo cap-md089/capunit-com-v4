@@ -28,6 +28,12 @@
             //if returns, 
             foreach ($signups as $signup) {
                 self::SendEvent($signup['AccountID'], $signup['EventNumber']);
+                $sqlin = 'UPDATE '.DB_TABLES['SignUpQueue'].' SummarySent=1 WHERE AccountID=:account ';
+                $sqlin .= 'AND EventNumber=:evnum AND SummarySent=0;'; 
+                $stmt = $pdo->prepare($sqlin);
+                $stmt->bindValue(':account', $account);
+                $stmt->bindValue(':EventNumber', $EventNumber);
+                $response = DBUtils::ExecutePDOStatement($stmt);
             }
 
         }
