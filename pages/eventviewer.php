@@ -164,15 +164,30 @@
 				$stmt->bindValue(':aid', $a->id);
 				$stmt->bindValue(':ev', $event->EventNumber);
 				$data = DBUtils::ExecutePDOStatement($stmt);
-				if (count($data) > 0) {
-					$html .= "<br /><br /><h3>Event Files</h3>";
-				}
+				// if (count($data) > 0) {
+					$html .= "<br /><br /><h2>Event Files</h2>";
+				// }
 				foreach ($data as $row) {
 					$file = File::Get($row["FileID"]);
+					if(($event->isPOC($m) || $m->hasPermission('SignUpEdit'))) {
+						$ab = new AsyncButton(Null, "Delete", "deleteEventFile");
+						$ab->data = 'efdel'.json_encode(array(
+							'fid' => $file,
+							'eid' => $event->EventNumber	
+						));
+					}
 					if ($file) {
-						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()."<br />";
+						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()." ".$ab."<br />";
 					}
 				}
+				$form = new AsyncForm (Null, 'Add File');
+				$form->addField ('eventFiles', ' ', 'file');
+				$form->addHiddenField ('eid', $event->EventNumber);
+				$form->addHiddenField ('func', 'addfiles');
+				$form->reload = true;
+				$html .= $form;
+
+				//add files list
 				$html .= "<br /><br />";
 
 				$attendance = $event->getAttendance();
@@ -192,9 +207,11 @@
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
 				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");
+				$clist = new AsyncButton(null, "Cronological list", "chronoNamePopup");
 				if(count($attendance->EventAttendance) > 0) {
 					$html .= $alist->getHtml('atdir'.$event->EventNumber);
 					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
+					$html .= " | ".$clist->getHtml('atchr'.$event->EventNumber);
 				}
 				foreach ($attendance as $capid => $data) {
 					$member = Member::Estimate($capid);
@@ -299,8 +316,21 @@
 			if (!isset($e['raw']['func'])) {
 				return ['error' => 311];
 			}
+			if ($e['raw']['func'] == 'addfiles') {
+				$fileID = $e['form-data']['eventFiles'][0];
+				$eventID = $e['form-data']['eid'];
+				$accountID = $a->id;
+
+				$sqlin = 'INSERT INTO '.DB_TABLES['FileEventAssignments']; 
+				$sqlin .= ' (FileID, EID, AccountID) VALUES (:fileid, :evtid, :aid);';
+				$stmt = $pdo->prepare($sqlin);
+				$stmt->bindValue(":fileid", $fileID);
+				$stmt->bindValue(":evtid", $eventID);
+				$stmt->bindValue(':aid', $accountID);
+				$data = DBUtils::ExecutePDOStatement($stmt);
+			}
 			if ($e['raw']['func'] == 'signup') {
-				$attendance = new Attendance($e['form-data']['eid']);
+					$attendance = new Attendance($e['form-data']['eid']);
 				$ev = Event::Get($e['form-data']['eid']);
 				if ($attendance->has($m)) {
 					return "You're already signed up!";
@@ -460,6 +490,12 @@
 				
 			} else if (($func == 'atdel' && $m->AccessLevel == "Admin")) {
 				$event->getAttendance()->remove(Member::Estimate($data['cid']));
+			} else if (($func == 'atchr' && $m->AccessLevel == "Admin")) {
+				//need to generate chronological sign-up list separated by Senior/Cadet
+				// $event->getAttendance()->remove(Member::Estimate($data['cid']));
+			} else if (($func == 'efdel' && $m->AccessLevel == "Admin")) {
+				//need to remove specific file from event association
+				// $event->getAttendance()->remove(Member::Estimate($data['cid']));
 			} else if (($func == 'atdir')) {
 				$html = '';
 				$event = Event::Get((int)$data);

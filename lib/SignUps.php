@@ -96,19 +96,19 @@
                         $member = Member::Estimate($attendee['CAPID']);
                         if($attendee['SummaryEmailSent']==0) {
                             if($attendee['Type']=="SENIOR") {
-                                $newSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                                $newSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
                                 $newseniorcount += 1;
                             } else {
-                                $newCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                                $newCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
                                 $newcadetcount += 1;
                             }
                             $newattendeecount += 1;
                         }
                         if($attendee['Type']=="SENIOR") {
-                            $allSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                            $allSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
                             $allseniorcount += 1;
                         } else {
-                            $allCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                            $allCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
                             $allcadetcount += 1;
                         }
                         array_push($allemails, $member->getAllEmailAddresses());
