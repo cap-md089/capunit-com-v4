@@ -422,7 +422,6 @@
 					$response = rtrim($response, ', ');
 					$response .= ") to request a CAPUnit.com account upgrade.";
 					return [
-						'title' => 'Copy Event - Unauthorized',
 						'body' => $response,
 						'headers' => [
 							'X-Event-Copy-Status' => 'denieded'
