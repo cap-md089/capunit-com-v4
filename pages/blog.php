@@ -159,10 +159,13 @@
 					$title = $blogp[0]['title'];
 					$blogp2 = $blogp;
 
-					$stmt = $pdo->prepare("SELECT FilePhotoAssignments.FileID FROM ".DB_TABLES['FilePhotoAssignments']." AS FilePhotoAssignments INNER JOIN ".DB_TABLES['Blog']." AS Blog On Blog.id = FilePhotoAssignments.BID WHERE (Blog.id = :bid AND FilePhotoAssignments.AccountID = :aid);");
+					$stmt = $pdo->prepare("SELECT FileID FROM ".DB_TABLES['FilePhotoAssignments']." WHERE AccountID = :aid AND BID = :bid");
+					// For future reference on how NOT to perform a simple select
+					//$stmt = $pdo->prepare("SELECT FilePhotoAssignments.FileID FROM ".DB_TABLES['FilePhotoAssignments']." AS FilePhotoAssignments INNER JOIN ".DB_TABLES['Blog']." AS Blog On Blog.id = FilePhotoAssignments.BID WHERE (Blog.id = :bid AND FilePhotoAssignments.AccountID = :aid);");
 					$stmt->bindValue(':bid', $id);
 					$stmt->bindValue(':aid', $a->id);
 					$blogp = DB_Utils::ExecutePDOStatement($stmt);
+					print_r($blogp);
 					$pics = '<div id="photo-bank">';
 					foreach ($blogp as $pic) {
 						$file = File::Get($pic['FileID']);
@@ -321,11 +324,10 @@ HTM;
 						$data;
 						foreach ($e['form-data']['newPhotos'] as $file) {
 							$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FilePhotoAssignments']." VALUES (:fid, :bid, :aid);");
-							$stmt->bindValue(':fid', $file);
-							$data = File::Get($file);
+							$stmt->bindValue(':fid', rtrim($file));
+							$data = File::Get(rtrim($file));
 							$data->IsPhoto = true;
 							$data->save();
-							unset($data);
 							$stmt->bindValue(':bid', $blogid);
 							$stmt->bindvalue(':aid', $a->id);
 							$v1 = $stmt->execute() && $v1;
@@ -358,7 +360,10 @@ HTM;
 						$data;
 						foreach ($e['form-data']['photos'] as $file) {
 							$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FilePhotoAssignments']." VALUES (:fid, :bid, :aid);");
-							$stmt->bindValue(':fid', $file);
+							$stmt->bindValue(':fid', rtrim($file));
+							$data = File::Get(rtrim($file));
+							$data->IsPhoto = true;
+							$data->save();
 							$stmt->bindValue(':bid', $blogid);
 							$stmt->bindvalue(':aid', $a->id);
 							$v1 = $stmt->execute() && $v1;
