@@ -16,3 +16,5 @@ use EventManagement;
 #select M.CAPID, M.NameFirst, M.NameLast, (SELECT SUM(Hits) from BrowserAnalytics where CAPID = B.CAPID) AS Hits from Data_Member as M inner join BrowserAnalytics as B on M.CAPID = B.CAPID group by CAPID order by Hits desc;
 # Selects a prefered browser for a given user
 #select Type, Version, Hits from BrowserAnalytics where CAPID = 542488 and Hits in ((select Max(Hits) from BrowserAnalytics where CAPID = 542488));
+# Selects the max number from two tables
+#select max(id) from ((select id from Blog) union (select EventNumber as id from EventInformation)) as TD2
