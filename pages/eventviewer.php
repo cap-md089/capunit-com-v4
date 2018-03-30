@@ -167,6 +167,7 @@
 				// if (count($data) > 0) {
 					$html .= "<br /><br /><h2>Event Files</h2>";
 				// }
+				$hasfiles = false;
 				foreach ($data as $row) {
 					$file = File::Get($row["FileID"]);
 					if(($event->isPOC($m) || $m->hasPermission('SignUpEdit'))) {
@@ -177,12 +178,16 @@
 						));
 					}
 					if ($file) {
-						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()." ".$ab."<br />";
+						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()." ";
+						$html .= .$ab."<br />";
+						$hasfiles = true;
 					}
 				}
+				if(!$hasfiles) { $html .= "There are no files associated with this event.<br />"; }
 				$form = new AsyncForm (Null, 'Add File');
 				$form->addField ('eventFiles', ' ', 'file');
 				$form->addHiddenField ('eid', $event->EventNumber);
+				$form->addHiddenField ('uribase-index', $event->EventNumber);
 				$form->addHiddenField ('func', 'addfiles');
 				$form->reload = true;
 				$html .= $form;
@@ -323,6 +328,7 @@
 
 				$sqlin = 'INSERT INTO '.DB_TABLES['FileEventAssignments']; 
 				$sqlin .= ' (FileID, EID, AccountID) VALUES (:fileid, :evtid, :aid);';
+				$pdo = DBUtils::CreateConnection();
 				$stmt = $pdo->prepare($sqlin);
 				$stmt->bindValue(":fileid", $fileID);
 				$stmt->bindValue(":evtid", $eventID);
