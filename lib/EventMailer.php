@@ -38,7 +38,7 @@
                 return UtilCollection::sendFormattedEmail(
                     $contact,
                     $html,
-                    "New event created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
+                    "Event $form->EventNumber created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
                 );
             }
         } else { // Event was changed, data is available for comparison
@@ -68,9 +68,9 @@
 
                 foreach ($things as $thing) {
                     if ($form->$thing != $database->$thing) {
-                        if ($thing == 'MeetDateTime' || $thing == 'StartDateTime' || $thing == 'EndDateTime' || $thing == 'PickupDateTime' || $thing == 'RegistrationDeadline') {
+                        if ($thing == 'MeetDateTime' || $thing == 'StartDateTime' || $thing == 'EndDateTime' || $thing == 'PickupDateTime' || $thing == 'RegistrationDeadline' || $thing == 'ParticipationFeeDue') {
                             $fields[$thing] = [date('h:i A n/j/Y', $form->$thing),date('h:i A n/j/Y', $database->$thing)];
-                        } else if ($thing == 'TransportationProvided') {
+                        } else if ($thing == 'TransportationProvided' || $thing == 'AcceptSignUps' || $thing == 'Complete' || $thing == 'CAPPOC1ReceiveEventUpdates' || $thing == 'CAPPOC1ReceiveSignUpUpdates' || $thing == 'CAPPOC2ReceiveEventUpdates' || $thing == 'CAPPOC2ReceiveSignUpUpdates' || $thing == 'ExtPOCReceiveEventUpdates' || $thing == 'PartTime') {
                             $fields[$thing] = [$form->$thing ? 'YES' : 'NO', $database->$thing ? 'YES' : 'NO'];  
                         } else {
                             $fields[$thing] = [$form->$thing, $database->$thing];
@@ -110,7 +110,7 @@
                     return UtilCollection::sendFormattedEmail(
                         $contact,
                         $html,
-                        "Event update for $_ACCOUNT-$form->EventNumber"
+                        "Event $form->EventNumber updated: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
                     );
                 }
             }

@@ -4,7 +4,6 @@
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
-
 			$html = "<h3>Welcome, $m->memberRank $m->memberName</h3>";
 			$pdo = DB_Utils::CreateConnection();
 

@@ -7,18 +7,17 @@
         public static $accountId;
         public static $client;
         public static $service;
-		public static $logger;
 		public static $loglevel;
         
         public static function init () {
 			self::$loglevel = 8;
-			self::$logger = new Logger("GoogleCalendarUpdate");
+			$logger = new Logger("GoogleCalendarUpdate");
 			global $_ACCOUNT;
 			self::$accountId = $_ACCOUNT->id;
 
-			self::$logger->Log("init:: AccountID=: ".$_ACCOUNT->id, self::$loglevel);
+			$logger->Log("init:: AccountID=: ".$_ACCOUNT->id, self::$loglevel);
             self::$client = new Google_Client();
-			if(!self::$client) {self::$logger->Log("init:: client creator returned false", self::$loglevel);} else {self::$logger->Log("init:: client creator returned true", self::$loglevel);}
+			if(!self::$client) {$logger->Log("init:: client creator returned false", self::$loglevel);} else {$logger->Log("init:: client creator returned true", self::$loglevel);}
 
 			//self::$client->setAuthConfig(BASE_DIR.'../credentials/'.$_ACCOUNT->id.'.json');			
 			self::$client->setApplicationName("capunit.com Calendar Update");
@@ -26,13 +25,14 @@
             self::$client->setScopes(Google_Service_Calendar::CALENDAR);
 
             self::$service = new Google_Service_Calendar(self::$client);
-			if(!self::$service) {self::$logger->Log("init:: Calendar Service creator returned false", self::$loglevel);} else {self::$logger->Log("init:: Calendar Service creator returned true", self::$loglevel);}
+			if(!self::$service) {$logger->Log("init:: Calendar Service creator returned false", self::$loglevel);} else {$logger->Log("init:: Calendar Service creator returned true", self::$loglevel);}
 
 		}
 
         public static function updateCalendarEvent (Event $CUevent) {
+			$logger = new Logger("GoogleCalendarUpdate");
             if ($CUevent->Status == 'Draft') {
-				self::$logger->Log("Draft event, deleting from Google Calendar", self::$loglevel);
+				$logger->Log("Draft event, deleting from Google Calendar", self::$loglevel);
                 self::removeCalendarEvent($CUevent);
                 return;
             }
@@ -40,14 +40,14 @@
             $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
             $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
             $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
-			self::$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
+			$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
             
             $optParams = array(
                 'q' => 'Event ID Number: '.$eventId,
                 'orderBy' => 'startTime',
                 'singleEvents' => TRUE,
             );
-			self::$logger->Log("Update Calendar Event::  optParams: ".implode($optParams), self::$loglevel);
+			$logger->Log("Update Calendar Event::  optParams: ".implode($optParams), self::$loglevel);
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $wingResults = self::$service->events->listEvents($wingCalendarId, $optParams);
             
@@ -56,12 +56,12 @@
             //remove all event items from both calendars
             $results = $results->getItems();
             foreach ($results as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove event: ".$Gevent->summary, self::$loglevel);
+				$logger->Log("Update Calendar Event::  Remove event: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($calendarId, $Gevent->getId());
             }
             $wingResults = $wingResults->getItems();
             foreach ($wingResults as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove wing event: ".$Gevent->summary, self::$loglevel);
+				$logger->Log("Update Calendar Event::  Remove wing event: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($wingCalendarId, $Gevent->getId());
             }
 
@@ -74,7 +74,7 @@
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $results = $results->getItems();
             foreach ($results as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove event registration: ".$Gevent->summary, self::$loglevel);
+				$logger->Log("Update Calendar Event::  Remove event registration: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($calendarId, $Gevent->getId());
             }
             //remove all registration fee items
@@ -86,7 +86,7 @@
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $results = $results->getItems();
             foreach ($results as $Gevent) {
-				self::$logger->Log("Update Calendar Event::  Remove event fee: ".$Gevent->summary, self::$loglevel);
+				$logger->Log("Update Calendar Event::  Remove event fee: ".$Gevent->summary, self::$loglevel);
                 self::$service->events->delete($calendarId, $Gevent->getId());
             }
 
