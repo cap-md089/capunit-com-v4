@@ -322,18 +322,44 @@
 				return ['error' => 311];
 			}
 			if ($e['raw']['func'] == 'addfiles') {
-				$fileID = $e['form-data']['eventFiles'][0];
-				$eventID = $e['form-data']['eid'];
-				$accountID = $a->id;
-
-				$sqlin = 'INSERT INTO '.DB_TABLES['FileEventAssignments']; 
-				$sqlin .= ' (FileID, EID, AccountID) VALUES (:fileid, :evtid, :aid);';
+				$event = null;
+				if (isset ($e['form-data']['eid'])) {
+					$event = Event::Get($e['form-data']['eid']);
+					if (!$event) {
+						return ['error' => 311];
+					}
+					$event = $e['form-data']['eid'];
+				} else {
+					return ['error' => 311];
+				}
+				$success = true;
 				$pdo = DBUtils::CreateConnection();
-				$stmt = $pdo->prepare($sqlin);
-				$stmt->bindValue(":fileid", $fileID);
-				$stmt->bindValue(":evtid", $eventID);
-				$stmt->bindValue(':aid', $accountID);
-				$data = DBUtils::ExecutePDOStatement($stmt);
+				if (isset ($e['form-data']['eventFiles'][0])) {
+					foreach ($e['form-data']['eventFiles'] as $fileID) {
+						$stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileEventAssignments']." (FileID, EID, AccountID) VALUES (:fileid, :evtid, :aid);");
+						$stmt->bindValue(':fileid', rtrim($fileID));
+						$stmt->bindValue(':evtid', $event);
+						$stmt->bindValue(':aid', $a->id);
+						$success = $stmt->execute() | $success;
+					}
+				}
+				return [
+					'body' => $success ? 'All file uploads worked!' : 'A file failed to upload'
+				];
+
+
+				//$fileID = $e['form-data']['eventFiles'][0];
+			//	$eventID = $e['form-data']['eid'];
+			//	$accountID = $a->id;
+
+			//	$sqlin = 'INSERT INTO '.DB_TABLES['FileEventAssignments']; 
+			//	$sqlin .= ' (FileID, EID, AccountID) VALUES (:fileid, :evtid, :aid);';
+			//	$pdo = DBUtils::CreateConnection();
+			//	$stmt = $pdo->prepare($sqlin);
+			//	$stmt->bindValue(":fileid", $fileID);
+			//	$stmt->bindValue(":evtid", $eventID);
+			//	$stmt->bindValue(':aid', $accountID);
+			//	$data = DBUtils::ExecutePDOStatement($stmt);
 			}
 			if ($e['raw']['func'] == 'signup') {
 					$attendance = new Attendance($e['form-data']['eid']);
