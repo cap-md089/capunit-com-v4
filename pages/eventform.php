@@ -188,7 +188,7 @@
 				$form->setOption('reload', false);
 				$form->setOption('beforeSend', 'checkInputs');
 				
-				$form->setSubmitInfo('Submit', null, null, null, false);
+				$form->setSubmitInfo('Submit', null, null, null, true);
 
 				return [
 					'title' => 'Edit Event',

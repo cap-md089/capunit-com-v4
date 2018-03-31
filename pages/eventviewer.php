@@ -570,7 +570,7 @@
 			} else if (($func == 'sende')) {
 				$event = Event::Get((int)$data);
 				return SignUps::SendEvent($a->id, $event->EventNumber, true);
-			} else if (($func == 'delfi')) {
+			} else if (($func == 'delfi') && $m->hasPermission('EditEvent')) {
 				$pdo = DBUtils::CreateConnection();
 				$data = json_decode($data, true);
 				$stmt = $pdo->prepare("DELETE FROM ".DB_TABLES['FileEventAssignments']." WHERE FileID = :fid AND EID = :eid AND AccountID = :aid");

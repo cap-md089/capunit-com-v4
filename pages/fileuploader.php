@@ -11,8 +11,15 @@
 				return [
 					'headers' => [
 						'X-Error' => 'File Upload too big'
-					],
-					'body' => print_r($file, true)
+					]
+				];
+			}
+
+			if (!isset($file['tmp_name'])) {
+				return [
+					'headers' => [
+						'X-Error' => 'File upload too big'
+					]
 				];
 			}
 
