@@ -346,22 +346,7 @@
 				return [
 					'body' => $success ? 'All file uploads worked!' : 'A file failed to upload'
 				];
-
-
-				//$fileID = $e['form-data']['eventFiles'][0];
-			//	$eventID = $e['form-data']['eid'];
-			//	$accountID = $a->id;
-
-			//	$sqlin = 'INSERT INTO '.DB_TABLES['FileEventAssignments']; 
-			//	$sqlin .= ' (FileID, EID, AccountID) VALUES (:fileid, :evtid, :aid);';
-			//	$pdo = DBUtils::CreateConnection();
-			//	$stmt = $pdo->prepare($sqlin);
-			//	$stmt->bindValue(":fileid", $fileID);
-			//	$stmt->bindValue(":evtid", $eventID);
-			//	$stmt->bindValue(':aid', $accountID);
-			//	$data = DBUtils::ExecutePDOStatement($stmt);
-			}
-			if ($e['raw']['func'] == 'signup') {
+			} else if ($e['raw']['func'] == 'signup') {
 					$attendance = new Attendance($e['form-data']['eid']);
 				$ev = Event::Get($e['form-data']['eid']);
 				if ($attendance->has($m)) {
@@ -522,11 +507,27 @@
 			} else if (($func == 'atdel' && $m->AccessLevel == "Admin")) {
 				$event->getAttendance()->remove(Member::Estimate($data['cid']));
 			} else if (($func == 'atchr' && $m->AccessLevel == "Admin")) {
-				//need to generate chronological sign-up list separated by Senior/Cadet
-				// $event->getAttendance()->remove(Member::Estimate($data['cid']));
-			} else if (($func == 'efdel' && $m->AccessLevel == "Admin")) {
-				//need to remove specific file from event association
-				// $event->getAttendance()->remove(Member::Estimate($data['cid']));
+				//chronological sign-up list (need to separate by Senior/Cadet)
+				$html = '';
+				$event = Event::Get((int)$data);
+				$pdo = DB_Utils::CreateConnection();
+				
+				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance']; 
+				$sqlin .= ' WHERE EventID=:eid AND AccountID=:aid ';
+				$sqlin .= ' ORDER BY Timestamp;';
+				$stmt = $pdo->prepare($sqlin);
+				$stmt->bindValue(':aid', $account->id);
+				$stmt->bindValue(':eid', $event->EventNumber);
+				$attendancerecords = DB_Utils::ExecutePDOStatement($stmt);
+		
+				$html = '';
+				foreach ($attendancerecords as $record) {
+					$attendee = Member::Estimate($record['CAPID']);
+					if($attendee) {
+						$html .= date(DATE_RSS, $attendee->Timestamp).': '$attendee->MemberRankName.'<br />';
+					}
+				}
+				return $html;
 			} else if (($func == 'atdir')) {
 				$html = '';
 				$event = Event::Get((int)$data);
