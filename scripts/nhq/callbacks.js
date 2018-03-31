@@ -12,6 +12,11 @@ function deletePhotos(data, details, jqxhr, a) {
     customDialog("Photo removal", data);
 }
 
+function deleteEventFile (data, details, jqxhr, a) {
+	customDialog("Deletion results", data);
+	getHtml();
+}
+
 function deletePhotos_prepush() {
     return "photo";
 }

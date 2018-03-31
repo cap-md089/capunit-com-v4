@@ -144,7 +144,7 @@ HTM;
 	}
 
     if (/*defined("USER_REQUIRED") && USER_REQUIRED && */isset($_COOKIE["LOGIN_DETAILS"])) {
-    	if (isset($_METHODD['su'])) {
+    	if (isset($_METHODD['su']) && false) {
             $SecurityLogger->Log("User signing in as ".$_METHODD['su'], 4);
             $_USER = Member::Check($_COOKIE["LOGIN_DETAILS"], $_METHODD['su']);
         } else {

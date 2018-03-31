@@ -102,7 +102,9 @@
 
 				$html .= "<div id=\"photo-bank\">";
 				foreach ($photos as $photo) {
-					$html .= "<div class=\"image-box\"><a onclick=\"return !!viewImage(this);\" href = \"#\"><img class=\"image\" src=\"data:".$photo->ContentType.";base64,".base64_encode($photo->Data)."\" /><span class=\"comment\">".$photo->Comments."</span></a></div>";
+					if ($photo) {
+						$html .= "<div class=\"image-box\"><a onclick=\"return !!viewImage(this);\" href = \"#\"><img class=\"image\" src=\"data:".$photo->ContentType.";base64,".base64_encode($photo->Data)."\" /><span class=\"comment\">".$photo->Comments."</span></a></div>";
+					}
 				}
 				$html .= "</div>";
 				
@@ -169,8 +171,10 @@
 					$pics = '<div id="photo-bank">';
 					foreach ($blogp as $pic) {
 						$file = File::Get($pic['FileID']);
-						$butt = new AsyncButton("blog", $file->Name . "<span class=\"bigfatred rightFloat\">X</span><div class=\"image-box popupimage\"><img class=\"image\" src=\"/".HOST_SUB_DIR."filedownloader/".$pic['FileID']."?ajax=true\" /></div>", "deletePhotos", "width600px popupimagecontainer");
-						$pics .= $butt->getHtml($file->ID);
+						if ($file) {
+							$butt = new AsyncButton("blog", $file->Name . "<span class=\"bigfatred rightFloat\">X</span><div class=\"image-box popupimage\"><img class=\"image\" src=\"/".HOST_SUB_DIR."filedownloader/".$pic['FileID']."?ajax=true\" /></div>", "deletePhotos", "width600px popupimagecontainer");
+							$pics .= $butt->getHtml($file->ID);
+						}
 					}
 					$pics .= "</div>";
 

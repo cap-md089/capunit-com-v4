@@ -27,7 +27,7 @@
 					$html .= " | ".(new AsyncButton(Null, 'Copy event', 'copyEvent'))->getHtml("clone".$ev)."<span style=\"display:none\" id=\"dateTimeOfCurrentEvent\">".date('Y-m-d\TH:i:s',$event->StartDateTime)."</span>";
 				}
 				if ($m->hasPermission("SignUpEdit")) {
-					$html .= " | ".new Link ("multiadd", "Add attendees", [$ev]);
+					$html .= "<br />".new Link ("multiadd", "Add attendees", [$ev]);
 					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
 				}
 				$breaks = 'true';
@@ -171,21 +171,21 @@
 				foreach ($data as $row) {
 					$file = File::Get($row["FileID"]);
 					if(($event->isPOC($m) || $m->hasPermission('SignUpEdit'))) {
-						$ab = new AsyncButton(Null, "Delete", "deleteEventFile");
-						$ab->data = 'efdel'.json_encode(array(
-							'fid' => $file,
+						$ab = new AsyncButton(Null,  "Delete", "deleteEventFile");
+						$ab->data = 'delfi'.json_encode(array(
+							'fid' => $file->ID,
 							'eid' => $event->EventNumber	
 						));
 					}
 					if ($file) {
 						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()." ";
-						$html .= .$ab."<br />";
+						$html .= $ab."<br />";
 						$hasfiles = true;
 					}
 				}
 				if(!$hasfiles) { $html .= "There are no files associated with this event.<br />"; }
 				$form = new AsyncForm (Null, 'Add File');
-				$form->addField ('eventFiles', ' ', 'file');
+				$form->addField ('eventFiles', '&nbsp;', 'file');
 				$form->addHiddenField ('eid', $event->EventNumber);
 				$form->addHiddenField ('uribase-index', $event->EventNumber);
 				$form->addHiddenField ('func', 'addfiles');
@@ -570,7 +570,15 @@
 			} else if (($func == 'sende')) {
 				$event = Event::Get((int)$data);
 				return SignUps::SendEvent($a->id, $event->EventNumber, true);
-			} else {
+			} else if (($func == 'delfi')) {
+				$pdo = DBUtils::CreateConnection();
+				$data = json_decode($data, true);
+				$stmt = $pdo->prepare("DELETE FROM ".DB_TABLES['FileEventAssignments']." WHERE FileID = :fid AND EID = :eid AND AccountID = :aid");
+				$stmt->bindValue(':fid', $data['fid']);
+				$stmt->bindValue(':eid', $data['eid']);
+				$stmt->bindValue(':aid', $a->id);
+				return $stmt->execute() ? 'File removed' : 'Error when deleting file';
+			}  else {
 				return ['error' => '402'];
 			}	
 		}

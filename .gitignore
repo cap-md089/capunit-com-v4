@@ -8,4 +8,4 @@ logs/*
 .vscode/*
 *.css.map
 .DS_Store
-styles/*.css
+nstyles/*.css
