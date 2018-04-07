@@ -782,7 +782,7 @@
 				$id = $acc->id;
 			}
             // Get the access levels, but only for the current account (e.g., no global access levels)
-            $stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['AccessLevel']." WHERE CAPID = :CAPID AND (".DB_TABLES['AccessLevel'].".AccountID = :aid);");
+            $stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['AccessLevel']." WHERE CAPID = :CAPID AND (".DB_TABLES['AccessLevel'].".AccountID = :aid OR ".DB_TABLES['AccessLevel'].".AccountID = 'www');");
             $stmt->bindParam(":CAPID", $this->uname);
             $stmt->bindParam(":aid", $id);
             $rows = array ();
@@ -792,12 +792,12 @@
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         $rows[] = $row;
                     }
-                }
+                } else {
+					trigger_error($stmt->errorInfo()[2], 512);
+				}
             } catch (PDOException $e) {
                 $this->logger->Warn("$this->memberName could not get access levels", 1);
-                return array ();
             }
-
             if (count($rows) == 1) { // If there are mores rows, somethings wrong
                 $this->AccessLevel = $rows[0]['AccessLevel']; // We've switched to access levels instead of individual permissions
                 $perms = Permissions::GetPermissions($this);
