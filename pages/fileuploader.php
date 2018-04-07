@@ -37,6 +37,7 @@
 			$ctype = mime_content_type($uri);
 			fclose($file);
 			
+			DBUtils::DestroyConnection();
 			$file = File::Create($fname, $data, $m);
 
 			if (in_array($ctype, [
@@ -55,14 +56,7 @@
 				}
 				$file->Created = $timestamp;
 			}
-			if (in_array($ctype, [		
-				'image/jpg',
-				'image/jpeg',
-				'image/pjpeg',
-				'image/pjpg',
-				'image/png',
-				'image/gif'
-			])) {
+			if (explode('/', $ctype)[0] === 'image') {
 				$file->IsPhoto = true;
 			}
 

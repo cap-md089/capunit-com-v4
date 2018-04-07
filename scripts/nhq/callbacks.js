@@ -407,6 +407,10 @@ function attendanceEmailPopup (data) {
     customDialog("Email List", data);
 }
 
+function chronoNamePopup (data) {
+    customDialog("Chronological Sign-up List", data);
+}
+
 function pageLink_prepush (a, data) {
     $('html, body').animate({
         'scrollTop' : $('#'+data).offset().top - 100

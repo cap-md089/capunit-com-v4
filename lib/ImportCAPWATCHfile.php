@@ -630,8 +630,14 @@
 		$stmt = $pdo->prepare("CALL UpdateMemberByUnit(:orgid);");
 		$stmt->bindValue(':orgid', $id);
 		if (!$stmt->execute()) {
-			ErrorMSG::Log("Update Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
-			return "Update Stored Procedure Failed";
+			ErrorMSG::Log("Update Member Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "Update Member Stored Procedure Failed";
+		}
+		$stmt = $pdo->prepare("CALL Flights_Update(:orgid);");
+		$stmt->bindValue(':orgid', $id);
+		if (!$stmt->execute()) {
+			ErrorMSG::Log("Update Flights Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "Update Flights Stored Procedure Failed";
 		}
 		// $stmt = $pdo->prepare("CALL UpdateMemberMatch(:orgid);");
 		// $stmt->bindValue(':orgid', $id);

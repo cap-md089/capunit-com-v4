@@ -201,7 +201,7 @@ HTM;
         unset($e['uri'][count($e['uri'])-1]);
     }
     for ($i = 0; $i < count(explode('/', HOST_SUB_DIR)); $i++) {
-        unset($e['uri'][$i]);
+        unset($e['uri'][1]);
     }
     array_shift($e['uri']);
 

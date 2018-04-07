@@ -8,9 +8,9 @@
             global $_USER;
             $capid = isset($_USER) ? $_USER->uname : '0';
             $pdo = DB_Utils::CreateConnection();
-            $stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['ErrorMessages'].' (timestamp, enumber, errname, message, badfile, badline, context, capid) 
+            $stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['ErrorMessages'].' (timestamp, enumber, errname, message, badfile, badline, context, capid, requestpath, requestmethod) 
             VALUES
-            (:timestamp, :enumber, :errname, :message, :badfile, :badline, :context, :cid);');
+            (:timestamp, :enumber, :errname, :message, :badfile, :badline, :context, :cid, :requestpath, :requestmethod);');
             $time = time();
             $stmt->bindValue(':enumber', $ERROR['enumber']);
             $stmt->bindValue(':errname', $ERROR['errname']);
@@ -19,6 +19,14 @@
             $stmt->bindValue(':badline', $ERROR['badline']);
             $stmt->bindValue(':context', print_r($ERROR['context'], true));
             $stmt->bindValue(':cid', $capid);
+			$query = '';
+			global $_METHODD;
+			foreach ($_METHODD as $k => $v) {
+				if (!in_array($k, ['cookies', 'ajax', 'form', 'mobile', 'method'])) $query .= "$k=$v&";
+			}
+			$query = rtrim($query, "&");
+			$stmt->bindValue(':requestpath', rtrim($_SERVER['REQUEST_URI']."?".$query, '?'));
+			$stmt->bindValue(':requestmethod', strtoupper($_METHODD['method']));
             $stmt->bindValue(':timestamp', $time);
             $val = $stmt->execute();
             $form = new AsyncForm('errremark', 'Would you tell us what you were trying to do?');

@@ -343,7 +343,7 @@ window.loaded.push(function() {
         if (codes[code[0]] && codes[code[0]][code[1]] && codes[code[0]][code[1]][code[2]]) {
             return [codes[code[0]][code[1]][code[2]], code.join("")];
         } else {
-            return ["Some undetermined error, please contact the webmaster with details about how it is the error happened to get it fixed", "500"];
+            return ["Some undetermined error, please contact the webmaster with details about how it is the error happened to get it fixed", "300"];
         }
     };
 
@@ -363,7 +363,7 @@ window.loaded.push(function() {
 
     addFunction(function () {
         $(".signin_link").on("click touch", displaySignIn);
-        $("#signout_link").on("click touch", function () {
+        $(".signout_link").on("click touch", function () {
             localStorage.removeItem("LOGIN_DETAILS");
             getHtml();
         });

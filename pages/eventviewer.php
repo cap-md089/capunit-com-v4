@@ -516,15 +516,15 @@
 				$sqlin .= ' WHERE EventID=:eid AND AccountID=:aid ';
 				$sqlin .= ' ORDER BY Timestamp;';
 				$stmt = $pdo->prepare($sqlin);
-				$stmt->bindValue(':aid', $account->id);
+				$stmt->bindValue(':aid', $a->id);
 				$stmt->bindValue(':eid', $event->EventNumber);
 				$attendancerecords = DB_Utils::ExecutePDOStatement($stmt);
 		
 				$html = '';
-				foreach ($attendancerecords as $record) {
-					$attendee = Member::Estimate($record['CAPID']);
+				foreach ($attendancerecords as $myRecord) {
+					$attendee = Member::Estimate($myRecord['CAPID']);
 					if($attendee) {
-						$html .= date(DATE_RSS, $attendee->Timestamp).': '$attendee->MemberRankName.'<br />';
+						$html .= date(DATE_RSS, $myRecord['Timestamp']).': '.$myRecord['MemberRankName'].'<br />';
 					}
 				}
 				return $html;

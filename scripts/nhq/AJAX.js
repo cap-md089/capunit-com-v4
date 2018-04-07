@@ -38,6 +38,7 @@ window.loaded.push(function() {
             $("#loader").css({
                 "display": "none"
             });
+			executeFunctions();
         };
         scback = scback || function(data, stat, jxhr) {
             data = parseReturn(data);
@@ -268,12 +269,13 @@ window.loaded.push(function() {
                             }
                         });
                     }, function() {
-                        customDialog("File upload error", "We're sorry, but we can't upload files that are bigger than 2MB");
+                        customDialog("File upload error", "We're sorry, but the files you are trying to upload are too large"); 
+                        $form.find("input[type=submit]").prop("disabled", false);
                     });
                 } else if ($(form).find("input[type=\"file\"]").length == 0) {
                     if (form.getAttribute('data-signin-form') === 'true') {
                         $("#sidenav").html("");
-                        $("#pageblock").html("");
+                        ("#pageblock").html("");
                         $("#breadcrumbs").html("");
                         $("#loader").css({
                             "display": "block"

@@ -1,7 +1,7 @@
 <?php
 	function contactView ($e, $c, $l, $m, $a) {
 		$html = '';
-		$html .= ($m->hasDutyPosition(["Cadet Flight Sergeant", "Cadet Flight Commander"])) ? 'T' : 'F';
+//		$html .= ($m->hasDutyPosition(["Cadet Flight Sergeant", "Cadet Flight Commander"])) ? 'T' : 'F';
 		if ($m->hasDutyPosition(["Cadet Flight Sergeant", "Cadet Flight Commander"])) {
 			$pdo = DB_Utils::CreateConnection();
 			$emails = '';

@@ -89,6 +89,7 @@
                 $attendees = DBUtils::ExecutePDOStatement($stmt);
 
                 $newSeniorHtml = ''; $newCadetHtml = ''; $allSeniorHtml = ''; $allCadetHtml = '';
+                $newSeniorAlt = ''; $newCadetAlt = ''; $allSeniorAlt = ''; $allCadetAlt = '';
                 $newattendeecount = 0; $newseniorcount = 0; $newcadetcount = 0;
                 $allattendeecount = 0; $allseniorcount = 0; $allcadetcount = 0;
                 if(count($attendees)) {
@@ -96,19 +97,23 @@
                         $member = Member::Estimate($attendee['CAPID']);
                         if($attendee['SummaryEmailSent']==0) {
                             if($attendee['Type']=="SENIOR") {
-                                $newSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
+                                $newSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                                $newSeniorAlt .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']\n';
                                 $newseniorcount += 1;
                             } else {
-                                $newCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
+                                $newCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                                $newCadetAlt .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']\n';
                                 $newcadetcount += 1;
                             }
                             $newattendeecount += 1;
                         }
                         if($attendee['Type']=="SENIOR") {
-                            $allSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
+                            $allSeniorHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                            $allSeniorAlt .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']\n';
                             $allseniorcount += 1;
                         } else {
-                            $allCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />\n';
+                            $allCadetHtml .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']<br />';
+                            $allCadetAlt .= $member->RankName." [".$member->getBestEmail().", ".$member->getBestPhone().']\n';
                             $allcadetcount += 1;
                         }
                         array_push($allemails, $member->getAllEmailAddresses());
@@ -137,8 +142,11 @@
                 $subject .= ': '.$event['EventName'].' on ';
                 $subject .= date(DATE_RSS, $event['StartDateTime']);
 
-                $html = 'View all event details at this page: https://'.$account;
-                $html .= '.capunit.com/eventviewer/'.$EventNumber.'/<br /><br />';
+                $html = 'View all event details at <a href=\"https://'.$account;
+                $html .= '.capunit.com/eventviewer/'.$EventNumber.'\">this page</a>/<br /><br />';
+
+                $altHtml = 'View all event details at this page: https://'.$account;
+                $altHtml .= '.capunit.com/eventviewer/'.$EventNumber.'/<br /><br />';
 
                 $memberhtml = 'There '.$newstatement.' for this event.  <br />';
                 if($newseniorcount > 0) {
@@ -159,6 +167,7 @@
 //                $html .= '<a href=\"mailto:'.implode(', ', $emails).'?subject=CAP Event '.$EventNumber.': ';
   //              $html .= $event['EventName'].'\">All participant emails</a><br /><br />';
                 $html .= $memberhtml;
+                $altHtml .= $memberhtml;
 
                 $stmtreset = "UPDATE Attendance SET SummaryEmailSent=1 WHERE EventID=:event AND AccountID=:account AND SummaryEmailSent=0;";
                 $stmt = $pdo->prepare($stmtreset);
@@ -166,7 +175,7 @@
                 $stmt->bindValue(':event', $EventNumber);
                 $updated = DBUtils::ExecutePDOStatement($stmt);
 
-                UtilCollection::sendFormattedEmail($sendemails, $html, $subject);
+                UtilCollection::sendFormattedEmail($sendemails, $html, $subject, $altHtml);
 
                 $returnmessage = "Attendance summary email sent to ".count($sendemails)." address";
                 if(count($sendemails) != 1) {

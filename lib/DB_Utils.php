@@ -32,6 +32,13 @@
             }
             return self::$PDO;
         }
+	
+		/**
+		 * Destroys the connection
+		 */
+		public static function DestroyConnection () {
+			self::$PDO = null;
+		}
 
         /**
          * Executes a PDO statement and returns the data, wrapped in a try/catch statement

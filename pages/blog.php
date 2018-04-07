@@ -172,7 +172,7 @@
 					foreach ($blogp as $pic) {
 						$file = File::Get($pic['FileID']);
 						if ($file) {
-							$butt = new AsyncButton("blog", $file->Name . "<span class=\"bigfatred rightFloat\">X</span><div class=\"image-box popupimage\"><img class=\"image\" src=\"/".HOST_SUB_DIR."filedownloader/".$pic['FileID']."?ajax=true\" /></div>", "deletePhotos", "width600px popupimagecontainer");
+							$butt = new AsyncButton("blog", "Delete '$file->Name'<div class=\"image-box popupimage\"><img class=\"image\" src=\"/".HOST_SUB_DIR."filedownloader/".$pic['FileID']."?ajax=true\" /></div>", "deletePhotos", "width600px popupimagecontainer");
 							$pics .= $butt->getHtml($file->ID);
 						}
 					}

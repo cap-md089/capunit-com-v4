@@ -15,7 +15,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 			}
 
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare("select id, timestamp, context, enumber, errname, message, badfile, badline, remarks from ".DB_TABLES['ErrorMessages']." where id in (select min(id) from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline);");
+			$stmt = $pdo->prepare("select id, timestamp, context, enumber, errname, message, badfile, badline, remarks, requestpath as reqpath from ".DB_TABLES['ErrorMessages']." where id in (select min(id) from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline);");
 			$data = DB_Utils::ExecutePDOStatement($stmt, true);
 			$html = '';
 	
@@ -50,13 +50,21 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 						$capids .= "$capid, ";
 					}
 				}
-				$stmt = $pdo->prepare("select remarks from ".DB_TABLES['ErrorMessages']." where message = :msg and resolved = 0 and badfile = :badfile and badline = :badline;");
+				$stmt = $pdo->prepare("select remarks, requestpath as reqpath, requestmethod as rmethod from ".DB_TABLES['ErrorMessages']." where message = :msg and resolved = 0 and badfile = :badfile and badline = :badline;");
 				$stmt->bindValue(':msg', $datum['message']);
 				$stmt->bindValue(':badfile', $datum['badfile']);
 				$stmt->bindValue(':badline', $datum['badline']);
 				$cdata = DBUtils::ExecutePDOStatement($stmt);
 				$remarks = '';
+				$reqpath = '';
+				$used = [];
 				foreach ($cdata as $c) {
+					$path = htmlspecialchars($c['reqpath']);
+					if (!isset($used[$path])) $used[$path] = [];
+					if (!in_array($c['rmethod'], $used[$path])) {
+						$used[$path][] = $c['rmethod'];
+						$reqpath .= "\n<p>{$c['rmethod']} {$path}</p>";
+					}
 					if ($c['remarks'] == '') continue;
 					$remarks .= "<p>".$c['remarks']."</p>";
 				}
@@ -76,7 +84,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 				$message = $datum['message'];
 				$badfile = $datum['badfile'];
 				$badline = $datum['badline'];
-				$safemsg = urlencode($message);
+				$safemsg = htmlspecialchars($message);
 				$html .= <<<EOD
 <div style="clear:both">
 <h2 class="title" style="border-bottom: 1px solid #2b357b" id="error$id">Issue #$id (Occurred $amount times) $butth</h4>
@@ -85,14 +93,18 @@ Time: $time<br />
 Error type: $enumber ({$errname})<br />
 Error: $message (<a target="_blank" href="https://google.com/search?q=$safemsg">Google it</a>)<br />
 File: {$badfile}:{$badline}<br />
+Requested paths:<br />
+<div style="margin: 15px">
+$reqpath
+</div>
 People experiencing this problem:<br />
-<p style="margin: 15px">
+<div style="margin: 15px">
 $capids
-</p>
+</div>
 User remarks:<br />
-<p style="margin: 15px">
+<div style="margin: 15px">
 $remarks
-</p>
+</div>
 </section>
 <section style="overflow:scroll; max-height: 700px">
 <xmp>
