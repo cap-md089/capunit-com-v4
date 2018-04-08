@@ -524,7 +524,7 @@
 				foreach ($attendancerecords as $record) {
 					$attendee = Member::Estimate($record['CAPID']);
 					if($attendee) {
-						$html .= date(DATE_RSS, $attendee->Timestamp).': '$attendee->MemberRankName.'<br />';
+						$html .= date(DATE_RSS, $attendee->Timestamp).': '.$attendee->MemberRankName.'<br />';
 					}
 				}
 				return $html;
