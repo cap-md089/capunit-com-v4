@@ -129,6 +129,13 @@
          */
         public $firstName = '', $middleName = '', $lastName = '', $suffix = '';
 
+		/**
+		 * @var bool Whether or not the user is Rioux (Lt Col or C/2d Lt
+		 *
+		 * Used so that there doesn't need to be ($this->uname == 542488 || $this->uname == 546319) everywhere
+		 */
+		public $IsRioux = false;
+
         /**
          * Gets login cookies given a username and user password
          *
@@ -676,6 +683,8 @@
             $this->capid = $this->uname; // Alias
             $this->RankName = $this->memberRank . ' ' . $this->memberName;
 
+			$this->IsRioux = ($this->uname == 542488 || $this->uname == 546319);
+
             $this->logger = new Logger ("MemberAccess");
             if (!self::SkipNHQ) {
                 $this->curl = new MyCURL ();
@@ -798,10 +807,12 @@
             } catch (PDOException $e) {
                 $this->logger->Warn("$this->memberName could not get access levels", 1);
             }
-            if (count($rows) == 1) { // If there are mores rows, somethings wrong
+			// If there are mores rows, somethings wrong or there is someone with an access level in www and the current account	
+            if (count($rows) == 1 || (count($rows) == 2 && ($this->IsRioux))) { 
                 $this->AccessLevel = $rows[0]['AccessLevel']; // We've switched to access levels instead of individual permissions
                 $perms = Permissions::GetPermissions($this);
-                $perms['Developer'] = ($this->uname == 542488 || $this->uname == 546319) ? 1 : 0; // If they are special they get to be developers
+				// If they are special they get to be developers
+                $perms['Developer'] = $this->IsRioux ? 1 : 0;
             } else {
                 $this->AccessLevel = "Member";
                 $perms = Permissions::Member;

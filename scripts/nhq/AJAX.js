@@ -460,7 +460,6 @@ window.loaded.push(function() {
                     success: function(data, status, jqxhr) {
                         console.log(cbackn);
                         if (window[cbackn]) window[cbackn](parseReturn(data).MainBody, status, jqxhr, a);
-                        console.log(window[cbackn].toString());
                     },
                     error: window[cbackn + "_error"]
                 });
@@ -485,7 +484,9 @@ window.loaded.push(function() {
     };
 
     this.addFunction(function () {
-        twttr.widgets.load();
-        FB.XFBML.parse();
+		if (typeof twttr !== 'undefined') {
+       		twttr.widgets.load();
+        	FB.XFBML.parse();
+		}
     });
 });
