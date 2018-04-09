@@ -497,9 +497,9 @@
 				return [
 					'body' => [
 						'MainBody' => $ne->EventNumber,
-						'headers' => [
-							'X-Event-Copy-Status' => 'accepteded'
-						]
+					],
+					'headers' => [
+						'X-Event-Copy-Status' => 'accepteded'
 					]
 				];
 			} else if ($func == 'atmod' && ($m->hasPermissionLevel("SignUpEdit") || $event->isPOC($m))) {

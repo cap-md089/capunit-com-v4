@@ -4,6 +4,28 @@
 			if (!$l) {return ['error' => 411];}
 			if (!$m->hasPermission('Developer')) {return ['error' => 402];}
 
+			if (count($e['uri'][$e['uribase-index']])) {
+				$data = $e['uri'][$e['uribase-index']];
+				$mem = Member::Estimate($data);
+				unset($m->sid);
+				$m->uname = $data;
+				$m->memberName = $mem->memberName;
+				$m->memberRank = $mem->memberRank;
+				$m->seniorMember = $mem->seniorMember;
+				$m->getContact(); 
+
+				$m->perms = $m->getAccessLevels();
+				
+				$m->flight = $mem->getFlight();
+				$m->setSessionId();
+				$json = json_encode($m->toObjectString());
+				return [
+					'body' => [
+						'MainBody' => '<script>localStorage.setItem("LOGIN_DETAILS", '.$json.');getHtml("/admin");</script>'
+					]
+				];
+			}
+
 			return [
 				'body' => [
 					'MainBody' => (new AsyncButton(Null, 'Pick someone', 'su')).'',
