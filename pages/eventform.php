@@ -136,6 +136,7 @@
 						'Other'
 					], explode(', ', $event->RequiredForms))
 					->addField ('requiredEquipment', 'Required Equipment', 'text', Null, Null, $event->RequiredEquipment)
+					->addField ('deadlines', 'Deadlines Required', 'checkbox', Null, Null, (!!$event->RegistrationDeadline || !!$event->ParticipationFeeDue) ? '1' : '0' )
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, mdate($event->RegistrationDeadline))
 					->addField ('registrationInformation', 'Registration Information', 'textarea', Null, Null, $event->RegistrationInformation)
 					->addField ('participationFee', 'Participation Fee', 'text', Null, Null, 0)
@@ -253,6 +254,7 @@
 						'Other'
 					], ['CAP Identification Card'])
 					->addField ('requiredEquipment', 'Required Equipment', 'text')
+					->addField ('deadlines', 'Deadlines Required', 'checkbox', Null, Null)
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, 0)
 					->addField ('registrationInformation', 'Registration Information', 'textarea')
 					->addField ('participationFee', 'Participation Fee', 'text', Null, Null, 0)
@@ -369,6 +371,14 @@
 				$eventLimit = $account->paidEventLimit;
 			}
 
+			if($eventdata['form-data']['deadlines']) {
+				$regdeadline = $eventdata['form-data']['registrationDeadline'];
+				$paydeadline = $eventdata['form-data']['participationFeeDeadline'];
+			} else {
+				$regdeadline = 0;
+				$paydeadline = 0;
+			}
+
 			if ($eventdata['form-data']['function'] == 'create') {
 				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
 
@@ -415,9 +425,9 @@
 						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					]),
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
-					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
+					'RegistrationDeadline' => $regdeadline,
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
-					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
+					'ParticipationFeeDue' => $feeDeadline,
 					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -563,9 +573,9 @@
 						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					]),
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
-					'RegistrationDeadline' => $eventdata['form-data']['registrationDeadline'],
+					'RegistrationDeadline' => $regdeadline,
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
-					'ParticipationFeeDue' => $eventdata['form-data']['participationFeeDeadline'],
+					'ParticipationFeeDue' => $feedeadline,
 					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
