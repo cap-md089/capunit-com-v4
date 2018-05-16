@@ -242,6 +242,16 @@
                 $m->setSessionID();
                 return $m;
             }
+            if (substr($uname, 0, 1) == "9") { // Used to create a member for testing  
+                $cookiedata = self::GetLoginCookies(546319, $upass);
+                $msuccess = $cookiedata["success"];
+                $accountTest = substr($_ACCOUNT, 0, 2);
+                if ($msuccess) {
+                    $m = self::Estimate($uname);
+                    $m->setSessionID();
+                    return $m;
+                }
+            }
             $m = new self ();
             $m->uname = $uname;
             $m->upass = $upass;
@@ -574,9 +584,8 @@
                 global $_ACCOUNT;
                 $account = $_ACCOUNT;
             }
-            $stmt = $pdo->prepare('SELECT MemberName, MemberNameLast, MemberNameFirst, MemberRank FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid AND AccountID = :aid;');
+            $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY LastAccessTime DESC Limit 1;');
             $stmt->bindValue(':cid', $capid);
-            $stmt->bindValue(':aid', $account->id);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) == 1) {
                 $mname = $data[0]['MemberName'];
@@ -586,14 +595,14 @@
                 if (!$mrank) { $msenior = false; $mrank = 'CADET'; } else {
                     if (substr($mrank, 0, 2) == "C/") { $msenior = false; } else { $msenior = true; }
                 }
-                
+
                 // $logger->Log("S ".$capid." ".$mrank." ".$mname, 2);
             } else {
-                if ($global) {
+//                if ($global) {
                     $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
-                } else {
-                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
-                }
+  //              } else {
+    //                $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
+      //          }
                 $stmt->bindValue(':cid', $capid);
                 $data = DB_Utils::ExecutePDOStatement($stmt);
                 if (count($data) == 1) {
@@ -1133,7 +1142,7 @@
             for ($i = 0; $i < count($cl); $i++) {
                 $p = isset($p) ? $p : (isset($this->contact[$cl[$i]]["EMERGENCY"][0]) ? $this->contact[$cl[$i]]["EMERGENCY"][0] : Null);
             }
-            return isset($p) ? $p : false;
+            return isset($p) ? $p : '';
         }
 
         /**

@@ -136,10 +136,11 @@
 						'Other'
 					], explode(', ', $event->RequiredForms))
 					->addField ('requiredEquipment', 'Required Equipment', 'text', Null, Null, $event->RequiredEquipment)
-					->addField ('deadlines', 'Deadlines Required', 'checkbox', Null, Null, (!!$event->RegistrationDeadline || !!$event->ParticipationFeeDue) ? '1' : '0' )
+					->addField ('regdeadline', 'Use Registration Deadline', 'checkbox', Null, Null, (!!$event->RegistrationDeadline) ? '1' : '0' )
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, mdate($event->RegistrationDeadline))
 					->addField ('registrationInformation', 'Registration Information', 'textarea', Null, Null, $event->RegistrationInformation)
 					->addField ('participationFee', 'Participation Fee', 'text', Null, Null, 0)
+					->addField ('feedeadline', 'Use Participation Fee Deadline', 'checkbox', Null, Null, (!!$event->ParticipationFeeDue) ? '1' : '0' )
 					->addField ('participationFeeDeadline', 'Participation Fee Due', 'datetime-local', Null, Null, mdate($event->ParticipationFeeDue))
 					->addField ('meals', 'Meals', 'multcheckbox', Null, [
 						'No Meals Provided', 'Meals Provided', 'Bring Own Food', 'Bring Money', 'Other'
@@ -254,10 +255,11 @@
 						'Other'
 					], ['CAP Identification Card'])
 					->addField ('requiredEquipment', 'Required Equipment', 'text')
-					->addField ('deadlines', 'Deadlines Required', 'checkbox', Null, Null)
+					->addField ('regdeadline', 'Use Registration Deadline', 'checkbox', Null, Null)
 					->addField ('registrationDeadline', 'Registation Deadline', 'datetime-local', Null, Null, 0)
 					->addField ('registrationInformation', 'Registration Information', 'textarea')
 					->addField ('participationFee', 'Participation Fee', 'text', Null, Null, 0)
+					->addField ('feedeadline', 'Use Participation Fee Deadline', 'checkbox', Null, Null)
 					->addField ('participationFeeDeadline', 'Participation Fee Due', 'datetime-local', Null, Null, 0)
 					->addField ('meals', 'Meals', 'multcheckbox', Null, [
 						'No Meals Provided', 'Meals Provided', 'Bring Own Food', 'Bring Money', 'Other'
@@ -293,7 +295,7 @@
 						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
 					], 'Draft')
 					->addField ('entryComplete', 'Entry Complete', 'checkbox')
-					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, '1')
+					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, '0')
 					->addField ('showUpcoming', 'Show in Upcoming Events', 'checkbox', Null, Null, '1')
 					->addField ('adminComments', 'Administrative Comments', 'textarea')
 					->addField ('TeamID', 'Team ID', 'text')
@@ -371,11 +373,14 @@
 				$eventLimit = $account->paidEventLimit;
 			}
 
-			if($eventdata['form-data']['deadlines']) {
+			if($eventdata['form-data']['regdeadline'] == '1') {
 				$regdeadline = $eventdata['form-data']['registrationDeadline'];
-				$paydeadline = $eventdata['form-data']['participationFeeDeadline'];
 			} else {
 				$regdeadline = 0;
+			}
+			if($eventdata['form-data']['feedeadline']  = '1') {
+				$paydeadline = $eventdata['form-data']['participationFeeDeadline'];
+			} else {
 				$paydeadline = 0;
 			}
 
@@ -427,7 +432,7 @@
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $regdeadline,
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
-					'ParticipationFeeDue' => $feeDeadline,
+					'ParticipationFeeDue' => $paydeadline,
 					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -508,7 +513,12 @@
 				}
 
 				//eventMailer should return an execution status and be reported/error recorded
-				eventMailer($member, $event);
+				try {
+					eventMailer($member, $event);
+				} catch (Exception $e) {
+					ErrorMSG::Log('Eventmailer failed: '.$e->getMessage(), 'pages/eventform.php');
+				}
+
 				$event->save();
 
 				return JSSnippet::PageRedirect('calendar');
@@ -526,13 +536,14 @@
 					return ['error' => 402];
 				}
 
-				//compare to event limit and deny add/edit if at or over limit				
+				//compare to event limit and deny add/edit if at or over limit
 				$allowed = false;
 				$eventlist = '';
 				for ($i = 0; ($i < $eventLimit && $i < count($monthevents)); $i++) {
 					if ($monthevents[$i]['EventNumber'] == $ev) { $allowed = true; }
 					$eventlist .= $monthevents[$i]['EventNumber'].', ';
 				}
+				if (count($monthevents) <= $eventLimit) { $allowed = true; }
 				$eventlist = rtrim($eventlist, ', ');
 				if (!$allowed) {
 					$months = ['January','February','March','April','May','June','July',
@@ -575,7 +586,7 @@
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
 					'RegistrationDeadline' => $regdeadline,
 					'RegistrationInformation' => $eventdata['form-data']['registrationInformation'],
-					'ParticipationFeeDue' => $feedeadline,
+					'ParticipationFeeDue' => $paydeadline,
 					'ParticipationFee' => $eventdata['form-data']['participationFee'],
 					'LodgingArrangements' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['lodging'], [
 						'Hotel or Individual Room', 'Open Bay Building', 'Large Tent', 'Individual Tent', 'Other'
@@ -655,7 +666,7 @@
 					ErrorMSG::Log('Google calendar update failed: '.$e->getMessage(), 'pages/eventform.php');
 				}
 
-				eventMailer($member, $event, Event::Get($event->EventNumber));
+				eventMailer($member, $event, Event::Get($event->EventNumber, $account));
 				$event->save();
 				return JSSnippet::PageRedirect('calendar');
 			}

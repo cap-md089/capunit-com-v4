@@ -134,6 +134,16 @@ function sendAttendance(data, status, jqxhr, a) {
     customDialog("Attendance Email Status", data);
 }
 
+function linkEventSet(data, status, jqxhr, a) {
+	customDialog("Linked Event Status", data);
+	getHtml();
+}
+
+function linkEventUnset(data, status, jqxhr, a) {
+	customDialog("Linked Event Status", data);
+	getHtml();
+}
+
 function copyEvent_prepush(a) {
     form = "<form class=\"asyncForm\">";
     form += "<div class=\"formbar\">";
@@ -316,7 +326,6 @@ function reload() {
 
 function fileDeleted (data) {
     getHtml();
-    customDialog("File Status", data);
 }
 
 function dateRangeUpdate() {

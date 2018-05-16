@@ -4,9 +4,9 @@
 			if (!$l) {return ['error' => 411];}
 			if (!$m->hasPermission('Developer')) {return ['error' => 402];}
 
-			if (count($e['uri'][$e['uribase-index']])) {
+			if (isset($e['uri'][$e['uribase-index']])) {
 				$data = $e['uri'][$e['uribase-index']];
-				$mem = Member::Estimate($data);
+				$mem = Member::Estimate($data, true);
 				unset($m->sid);
 				$m->uname = $data;
 				$m->memberName = $mem->memberName;

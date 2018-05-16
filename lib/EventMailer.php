@@ -3,23 +3,57 @@
         * This function is used to send the appropriate mail to 
         * select addresses at the appropriate time
     */
-    function eventMailer(Member $member, Event $form, Event $database=null) {
+    function eventMailer(Member $member, Event $form, Event $database=null, Event $sourceEvent=null) {
         //compare form and database for changed values
         //build changed values string and full event string
-        
-        global $_ACCOUNT;
+
+        $homeUnit = $member->Squadron;
+        $homeAccountID = UtilCollection::GetAccountIDFromUnit($homeUnit);  //lib/general.php
+        $_ACCOUNT = new Account($homeAccountID);
 
         if (!isset($database)) { // Event was created, cannot compare against database
-            $html = $member->RankName." has created an event and ";
-            $html .= "you have been identified as a Point of Contact!<br />";
-            $html .= "<br />Here are some basic event details: <br />";
-            $html .= "<br />Event name: $form->EventName";
-            $html .= "<br />Event ID Number: <a href=\"".(new Link("eventviewer", '', [$form->EventNumber]))->getURL(false)."\">$_ACCOUNT-$form->EventNumber</a><br />";
+            if (!isset($sourceEvent)) { // Event was created from the form, not linked from another event
+                $html = $member->RankName." has created an event and ";
+                $html .= "you have been identified as a Point of Contact!<br />";
+                $html .= "<br />Here are some basic event details: <br />";
+                $html .= "<br />Event name: $form->EventName";
+                $html .= "<br />Event ID Number: <a href=\"".(new Link("eventviewer", '', [$form->EventNumber]))->getURL(false)."\">$_ACCOUNT-$form->EventNumber</a><br />";
+            } else {  // Created event is linked to another event
+                $pdo = DB_Utils::CreateConnection();
+                $stmt = $pdo->prepare('SELECT UnitID FROM '.DB_TABLES['Accounts'].' WHERE AccountID=:aid AND MainOrg=1;');
+                $stmt->bindValue(':aid', $sourceEvent->SourceAccountID);
+                $data = DB_Utils::ExecutePDOStatement($stmt);
+                if (count($data) != 1) {
+                    //there was an error; need to add error logging here.  return
+                    return [
+                        'error' => 311
+                    ];
+                } else {
+                    $data = $data[0];
+                    $stmt = $pdo->prepare('SELECT Region, Wing, Unit, Name FROM '.DB_TABLES['Organization'].' WHERE ORGID = :oid;');
+                    $stmt->bindValue(':oid', $data['ORGID']);
+                    $data2 = DB_Utils::ExecutePDOStatement($stmt);
+                    if (count($data2) != 1) {
+                        //there was an error; need to add error logging here.  return
+                        return [
+                            'error' => 311
+                        ];
+                    } else {
+                        $linkedUnitName = $data2['Region']."-".$data2['Wing']."-".$data2['Unit'];
+                        $html = $member->RankName." has linked to Event ".$sourceEvent->EventNumber." at ";
+                        $html .= $linkedUnitName."";
+                        $html .= "you have been identified as a Point of Contact!<br />";
+                        $html .= "<br />Here are some basic details of the local event: <br />";
+                        $html .= "<br />Event name: $form->EventName";
+                        $html .= "<br />Event ID Number: <a href=\"".(new Link("eventviewer", '', [$form->EventNumber]))->getURL(false)."\">$form->GetAccount()->id-$form->EventNumber</a><br />";
+                    }
+                }
+            }
             $html .= "<br />Meet at ".date('h:i A \o\n n/j/Y', $form->MeetDateTime).' at '.$form->MeetLocation.'<br />';
             $html .= "Start at ".date('h:i A \o\n n/j/Y', $form->StartDateTime).' at '.$form->EventLocation.'<br />';
 			$html .= "End at ".date('h:i A \o\n n/j/Y', $form->EndDateTime).'<br />';
             $html .= "Pickup at ".date('h:i A \o\n n/j/Y', $form->PickupDateTime).' at '.$form->PickupLocation.'<br /><br />';
-            
+
             $html .= "Transportation provided: ".($form->TransportationProvided == 1 ? 'YES' : 'NO').'<br />';
 			$html .= "Uniform: ".$form->Uniform.'<br />';
 			$html .= "Comments: ".$form->Comments.'<br />';
@@ -96,16 +130,38 @@
                 $html .= "View the event at <a href=\"".(new Link("eventviewer", "", [$form->EventNumber]))->getURL(false)."\">this link</a>";
 
                 $contact = [];
-                if ($form->CAPPOC1Email != 0 && $form->CAPPOC1ReceiveEventUpdates) $contact[$form->CAPPOC1Name] = $form->CAPPOC1Email;
+                if ($form->CAPPOC1ID != 0 && $form->CAPPOC1ReceiveEventUpdates) $contact[$form->CAPPOC1Name] = $form->CAPPOC1Email;
                 if ($form->CAPPOC2ID != 0 && $form->CAPPOC2ReceiveEventUpdates) $contact[$form->CAPPOC2Name] = $form->CAPPOC2Email;
                 if ($form->ExtPOCName != '' && $form->ExtPOCReceiveEventUpdates) $contact[$form->ExtPOCName] = $form->ExtPOCEmail;
-                
+
                 if ($database->CAPPOC1ID != 0 && $database->CAPPOC1ReceiveEventUpdates) $contact[$database->CAPPOC1Name] = $database->CAPPOC1Email;
                 if ($database->CAPPOC2ID != 0 && $database->CAPPOC2ReceiveEventUpdates) $contact[$database->CAPPOC2Name] = $database->CAPPOC2Email;
                 if ($database->ExtPOCName != '' && $database->ExtPOCReceiveEventUpdates) $contact[$database->ExtPOCName] = $database->ExtPOCEmail;
 
                 if ($form->AdditionalEmailAddresses != '') $contact[$form->AdditionalEmailAddresses] = $form->AdditionalEmailAddresses;
-                
+
+                $pdo = DB_Utils::CreateConnection();
+                $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE SourceAccountID=:sai AND SourceEventNumber=:sen;');
+                $stmt->bindValue(':sai', $form->SourceAccountID);
+                $stmt->bindValue(':sen', $form->SourceEventNumber);
+                $data = DB_Utils::ExecutePDOStatement($stmt);
+                if (count($data) > 0) {
+                    foreach ($data as $datum) {
+                        $contactLink = [];
+                        if ($datum['CAPPOC1ID'] != 0 && $datum['CAPPOC1ReceiveEventUpdates']) $contactLink[$datum['CAPPOC1Name']] = $datum['CAPPOC1Email'];
+                        if ($datum['CAPPOC2ID'] != 0 && $datum['CAPPOC2ReceiveEventUpdates']) $contactLink[$datum['CAPPOC2Name']] = $datum['CAPPOC2Email'];
+
+                        if ($datum['AdditionalEmailAddresses'] != '') $contactLink[$datum['AdditionalEmailAddresses']] = $datum['AdditionalEmailAddresses'];
+
+                        if (strpos(php_uname('r'), 'amzn1') !== false) {
+                            UtilCollection::sendFormattedEmail(
+                                $contactLink,
+                                $html,
+                                "Event $_ACCOUNT-$form->EventNumber updated: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
+                            );
+                        }
+                    }
+                }
                 if (strpos(php_uname('r'), 'amzn1') !== false) {
                     return UtilCollection::sendFormattedEmail(
                         $contact,
@@ -120,7 +176,7 @@
 
     function errorMailer(Member $member, $errorMessage) {
         //send email to developers and admins regarding a system error
-        
+
         global $_ACCOUNT;
 
         $html = $member->RankName." attempted a function and an error occurred. <br />";

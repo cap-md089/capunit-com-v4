@@ -293,7 +293,8 @@
 
 				case "file" :
 					$html = "<label class=\"file\" for=\"{$name}[]\">Upload</label><input id=\"{$name}[]\" type=\"file\" name=\"{$name}[]\" class=\"$class\" multiple=\"multiple\" /> or ".
-					(new AsyncButton(Null, 'select files.', 'asyncFormSelectFilesInsteadOfUpload'))->getHtml($name);
+					(new AsyncButton(Null, 'select files.', 'asyncFormSelectFilesInsteadOfUpload'))->getHtml($name).
+					"<br /><div class=\"fileNames\"></div>";
 					$this->addHiddenField('filesList[]', $name);
 				break;
 

@@ -473,7 +473,7 @@
 				}
 			}
 			VN::$header = $colIDs;
-			$stmt = $pdo->prepare("DELETE FROM Data_Organization;");
+			$stmt = $pdo->prepare("DELETE FROM Data_Organization WHERE ORGID<9000;");
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("Organization Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 				return "Organization Delete ORGID error: ".$stmt->errorInfo()[2];
@@ -535,7 +535,7 @@
 				}
 			}
 			VN::$header = $colIDs;
-			$stmt = $pdo->prepare("DELETE FROM Data_OrgAddresses;");
+			$stmt = $pdo->prepare("DELETE FROM Data_OrgAddresses WHERE ORGID<9000;");
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("OrgAddresses Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 				return "OrgAddresses Delete ORGID error: ".$stmt->errorInfo()[2];
@@ -594,7 +594,7 @@
 				}
 			}
 			VN::$header = $colIDs;
-			$stmt = $pdo->prepare("DELETE FROM Data_OrgContact;");
+			$stmt = $pdo->prepare("DELETE FROM Data_OrgContact WHERE ORGID<9000;");
 			if (!$stmt->execute()) {
 				ErrorMSG::Log("OrgContact Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 				return "OrgContact Delete ORGID error: ".$stmt->errorInfo()[2];

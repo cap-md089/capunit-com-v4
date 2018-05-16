@@ -479,4 +479,12 @@ window.loaded.push(function() {
             els[i].ondragover = function(ev) {};
         }
     });
+
+	addFunction(function () {
+		$('input[type=file]').on('change', function (e) {
+			$(this).parent().find('.fileNames').html(
+				$.map($(this).prop('files'), function (f) { return f.name; })
+				.join('<br />'));
+		});
+	});
 });
