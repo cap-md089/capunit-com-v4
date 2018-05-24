@@ -99,24 +99,28 @@ ORDER BY Absent;");
 			$data = DB_Utils::ExecutePDOStatement($stmt);
 			$flightmembers = [];
 			foreach ($data as $datum) {
-				if (!isset($flightmembers[$datum['CAPID']])) {
-					$flightmembers[$datum['CAPID']] = [
-						'Rank' => $datum['Rank'],
-						'Name' => $datum['NameFirst'] . ' ' . $datum['NameLast'],
-						'Contact' => [],
-						'AbsentUntil' => $datum['AbsentUntil'],
-						'AbsentNotes' => $datum['AbsentNotes'],
-						'Absent' => $datum['Absent'] != Null && $datum['Absent'] > 0,
-						'_Absent' => $datum['Absent'],
-						'TAbsent' => ($datum['Absent'] > 0 && $datum['Absent'] != Null) ? 't' : 'f'
-					];
-				}
+				$flightmembers[$datum['CAPID']] = [
+					'Rank' => $datum['Rank'],
+					'Name' => $datum['NameFirst'] . ' ' . $datum['NameLast'],
+					'Contact' => [],
+					'AbsentUntil' => $datum['AbsentUntil'],
+					'AbsentNotes' => $datum['AbsentNotes'],
+					'Absent' => $datum['Absent'] != Null && $datum['Absent'] > 0,
+					'_Absent' => $datum['Absent'],
+					'TAbsent' => ($datum['Absent'] > 0 && $datum['Absent'] != Null) ? 't' : 'f'
+				];
 			}
-			$stmt = $pdo->prepare("SELECT MbrContact.CAPID, MbrContact.Contact, MbrContact.Type, MbrContact.Priority, MbrContact.DoNotContact FROM ".DB_TABLES['MemberContact']." AS MbrContact INNER JOIN ".DB_TABLES['Flights']." AS Flights ON MbrContact.CAPID = Flights.CAPID WHERE (MbrContact.`Type` LIKE '%PHONE%' OR MbrContact.`Type` LIKE '%EMAIL') AND MbrContact.DoNotContact = 0 AND Flights.Flight = :flight;");
-			$stmt->bindParam(':flight', $flight);
+			$stmt = $pdo->prepare("SELECT MbrContact.CAPID, MbrContact.Contact, MbrContact.Type, MbrContact.Priority, MbrContact.DoNotContact FROM ".DB_TABLES['MemberContact']." AS MbrContact WHERE (MbrContact.`Type` LIKE '%PHONE%' OR MbrContact.`Type` LIKE '%EMAIL') AND MbrContact.DoNotContact = 0;");
 			$cdata = DB_Utils::ExecutePDOStatement($stmt);
 			foreach ($cdata as $datum) {
-				$flightmembers[$datum['CAPID']]['Contact'][] = [
+				if (!isset($flightmembers[$datum['CAPID']])) {
+					continue;
+				}
+				$flightmember = $flightmembers[$datum['CAPID']];
+				
+				$contact = $flightmember['Contact'];
+
+				$contact[] = [
 					'Contact' => $datum['Contact'],
 					'Priority' => $datum['Priority'],
 					'Type' => $datum['Type'],
@@ -127,6 +131,10 @@ ORDER BY Absent;");
 					'AbsentUntil' => 0,
 					'AbsentNotes' => ''
 				];
+
+				$flightmember['Contact'] = $contact;
+
+				$flightmembers[$datum['CAPID']] = $flightmember;
 			}
 			$elist = [];
 			$dl = new DetailedListPlus();
@@ -147,7 +155,7 @@ ORDER BY Absent;");
 						if (is_numeric($cont)) {
 							$phones .= '('.substr($cont, 0, 3).') '.substr($cont, 3, 3).'-'.substr($cont, 6, 4).' ('.strtoupper($mem['Contact'][$i]['Priority'] . ' '.$mem['Contact'][$i]['Type']).')<br />';
 						} else {
-							if (!$mem['Absent'] && !in_array($cont, $elist)) {
+							if (isset($mem['Absent']) && !$mem['Absent'] && !in_array($cont, $elist)) {
 								$elist[] = $cont;
 								$emails .= $cont.'; ';
 								$phones .= $cont . ' ('.strtoupper($mem['Contact'][$i]['Priority']) . ' '. $mem['Contact'][$i]['Type'] .') '.$rbutt->getHtml($cont).'<br />';
@@ -157,7 +165,7 @@ ORDER BY Absent;");
 						}
 					}
 				}
-				if ($mem['Absent']) {
+				if (isset($mem['Absent']) && $mem['Absent']) {
 					$phones .= <<<EOD
 <div style="margin-left:40px"><h3>Absent notes:</h3>
 <div>{$mem['AbsentNotes']}</div></div>
