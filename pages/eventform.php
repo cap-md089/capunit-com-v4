@@ -523,6 +523,7 @@
 					if ($monthevents[$i]['EventNumber'] == $ev) { $allowed = true; }
 					$eventlist .= $monthevents[$i]['EventNumber'].', ';
 				}
+				if (count($monthevents) <= $eventLimit) { $allowed = true; }
 				$eventlist = rtrim($eventlist, ', ');
 				if (!$allowed) {
 					$months = ['January','February','March','April','May','June','July',
