@@ -170,14 +170,12 @@
 				$hasfiles = false;
 				foreach ($data as $row) {
 					$file = File::Get($row["FileID"]);
-					if(($event->isPOC($m) || $m->hasPermission('SignUpEdit'))) {
+					if(($event->isPOC($m) || $m->hasPermission('SignUpEdit')) && !!$file) {
 						$ab = new AsyncButton(Null,  "Delete", "deleteEventFile");
 						$ab->data = 'delfi'.json_encode(array(
 							'fid' => $file->ID,
 							'eid' => $event->EventNumber	
 						));
-					}
-					if ($file) {
 						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()." ";
 						$html .= $ab."<br />";
 						$hasfiles = true;
