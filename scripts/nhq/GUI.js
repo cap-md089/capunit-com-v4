@@ -316,6 +316,9 @@ window.loaded.push(function() {
                 },
                 "2": {
                     "1": "You didn't fill out the entire form"
+                },
+                "3": {
+                    "1": "This content is restricted to members of this account/unit"
                 }
             },
             "3": { // Client errors
