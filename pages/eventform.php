@@ -504,7 +504,7 @@
 						}
 					}
 				}
-				
+
 				//return value for updateCalendarEvent is currently text and is undisplayed here
 				try {
 					GoogleCalendar::updateCalendarEvent($event);
@@ -514,7 +514,7 @@
 
 				//eventMailer should return an execution status and be reported/error recorded
 				try {
-					eventMailer($member, $event);
+					eventMailerNew($member, $event);
 				} catch (Exception $e) {
 					ErrorMSG::Log('Eventmailer failed: '.$e->getMessage(), 'pages/eventform.php');
 				}
@@ -666,7 +666,7 @@
 					ErrorMSG::Log('Google calendar update failed: '.$e->getMessage(), 'pages/eventform.php');
 				}
 
-				eventMailer($member, $event, Event::Get($event->EventNumber, $account));
+				eventMailerEdit($member, $event, Event::Get($event->EventNumber, $account));
 				$event->save();
 				return JSSnippet::PageRedirect('calendar');
 			}

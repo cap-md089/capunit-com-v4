@@ -151,6 +151,9 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                         fly exciting Search and Rescue Missions.  Service to your Community and Country is 
                         part-time, and can be an exciting second career.
                     </p>
+                    <p>
+                        The application form can be downloaded from <a href="https://drive.google.com/open?id=1qAh_B3XHR2AFLkRG7og2297IRLDXm_4_">this link</a>.
+                    </p>
                 </div>
                 <h4>How to become a Cadet (Age 10-21)</h4>
                 <div>
@@ -168,6 +171,10 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                     <p>
                         We offer our Cadets' summer/winter Encampments, Flying, Pilot Training, Rocketry, travel 
                         oppurtunities, and traing and participation in Search and Rescue operations.
+                    </p>
+                    <p>
+                        The application form can be downloaded from <a href="https://drive.google.com/open?id=1qAh_B3XHR2AFLkRG7og2297IRLDXm_4_">this link</a>. 
+                        The online application (recommended) may be accessed at <a href="https://www.capnhq.gov/CAP.MembershipSystem.Web/CadetOnlineApp.aspx">this link</a>.
                     </p>
                 </div>
             </section>

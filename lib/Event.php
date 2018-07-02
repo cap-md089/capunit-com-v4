@@ -416,7 +416,7 @@
             $stmt->bindValue(':acceptSignups', $event->AcceptSignUps);
             $stmt->bindValue(':signUpDeny', $event->SignUpDenyMessage);
             $stmt->bindValue(':publishToWing', $event->PublishToWingCalendar ? 1 : 0);
-			$stmt->bindValue(':showUpcoming', $event->ShowUpcoming ? 1 : 0);
+			$stmt->bindValue(':showUpcoming', $event->showUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $event->GroupEventNumber);
             $stmt->bindValue(':entryComplete', $event->Complete ? 1 : 0);
             $stmt->bindValue(':adminComments', $event->Administration);
@@ -517,7 +517,8 @@
          * @return self
          */
         public function save () {
-            global $_ACCOUNT;
+//            global $_ACCOUNT;
+            $_ACCOUNT=$this->GetAccount();
 
             $errors = $this->checkErrors();
             if (!!$errors) {
@@ -526,7 +527,7 @@
 
             $pdo = DB_Utils::CreateConnection();
 
-            $stmt = $pdo->prepare('UPDATE '.DB_TABLES['EventInformation'].' SET 
+            $stmt = $pdo->prepare('UPDATE '.DB_TABLES['EventInformation'].' SET
                 EventName = :eventName, MeetDateTime = :meetDate, MeetLocation = :meetLocation,
                 StartDateTime = :startDate, EventLocation = :eventLocation, EndDateTime = :endDate,
                 PickupDateTime = :pickupDate, PickupLocation = :pickupLocation,
@@ -576,7 +577,7 @@
             $stmt->bindValue(':acceptSignups', $this->AcceptSignUps);
             $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
             $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
-            $stmt->bindValue(':showUpcoming', $this->ShowUpcoming ? 1 : 0);
+            $stmt->bindValue(':showUpcoming', $this->showUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $this->GroupEventNumber);
             $stmt->bindValue(':entryComplete', $this->Complete ? 1 : 0);
             $stmt->bindValue(':adminComments', $this->Administration);
@@ -602,10 +603,10 @@
             $stmt->bindValue(':author', $this->Author);
             $stmt->bindValue(':parttime', $this->PartTime ? 1 : 0);
             $stmt->bindValue(':teamid', $this->TeamID);
-            $stmt->bindValue(':ev', $this->EventNumber);
-            $stmt->bindValue(':aid', $_ACCOUNT->id);
             $stmt->bindValue(':sourceEventNumber', $this->SourceEventNumber);
             $stmt->bindValue(':sourceAccountID', $this->SourceAccountID);
+            $stmt->bindValue(':ev', $this->EventNumber);
+            $stmt->bindValue(':aid', $_ACCOUNT->id);
 
             $this->success = $stmt->execute();
             $this->error = $stmt->errorInfo();

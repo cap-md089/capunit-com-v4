@@ -288,7 +288,7 @@
 						if (!isset($data)) $data = [];
 						$data['value'] = $default;
 					}
-					$html = "<textarea ".(isset($default)?"value=\"$default\" ":"")."name=\"$name\" cols=\"".(isset($data[0])?$data[0]:32)."\" rows=\"".(isset($default)?$default:"").(isset($data[1])?$data[1]:4)."\" class=\"$class\">".(isset($data['value'])?$data['value']:'')."</textarea>";
+					$html = "<textarea ".(isset($default)?"value=\"".str_replace('"', '&quot;', $default)."\" ":"")."name=\"$name\" cols=\"".(isset($data[0])?$data[0]:32)."\" rows=\"".(isset($default)?$default:"").(isset($data[1])?$data[1]:4)."\" class=\"$class\">".(isset($data['value'])?$data['value']:'')."</textarea>";
 				break;
 
 				case "file" :

@@ -14,8 +14,8 @@
 
 			$form = new AsyncForm (Null, "Select members to include in email address listing", Null, "MultiAdd");
 			$form
-				->addField("cadets", 'Cadets', 'multcheckbox', Null, $cadets, $cadets)
-				->addField('seniorm', 'Senior Members', 'multcheckbox', Null, $seniorm, $seniorm)
+				->addField("cadets", 'Cadets', 'multcheckbox', Null, $cadets)
+				->addField('seniorm', 'Senior Members', 'multcheckbox', Null, $seniorm)
 				->setOption('reload', false);
 
 			$form->setSubmitInfo('Submit', null, null, null, false);
