@@ -316,6 +316,9 @@ window.loaded.push(function() {
                 },
                 "2": {
                     "1": "You didn't fill out the entire form"
+                },
+                "3": {
+                    "1": "This content is restricted to members of this account/unit"
                 }
             },
             "3": { // Client errors
@@ -479,4 +482,12 @@ window.loaded.push(function() {
             els[i].ondragover = function(ev) {};
         }
     });
+
+	addFunction(function () {
+		$('input[type=file]').on('change', function (e) {
+			$(this).parent().find('.fileNames').html(
+				$.map($(this).prop('files'), function (f) { return f.name; })
+				.join('<br />'));
+		});
+	});
 });

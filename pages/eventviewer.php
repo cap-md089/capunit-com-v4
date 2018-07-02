@@ -30,20 +30,65 @@
 					$html .= "<br />".new Link ("multiadd", "Add attendees", [$ev]);
 					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
 				}
+				if ($event->SourceEventNumber > 0) {
+					$sourceEvent = Event::Get($event->SourceEventNumber, new Account($event->SourceAccountID));
+					$pdo = DB_Utils::CreateConnection();
+					$stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['Accounts'].' WHERE AccountID=:aid AND MainOrg=1;');
+					$stmt->bindValue(':aid', $event->SourceAccountID);
+					$data = DB_Utils::ExecutePDOStatement($stmt);
+					if (count($data) != 1) {
+						//there was an error; need to add error logging here.  return
+						return [
+							'error' => 311
+						];
+					} else {
+						$data = $data[0];
+						$stmt = $pdo->prepare('SELECT Region, Wing, Unit, Name FROM '.DB_TABLES['Organization'].' WHERE ORGID = :oid;');
+						$stmt->bindValue(':oid', $data['UnitID']);
+						$data2 = DB_Utils::ExecutePDOStatement($stmt);
+						if (count($data2) != 1) {
+							//there was an error; need to add error logging here.  return
+							return [
+								'error' => 311
+							];
+						} else {
+							$data2 = $data2[0];
+							$linkedUnitName = $data2['Region']."-".$data2['Wing']."-".$data2['Unit'];
+							$html .= '<br /><b>This event is linked to ';
+							$html .= '<a href="https://'.$event->SourceAccountID.'.capunit.com/eventviewer/'.$event->SourceEventNumber.'" target="_blank">';
+							$html .= $linkedUnitName.' Event '.$event->SourceEventNumber.'</a></b>';
+							if ($m->hasPermission("LinkEvent")) {
+								$html .= "<br />".(new AsyncButton(Null, 'Unlink this event','linkEventUnset'))->getHtml('linku'.$ev);
+		//need to refresh page after this to remove linked event text and unlink link?
+							}
+						}
+					}
+				}
 				$breaks = 'true';
 			}
 			if($l) {
 				$perm = false;
 				foreach ($m->genAccounts() as $acc) {
-					$perm = $perm || $m->hasPermission('CopyEvent', 1, $acc); 
+					$perm = $perm || $m->hasPermission('LinkEvent', 1, $acc); 
 				}
-				$notInAcct = !$a->hasMember($m);
-				$notLinked = true; //need to query database for linked event
-				//need to add linked event fields to database before implementing
-				if ($perm && $notInAcct && $notLinked) {
-//					$html .= " | ".new Link ("linkEvent", "Link To Event", [$ev]);
-					// Better to use AsyncButton, similar to copy on line 26
-											
+				$stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE SourceEventNumber=:sen AND SourceAccountID=:sai;');
+				$stmt->bindValue(':sen', $ev);
+				$stmt->bindValue(':sai', $_ACCOUNT->id);
+				$evdata = DB_Utils::ExecutePDOStatement($stmt);
+				$homeAccount = UtilCollection::GetAccountIDFromUnit($m->Squadron);
+				$eventLinked = false;
+				if (count($evdata) > 0) {
+					foreach($evdata as $datum) {
+						if($datum['AccountID'] == $homeAccount) { 
+							$eventLinked=true;
+						}
+					}
+				}
+				if ($perm && !$a->hasMember($m) && !$eventLinked) {
+					$html .= (new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
+//				} else if ($perm && $notInAcct) {
+//					$html .= new Link ("linkeventunset", "Unlink from this event in the ".$m->Squadron." calendar", [$ev]);
+					//need to implement unlink in own event view page, not just in remote account event
 				}
 				$breaks = 'true';
 			}
@@ -59,7 +104,7 @@
 			$html .= "<b>Event:</b> ".$event->EventName.'<br />';
 			$html .= "<b>Event ID Number:</b> $a-$ev<br />";
 			$html .= "Please contact the event POC listed below directly with any questions or comments<br />";
-			
+
 			// Second block
 			$html .= "<b>Meet</b> at ".date('h:i A \o\n n/j/Y', $event->MeetDateTime).' at '.$event->MeetLocation.'<br />';
 			$html .= "<b>Start</b> at ".date('h:i A \o\n n/j/Y', $event->StartDateTime).' at '.$event->EventLocation.'<br />';
@@ -110,9 +155,9 @@
 				$stmt = $pdo->prepare('SELECT `TeamName` FROM '.DB_TABLES['Team'].' WHERE TeamID = :tid AND AccountID = :aid;');
 				$stmt->bindValue(':tid', $event->TeamID);
 				$stmt->bindValue(':aid', $_ACCOUNT->id);
-				$data = DB_Utils::ExecutePDOStatement($stmt);
-				if(count($data) > 0) {
-					$html .= "<b>Team Name:</b> ".$data[0]['TeamName'].'<br />';
+				$teamdata = DB_Utils::ExecutePDOStatement($stmt);
+				if(count($teamdata) > 0) {
+					$html .= "<b>Team Name:</b> ".$teamdata[0]['TeamName'].'<br />';
 				}
 			}
 			$html .= "<b>Desired number of Participants:</b> ".$event->DesiredNumParticipants.'<br />';
@@ -120,19 +165,19 @@
 
 			// Fourth block
 			if ($event->CAPPOC1ID != 0) {
-				$html .= "<b>CAP Point of Contact:</b> ".$event->CAPPOC1Name."<br />";
-				$html .= "<b>CAP Point of Contact phone:</b> ".$event->CAPPOC1Phone."<br />";
-				$html .= "<b>CAP Point of Contact email:</b> ".$event->CAPPOC1Email."<br />";
+				$html .= "<b>CAP Squadron Primary Point of Contact:</b> ".$event->CAPPOC1Name."<br />";
+				$html .= "<b>CAP Squadron Primary Point of Contact phone:</b> ".$event->CAPPOC1Phone."<br />";
+				$html .= "<b>CAP Squadron Primary Point of Contact email:</b> ".$event->CAPPOC1Email."<br />";
 			}
 			if ($event->CAPPOC2ID != 0) {
-				$html .= "<b>CAP Point of Contact:</b> ".$event->CAPPOC2Name."<br />";
-				$html .= "<b>CAP Point of Contact phone:</b> ".$event->CAPPOC2Phone."<br />";
-				$html .= "<b>CAP Point of Contact email:</b> ".$event->CAPPOC2Email."<br />";
+				$html .= "<b>CAP Squadron Secondary Point of Contact:</b> ".$event->CAPPOC2Name."<br />";
+				$html .= "<b>CAP Squadron Secondary Point of Contact phone:</b> ".$event->CAPPOC2Phone."<br />";
+				$html .= "<b>CAP Squadron Secondary Point of Contact email:</b> ".$event->CAPPOC2Email."<br />";
 			}
 			if ($event->ExtPOCName != '') {
-				$html .= "<b>CAP Point of Contact:</b> ".$event->ExtPOCName."<br />";
-				$html .= "<b>CAP Point of Contact phone:</b> ".$event->ExtPOCPhone."<br />";
-				$html .= "<b>CAP Point of Contact email:</b> ".$event->ExtPOCEmail."<br />";
+				$html .= "<b>Non-Squadron Point of Contact:</b> ".$event->ExtPOCName."<br />";
+				$html .= "<b>Non-Squadron Point of Contact phone:</b> ".$event->ExtPOCPhone."<br />";
+				$html .= "<b>Non-Squadron Point of Contact email:</b> ".$event->ExtPOCEmail."<br />";
 			}
 			if ($l) {
 				$member = Member::Estimate($event->Author);
@@ -163,21 +208,23 @@
 				$stmt = $pdo->prepare("SELECT FileID FROM ".DB_TABLES['FileEventAssignments']." WHERE EID = :ev AND AccountID = :aid;");
 				$stmt->bindValue(':aid', $a->id);
 				$stmt->bindValue(':ev', $event->EventNumber);
-				$data = DBUtils::ExecutePDOStatement($stmt);
+				$filedata = DBUtils::ExecutePDOStatement($stmt);
 				// if (count($data) > 0) {
 					$html .= "<br /><br /><h2>Event Files</h2>";
 				// }
 				$hasfiles = false;
-				foreach ($data as $row) {
+				foreach ($filedata as $row) {
 					$file = File::Get($row["FileID"]);
 					if(($event->isPOC($m) || $m->hasPermission('SignUpEdit')) && !!$file) {
 						$ab = new AsyncButton(Null,  "Delete", "deleteEventFile");
 						$ab->data = 'delfi'.json_encode(array(
 							'fid' => $file->ID,
-							'eid' => $event->EventNumber	
+							'eid' => $event->EventNumber
 						));
 						$html .= (new FileDownloader($file->Name, $file->ID))->getHtml()." ";
-						$html .= $ab."<br />";
+						if(($event->isPOC($m) || $m->hasPermission('SignUpEdit'))) {
+							$html .= $ab."<br />";
+						}
 						$hasfiles = true;
 					}
 				}
@@ -236,14 +283,14 @@
 							$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
 							$ab->data = 'atdel'.json_encode(array(
 								'cid' => $capid,
-								'eid' => $event->EventNumber	
+								'eid' => $event->EventNumber
 							));
 							$memberinfo = "$capid: $member->memberRank $member->memberName";
-							if(strlen($member->Squadron)>1) { 
+							if(strlen($member->Squadron)>1) {
 								if($a->hasMember($member)) {
-									$memberinfo .= " [".$member->Squadron."]"; 
+									$memberinfo .= " [".$member->Squadron."]";
 								} else {
-									$memberinfo .= " <b>[".$member->Squadron."]</b>"; 
+									$memberinfo .= " <b>[".$member->Squadron."]</b>";
 								}
 							}
 							$memEmail = '';
@@ -267,10 +314,10 @@
 							} else {
 								$contactString = "";
 							}
-							
+
 							$memberinfo .= (($event->isPOC($m) || $m->hasPermission("EditEvent")?$contactString: ""));
 							if ($member) $dlist->addElement($memberinfo, $form->getHtml(), $ab);
-						} else {	
+						} else {
 							$color = ($data['Status'] == 'Committed/Attended' ? 'color:green' :
 								($data['Status'] == 'Rescinded commitment to attend' ? 'color:yellow' :
 									($data['Status'] == 'No show' ? 'color:red' : '')));
@@ -284,7 +331,55 @@
 				}
 
 			} else if ($l) {
-				$html .= "<h4>Attendance information display is restricted to unit members</h4>";
+/*				$form = new AsyncForm(Null, Null, "nopadtop");
+
+				$form->reload = true;
+				$form->addField("comments", "Comments", "textarea", Null, ['value' => $data['Comments']], $data['Comments']);
+				$form->addField("plantouse", "Plan to use CAP transportation", "checkbox", Null, Null, $data['PlanToUseCAPTransportation']);
+				$form->addField("status", "Status", "radio", Null, [
+					'Committed/Attended',
+					'Rescinded commitment to attend',
+					'No show'
+				], $data['Status']);
+				$form->addHiddenField('capid', $capid);
+				$form->addHiddenField('eid', $ev);
+				$form->addHiddenField('func', 'signupedit');
+				$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
+				$ab->data = 'atdel'.json_encode(array(
+					'cid' => $capid,
+					'eid' => $event->EventNumber
+				));
+				$memberinfo = "$capid: $member->memberRank $member->memberName";
+				if(strlen($member->Squadron)>1) {
+					if($a->hasMember($member)) {
+						$memberinfo .= " [".$member->Squadron."]";
+					} else {
+						$memberinfo .= " <b>[".$member->Squadron."]</b>";
+					}
+				}
+				$memEmail = '';
+				$memPhone = '';
+				if($member->contact) {
+					$memEmail = $member->getBestEmail();
+					$memPhone = $member->getBestPhone();
+				}
+				if($memEmail || $memPhone) {
+					//set contactstring
+					//" [".$member->getBestEmail().", ".$member->getBestPhone()."]"
+					$contactString = " [";
+					if($memEmail && $memPhone) {
+						$contactString .= $member->getBestEmail().", ".$member->getBestPhone();
+					} elseif ($memEmail) {
+						$contactString .= $member->getBestEmail();
+					} else {
+						$contactString .= $member->getBestPhone();
+					}
+					$contactString .= "]";
+				} else {
+					$contactString = "";
+				}
+*/
+//				$html .= "<h4>Attendance information display is restricted to unit members</h4>";
 			} else {
 				$html .= "<h4>Please sign in to view restricted content</h4>";
 				$html .= JSSnippet::SigninLink("Sign in now");
@@ -345,7 +440,21 @@
 					'body' => $success ? 'All file uploads worked!' : 'A file failed to upload'
 				];
 			} else if ($e['raw']['func'] == 'signup') {
-					$attendance = new Attendance($e['form-data']['eid']);
+				$pdo = DBUtils::CreateConnection();
+				$stmt = $pdo->prepare('SELECT AccountID FROM '.DB_TABLES['EventInformation'].' WHERE SourceEventNumber=:sen AND SourceAccountID=:sai;');
+				$stmt->bindValue(':sen', $e['form-data']['eid']);
+				$stmt->bindValue(':sai', $a->id);
+				$data = DB_Utils::ExecutePDOStatement($stmt);
+				$homeAccount = UtilCollection::GetAccountIDFromUnit($m->Squadron);
+				$eventLinked = false;
+				if (count($data) > 0) {
+					foreach($data as $datum) {
+						if($datum['AccountID'] == $homeAccount) {
+							return "Your unit has at least one event linked to this one.  Please sign up on your unit's calendar.";
+						}
+					}
+				}
+				$attendance = new Attendance($e['form-data']['eid']);
 				$ev = Event::Get($e['form-data']['eid']);
 				if ($attendance->has($m)) {
 					return "You're already signed up!";
@@ -357,7 +466,7 @@
 				UtilCollection::sendFormattedEmail([
 					'<'.$m->getBestEmail().'>' => $m->getBestEmail(),
 					'<'.$m->getBestContact(['CADETPARENTEMAIL']).'>' => $m->getBestContact(['CADETPARENTEMAIL'])
-				], 'You have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
+				], $m->RankName.', you have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
 				View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
 				'Event signup: Event '.$ev->EventNumber);
 				return $attendance->add($m, 
@@ -402,6 +511,14 @@
 					$ev = $data;
 					$event = Event::Get($ev);
 					if (!$event) return ['error' => '311'];
+				} else if ($func == 'links') {
+					$ev = $data;
+					$event = Event::Get($ev);
+					if (!$event) return ['error' => '311'];
+				} else if ($func == 'linku') {
+					$ev = $data;
+					$event = Event::Get($ev);
+					if (!$event) return ['error' => '311'];
 				} else if ($func == 'atmod' || $func == 'atdel') {
 					$data = json_decode($data, true);
 					$event = Event::Get($data['eid']);
@@ -428,7 +545,7 @@
 				//check to see if within event limit, if applicable
 				if(!$account->paid || ($account->paid && $account->expired)) {
 					$pdo = DB_Utils::CreateConnection();
-		
+
 					//get month date range
 					$monthNumber = (int)date('n',$e['raw']['predata'])-1;
 					$thisYear = (int)date('Y',$e['raw']['predata']);
@@ -449,7 +566,7 @@
 				} else {
 					$eventLimit = $account->paidEventLimit;
 				}
-		
+
 				//check monthevents to prevent access error when Null
 				if(!is_null($monthevents) && (count($monthevents) > $eventLimit)) {
 					$months = ['January','February','March','April','May','June','July',
@@ -483,7 +600,7 @@
 				$ne->StartDateTime = $e['raw']['predata'];
 				$ne->MeetDateTime = $ne->StartDateTime - $d1;
 				$ne->EndDateTime = $ne->StartDateTime + $d2;
-				$ne->PickupDateTime = $ne->StartDateTime + $d3;				
+				$ne->PickupDateTime = $ne->StartDateTime + $d3;
 				//return value for updateCalendarEvent is currently text and is undisplayed here
 				try {
 					GoogleCalendar::updateCalendarEvent($ne);
@@ -500,8 +617,128 @@
 						'X-Event-Copy-Status' => 'accepteded'
 					]
 				];
+			} else if ($func == 'links') {
+				$allowed = false;
+				$monthevents = Null;
+				$eventlist = '';
+				$eventLimit = 0;
+
+				//get user's home account
+				$homeUnit = $m->Squadron;
+				$homeAccountID = UtilCollection::GetAccountIDFromUnit($homeUnit);  //lib/general.php
+				$account = new Account($homeAccountID);
+				$hasPerm = $m->hasPermission("LinkEvent", 1, $account);
+
+				if (!$hasPerm) {
+					return ['error' => '402'];
+				}
+
+				$pdo = DB_Utils::CreateConnection();
+
+				//check to see if within event limit, if applicable
+				if(!$account->paid || ($account->paid && $account->expired)) {
+					//get month date range
+					$monthNumber = (int)date('n',$e['raw']['predata'])-1;
+					$thisYear = (int)date('Y',$e['raw']['predata']);
+					$nextMonth = UtilCollection::createDate($thisYear, $monthNumber+1);
+					$thisMonth = UtilCollection::createDate($thisYear, $monthNumber);
+
+					$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+					$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
+					$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
+					$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
+					$stmt = $pdo->prepare($sqlin);
+					$stmt->bindValue(':monthend', $nextMonth->getTimestamp(), PDO::PARAM_INT);
+					$stmt->bindValue(':monthstart', $thisMonth->getTimestamp(), PDO::PARAM_INT);
+					$stmt->bindValue(':aid', $account->id);
+					$monthevents = DB_Utils::ExecutePDOStatement($stmt);
+
+					$eventLimit = $account->unpaidEventLimit;
+				} else {
+					$eventLimit = $account->paidEventLimit;
+				}
+
+				//check monthevents to prevent access error when Null
+				if(!is_null($monthevents) && (count($monthevents) > $eventLimit)) {
+					$months = ['January','February','March','April','May','June','July',
+						'August','September','October','November','December'];
+					$response = "This account has exceeded the allowable event count limit for the month of ";
+					$response .= $months[$monthNumber]." ".$thisYear." and this event cannot be linked to at this time.  ";
+					$response .= "Please contact someone on your account administrative staff (";
+					foreach ($account->adminName as $capid => $rankname) {
+						$response .= "<a href=\"mailto:".$account->adminEmail[$capid];
+						$response .= "?subject=Upgrade our CAPUnit.com account, please";
+						$response .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account ";
+						$response .= "so that we can have more events on our calendar!\">";
+						$response .= $rankname."</a>, ";
+					}
+					$response = rtrim($response, ', ');
+					$response .= ") to request a CAPUnit.com account upgrade.";
+					return $response;
+				}
+
+				$d = $event->data;
+				unset($d['EventNumber']);
+				$d['CAPPOC1ID'] = $m->capid;
+				$d['CAPPOC1Name'] = $m->RankName;
+				$d['CAPPOC1Phone'] = $m->getBestPhone();
+				$d['CAPPOC1Email'] = $m->getBestEmail();
+				$d['CAPPOC1RxUpdates'] = 1;  //unused?
+				$d['CAPPOC1RxRoster'] = 1;  //unused?
+				$d['CAPPOC2ID'] = 0;
+				$d['CAPPOC2Name'] = '';
+				$d['CAPPOC2Phone'] = '';
+				$d['CAPPOC2Email'] = '';
+				$d['CAPPOC2RxUpdates'] = 0;  //unused?
+				$d['CAPPOC2RxRoster'] = 0;  //unused?
+				$d['CAPPOC1ReceiveEventUpdates'] = true;
+				$d['CAPPOC1ReceiveSignUpUpdates'] = true;
+				$d['CAPPOC2ReceiveEventUpdates'] = false;
+				$d['CAPPOC2ReceiveSignUpUpdates'] = false;
+				$d['ExtPOCReceiveEventUpdates'] = true;
+				$d['ExtPOCName'] = $event->CAPPOC1Name;
+				$d['ExtPOCPhone'] = $event->CAPPOC1Phone;
+				$d['ExtPOCEmail'] = $event->CAPPOC1Email;
+				$d['SourceEventNumber'] = $event->EventNumber;
+				$d['SourceAccountID'] = $a->id;
+				$d['Created'] = time();
+				$ne = Event::Create($d, $account, $m);
+
+//return "New Account=".$account->id." New EventNumber=".$ne->EventNumber." Current Account=".$a->id." Current EventNumber=".$event->EventNumber;
+
+				//move attendance records
+				$sqlin = "UPDATE ".DB_TABLES['Attendance']." SET AccountID=:naid, EventID=:neid WHERE AccountID=:oaid AND EventID=:oeid ";
+				$sqlin .= "AND CAPID IN (SELECT CAPID FROM Data_Member WHERE ORGID IN (SELECT UnitID FROM Accounts WHERE AccountID=:naid));";
+				$stmt = $pdo->prepare($sqlin);
+				$stmt->bindValue(':naid', $account->id);
+				$stmt->bindValue(':neid', $ne->EventNumber);
+				$stmt->bindValue(':oaid', $a->id);
+				$stmt->bindValue(':oeid', $event->EventNumber);
+				$moverecords = DB_Utils::ExecutePDOStatement($stmt);
+
+				//return value for updateCalendarEvent is currently text and is undisplayed here
+				try {
+					GoogleCalendar::init($account);
+					GoogleCalendar::updateCalendarEvent($ne, $account);
+				} catch (Exception $e) {
+					//need to indicate to user that calendar update failed
+				}
+				//eventMailer should return an execution status and be reported/error recorded
+
+				//send email to home squadron
+				eventMailer($m, $ne);
+				//send email to linked squadron
+				eventMailer($m, $ne, null, $event);
+
+				return 'Successfully linked to this event.';
+
+			} else if ($func == 'linku' && ($m->hasPermission("LinkEvent"))) {
+				$event->SourceAccountID = '';
+				$event->SourceEventNumber = 0;
+				$event->save();
+				return 'Successfully unlinked this event.';
 			} else if ($func == 'atmod' && ($m->hasPermissionLevel("SignUpEdit") || $event->isPOC($m))) {
-				
+
 			} else if (($func == 'atdel' && $m->AccessLevel == "Admin")) {
 				$event->getAttendance()->remove(Member::Estimate($data['cid']));
 			} else if (($func == 'atchr' && $m->AccessLevel == "Admin")) {
@@ -509,15 +746,15 @@
 				$html = '';
 				$event = Event::Get((int)$data);
 				$pdo = DB_Utils::CreateConnection();
-				
-				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance']; 
+
+				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
 				$sqlin .= ' WHERE EventID=:eid AND AccountID=:aid ';
 				$sqlin .= ' ORDER BY Timestamp;';
 				$stmt = $pdo->prepare($sqlin);
 				$stmt->bindValue(':aid', $a->id);
 				$stmt->bindValue(':eid', $event->EventNumber);
 				$attendancerecords = DB_Utils::ExecutePDOStatement($stmt);
-		
+
 				$html = '';
 				foreach ($attendancerecords as $myRecord) {
 					$attendee = Member::Estimate($myRecord['CAPID']);
@@ -579,6 +816,6 @@
 				return $stmt->execute() ? 'File removed' : 'Error when deleting file';
 			}  else {
 				return ['error' => '402'];
-			}	
+			}
 		}
 	}

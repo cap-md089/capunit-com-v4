@@ -21,7 +21,7 @@
                 $id = $e['uri'][$e['uribase-index']+1];
 				
 				if ($l) {
-					if (($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
+					if ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog')) {
 						$del = new AsyncButton("blog", "Delete post", "deletePost");
 						$del = $del->getHtml($id);
 						$link = ' '.(new Link('blog', 'Edit blog post', ['edit', $id])).' '.$del;
@@ -135,7 +135,7 @@
 					'title' => $blog['title']
 				];
             } else if (isset($e['uri'][$e['uribase-index']]) && $e['uri'][$e['uribase-index']] == 'edit') {
-                if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
+                if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog'))) {
 					$pdo = DB_Utils::CreateConnection();
                     $form = new AsyncForm("blog", "Edit blog post");
                     $id = $e['uri'][$e['uribase-index']+1];
@@ -206,12 +206,12 @@
                     return [
                         'error' => '411'
                     ];
-                } else if (!($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
+                } else if (!($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog'))) {
                     return [
                         'error' => '401'
                     ];
                 }
-            } else if (isset($e['uri'][$e['uribase-index']]) && $e['uri'][$e['uribase-index']] == 'post' && ($l && $m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
+            } else if (isset($e['uri'][$e['uribase-index']]) && $e['uri'][$e['uribase-index']] == 'post' && ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog')))) {
                 $form = new AsyncForm ("blog", "Create blog post");
 				$form->addField('postName', 'Post name', 'text');
 				$form->addField('postText', 'Post text', 'textarea');
@@ -227,7 +227,7 @@
 				];
             } else {
                 $html = '';
-				if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
+				if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog'))) {
 					$l1 = new Link("page", "View pages", ['list']);
 					$l2 = new Link("page", "Add page", ['add']);
 					$l3 = new Link("blog", "Post blog post", ['post']);
@@ -251,7 +251,7 @@ HTM;
 				$stmt->bindValue(":aid", $a->id);
 				$blogp = DB_Utils::ExecutePDOStatement($stmt);
 				$links = [];
-				if ($l && $m->hasDutyPosition(['Cadet Public Affairs Officer', 'Cadet Public Affairs NCO', 'Public Affairs Officer'])) {
+				if ($l && ($m->hasDutyPosition(['Cadet Public Affairs Officer', 'Cadet Public Affairs NCO', 'Public Affairs Officer']) || $m->hasPermission('ManageBlog'))) {
 					$links = [
 						[
 							'Type' => 'link',
@@ -318,7 +318,7 @@ HTM;
         }
 
         public static function doPost ($e, $c, $l, $m, $a) {
-			if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) )) {
+			if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog'))) {
 				$pdo = DB_Utils::CreateConnection();
 				if (isset($e['raw']['function']) && $e['raw']['function'] == 'edit') {
 					$blogid = $e['raw']['postId'];
@@ -387,7 +387,7 @@ HTM;
 						'error' => '411'
 					];
 				}
-				if (!($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]))) {
+				if (!($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog'))) {
 					return [
 						'error' => '401'
 					];
@@ -396,13 +396,13 @@ HTM;
         }
 
 		public static function doPut ($e, $c, $l, $m, $a) {
-			if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"])) && $e['parameter']['predata'] == 'photo') {
+			if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog')) && $e['parameter']['predata'] == 'photo') {
 				$pdo = DB_Utils::CreateConnection();
 				$stmt = $pdo->prepare("DELETE FROM `".DB_TABLES['FilePhotoAssignments']."` WHERE `FileID` = :id AND AccountID = :aid");
 				$stmt->bindParam(":id", $e['parameter']['data']);
 				$stmt->bindParam(":aid", $a->id);
 				return $stmt->execute() ? "Photo deleted" : "Some error occurred";
-			} else if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"])) && $e['parameter']['predata'] == 'post') {
+			} else if ($l && ($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog')) && $e['parameter']['predata'] == 'post') {
 				$pdo = DB_Utils::CreateConnection();
 				$stmt = $pdo->prepare("DELETE FROM `".DB_TABLES['Blog']."` WHERE `id`=:id AND `AccountID` = :aid;");
 				$stmt->bindValue(":id", $e['parameter']['data']);
@@ -414,7 +414,7 @@ HTM;
 						'error' => '411'
 					];
 				}
-				if ($m->perms["PostBlogPost"] == 0) {
+				if (!($m->hasDutyPosition(["Cadet Public Affairs Officer", "Cadet Public Affairs NCO", "Public Affairs Officer"]) || $m->hasPermission('ManageBlog'))) {
 					return [
 						'error' => '401'
 					];

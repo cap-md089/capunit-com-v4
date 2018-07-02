@@ -20,17 +20,17 @@
          * @var int UNIX timestamp of last modified date
          */
         public $TimeModified = 0;
-        
+
         /**
          * @var int UNIX timestamp of date/time event was created
          */
         public $TimeCreated = 0;
-        
+
         /**
          * @var int Event number of event
          */
         public $EventNumber = 0;
-        
+
         /**
          * @var string Name of event
          */
@@ -267,6 +267,16 @@
         public $TeamID = 0;
 
         /**
+         * @var int source event number for linked events
+         */
+        public $SourceEventNumber = 0;
+
+        /**
+         * @var string source account id for linked events
+         */
+        public $SourceAccountID = '';
+
+        /**
          * @var string Contains a MySQL error, if it exists
          */
         public $error = '';
@@ -280,12 +290,19 @@
          * @var \Account Account to use instead of default account, defaults to default account
          */
         private static $account;
-        
+
         /**
-         * 
+         *
          */
         public static function SetAccount (\Account $account) {
             self::$account = $account;
+        }
+
+        /**
+         *
+         */
+        public static function GetAccount () {
+            return self::$account;
         }
 
         /**
@@ -295,8 +312,11 @@
          *
          * @return Event
          */
-        public static function Get (int $ev) {
+        public static function Get (int $ev, \Account $acc = Null) {
             global $_ACCOUNT;
+            if (isset ($acc)) {
+                $_ACCOUNT = $acc;
+            }
 
             $pdo = DB_Utils::CreateConnection();
             $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE EventNumber = :ev AND AccountID = :id;');
@@ -351,7 +371,8 @@
                     ShowUpcoming, GroupEventNumber, Complete, Administration, Status, Debrief, 
                     CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email, CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, 
                     CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, 
-                    AdditionalEmailAddresses, ExtPOCName, ExtPOCPhone, ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID
+                    AdditionalEmailAddresses, ExtPOCName, ExtPOCPhone, ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID,
+                    SourceEventNumber, SourceAccountID
 				) VALUES (
                     :created, :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
                     :endDate, :pickupLocation, :pickupDate, :transportationProvided, :transportationDescription, 
@@ -361,7 +382,8 @@
                     :showUpcoming, :groupEventNumber, :entryComplete, :adminComments, :eventStatus, :debrief, 
                     :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email, :CAPPOC1REU, :CAPPOC1RSU, 
                     :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
-                    :additionalEmailAddresses, :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid
+                    :additionalEmailAddresses, :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid,
+                    :sourceEventNumber, :sourceAccountID
 				);");
 
             $stmt->bindValue(':created', time());
@@ -420,6 +442,8 @@
             $stmt->bindValue(':author', isset($member)?$member->uname:0);
             $stmt->bindValue(':parttime', $event->PartTime ? 1 : 0);
             $stmt->bindValue(':teamid', $event->TeamID);
+            $stmt->bindValue(':sourceEventNumber', $event->SourceEventNumber);
+            $stmt->bindValue(':sourceAccountID', $event->SourceAccountID);
 
             $event->success = $stmt->execute() ? true : false;
             $event->error = $stmt->errorInfo();
@@ -522,8 +546,8 @@
                 ExtPOCEmail = :ExtPOCEmail, Author = :author, PartTime = :parttime, TeamID = :teamid,
                 CAPPOC1ReceiveEventUpdates = :POC1REU, CAPPOC1ReceiveSignUpUpdates = :POC1RSU,
                 CAPPOC2ReceiveEventUpdates = :POC2REU, CAPPOC2ReceiveSignUpUpdates = :POC2RSU,
-                ExtPOCReceiveEventUpdates = :ExtREU
-                WHERE EventNumber = :ev AND AccountID = :aid;');            
+                ExtPOCReceiveEventUpdates = :ExtREU, SourceEventNumber = :sourceEventNumber, SourceAccountID = :sourceAccountID
+                WHERE EventNumber = :ev AND AccountID = :aid;');
 
             $stmt->bindValue(':eventName', $this->EventName);
             $stmt->bindValue(':meetDate', $this->MeetDateTime);
@@ -580,6 +604,8 @@
             $stmt->bindValue(':teamid', $this->TeamID);
             $stmt->bindValue(':ev', $this->EventNumber);
             $stmt->bindValue(':aid', $_ACCOUNT->id);
+            $stmt->bindValue(':sourceEventNumber', $this->SourceEventNumber);
+            $stmt->bindValue(':sourceAccountID', $this->SourceAccountID);
 
             $this->success = $stmt->execute();
             $this->error = $stmt->errorInfo();
@@ -636,7 +662,8 @@
                 "CAPPOC1ID",
                 "CAPPOC2ID",
                 "Author",
-                "TeamID"
+                "TeamID",
+                "SourceEventNumber"
             ];
             $boolvars = [
                 "TransportationProvided",
@@ -676,7 +703,8 @@
                 "CAPPOC2Email",
                 "ExtPOCName",
                 "ExtPOCPhone",
-                "ExtPOCEmail"
+                "ExtPOCEmail",
+                "SourceAccountID"
             ];
 
             foreach ($intvars as $intvar) {

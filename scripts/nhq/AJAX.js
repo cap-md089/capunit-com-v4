@@ -93,6 +93,10 @@ window.loaded.push(function() {
             var $form = $(form);
             (takeoutput ? $form.find('div.formbox').last().find('div') : $form.parent().find('#output')).html("");
             $form.find("input[type=submit]").prop("disabled", true);
+			var $submitText = $form.find("input[type=submit]").prop("value");
+			if ($(form).find("input[type=\"file\"]").length > 0) {
+				$form.find("input[type=submit]").prop("value", "Uploading...");
+			}
             var url = form.action || location.href,
                 scback;
             if (form.getAttribute('data-signin-form') === 'true') {
@@ -101,6 +105,7 @@ window.loaded.push(function() {
             scback = scback || function(data, status, xhr) {
                 data = parseReturn(data);
                 $form.find("input[type=submit]").prop("disabled", false);
+				$form.find("input[type=submit]").prop("value", $submitText);
                 if (xhr.getResponseHeader("X-User-Error")) {
                     displayErrorMsg(xhr.getResponseHeader("X-User-Error"));
                 } else if (form.getAttribute('data-signin-form') === 'true') {
@@ -124,7 +129,7 @@ window.loaded.push(function() {
             if (form.getAttribute("data-form-beforesend") != '') {
                 var _func = window[form.getAttribute("data-form-beforesend")];
                 if (!!_func) {
-                    var push = _func($(form));
+                    var push = !!_func($(form));
                 } else {
                     var push = true;
                 }
@@ -239,6 +244,7 @@ window.loaded.push(function() {
                     formd.append("form", "true");
                     formd.append("mobile", (window.mobile ? "true" : "false"));
                     Promise.all(filep).then(function(values) {
+						$form.find("input[type=submit]").prop("value", "Submitting...");
                         for (var i = 0; i < values.length; i++) {
                             formd.append(values[i].name, values[i].id);
                         }
@@ -255,6 +261,7 @@ window.loaded.push(function() {
                             },
                             success: function (a, b, c) {
                                 $form.find("input[type=submit]").prop("disabled", false);
+								$form.find("input[type=submit]").prop("value", $submitText);
                                 scback(a, b, c);
                             },
                             error: function(xhr) {
@@ -271,6 +278,7 @@ window.loaded.push(function() {
                     }, function() {
                         customDialog("File upload error", "We're sorry, but the files you are trying to upload are too large"); 
                         $form.find("input[type=submit]").prop("disabled", false);
+						$form.find("input[type=submit]").prop("value", $submitText);
                     });
                 } else if ($(form).find("input[type=\"file\"]").length == 0) {
                     if (form.getAttribute('data-signin-form') === 'true') {
@@ -332,6 +340,7 @@ window.loaded.push(function() {
                         type: "POST",
                         success: function (a, b, c) {
                             $form.find("input[type=submit]").prop("disabled", false);
+							$form.find("input[type=submit]").prop("value", $submitText);
                             scback(a, b, c);
                         },
                         error: function(xhr) {
@@ -348,11 +357,13 @@ window.loaded.push(function() {
                 } else {
                     customDialog('Browser upgrades', "Please upgrade to a newer browser, preferably FireFox or Google Chrome");
                     $form.find("input[type=submit]").prop("disabled", false);
+					$form.find("input[type=submit]").prop("value", $submitText);
                 }
             } else {
                 $form.find("input[type=submit]").prop("disabled", false);
+				$form.find("input[type=submit]").prop("value", $submitText);
             }
-        } catch (e) {
+		} catch (e) {
             console.log(e);
         }
         return false;

@@ -8,7 +8,7 @@
         public static $client;
         public static $service;
 		public static $loglevel;
-        
+
         public static function init () {
 			self::$loglevel = 8;
 			$logger = new Logger("GoogleCalendarUpdate");
@@ -19,7 +19,7 @@
             self::$client = new Google_Client();
 			if(!self::$client) {$logger->Log("init:: client creator returned false", self::$loglevel);} else {$logger->Log("init:: client creator returned true", self::$loglevel);}
 
-			//self::$client->setAuthConfig(BASE_DIR.'../credentials/'.$_ACCOUNT->id.'.json');			
+			//self::$client->setAuthConfig(BASE_DIR.'../credentials/'.$_ACCOUNT->id.'.json');
 			self::$client->setApplicationName("capunit.com Calendar Update");
             self::$client->useApplicationDefaultCredentials();
             self::$client->setScopes(Google_Service_Calendar::CALENDAR);
@@ -29,7 +29,7 @@
 
 		}
 
-        public static function updateCalendarEvent (Event $CUevent) {
+        public static function updateCalendarEvent (Event $CUevent, \Account $acc = Null) {
 			$logger = new Logger("GoogleCalendarUpdate");
             if ($CUevent->Status == 'Draft') {
 				$logger->Log("Draft event, deleting from Google Calendar", self::$loglevel);
@@ -37,11 +37,15 @@
                 return;
             }
             global $_ACCOUNT;
+            if (isset ($acc)) {
+                $_ACCOUNT = $acc;
+            }
+
             $eventId = $_ACCOUNT.'-'.$CUevent->EventNumber;
             $calendarId = $_ACCOUNT->getGoogleCalendarAccountIdMain();
             $wingCalendarId = $_ACCOUNT->getGoogleCalendarAccountIdWing();
 			$logger->Log("Update Calendar Event::  EventID=: ".$eventId." CalID=: ".$calendarId." WCalID=: ".$wingCalendarId, self::$loglevel);
-            
+
             $optParams = array(
                 'q' => 'Event ID Number: '.$eventId,
                 'orderBy' => 'startTime',

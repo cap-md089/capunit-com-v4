@@ -6,7 +6,7 @@
 		const Member = [
 			"EventSignup" => 1,
 			"ViewEventSignup" => 1,
-			
+
 			"FlightAssign" => 0,
 			"MusterSheet" => 0,
 			"PTSheet" => 0,
@@ -21,6 +21,7 @@
 			"EventContactSheet" => 0,
 			"SignUpEdit" => 0,
 			"CopyEvent" => 0,
+			"LinkEvent" => 0,
 			"ORMOPORD" => 0,
 			"DeleteEvent" => 0,
 			"AssignPosition" => 0,
@@ -32,6 +33,7 @@
 			"AddTeam" => 0,
 			"EditTeam" => 0,
 			"FileManagement" => 0,
+			"ManageBlog" => 0,
 
 			"PermissionsManagement" => 0,
 			"DownloadCAPWATCH" => 0,
@@ -44,7 +46,7 @@
 		const CadetStaff = [
 			"EventSignup" => 1,
 			"ViewEventSignup" => 1,
-			
+
 			"FlightAssign" => 1,
 			"MusterSheet" => 1,
 			"PTSheet" => 1,
@@ -60,6 +62,7 @@
 			"EventContactSheet" => 0,
 			"SignUpEdit" => 0,
 			"CopyEvent" => 0,
+			"LinkEvent" => 0,
 			"ORMOPORD" => 0,
 			"DeleteEvent" => 0,
 			"AssignPosition" => 0,
@@ -70,6 +73,7 @@
 			"AddTeam" => 0,
 			"EditTeam" => 0,
 			"FileManagement" => 0,
+			"ManageBlog" => 0,
 
 			"PermissionsManagement" => 0,
 			"DownloadCAPWATCH" => 0,
@@ -82,7 +86,7 @@
 		const Manager = [
 			"EventSignup" => 1,
 			"ViewEventSignup" => 1,
-			
+
 			"FlightAssign" => 1,
 			"MusterSheet" => 1,
 			"PTSheet" => 1,
@@ -98,6 +102,7 @@
 			"EventContactSheet" => 1,
 			"SignUpEdit" => 1,
 			"CopyEvent" => 1,
+			"LinkEvent" => 1,
 			"ORMOPORD" => 1,
 			"DeleteEvent" => 1,
 			"AssignPosition" => 1,
@@ -108,6 +113,7 @@
 			"AddTeam" => 1,
 			"EditTeam" => 1,
 			"FileManagement" => 1,
+			"ManageBlog" => 1,
 
 			"PermissionsManagement" => 0,
 			"DownloadCAPWATCH" => 0,
@@ -120,7 +126,7 @@
 		const Admin = [
 			"EventSignup" => 1,
 			"ViewEventSignup" => 1,
-			
+
 			"FlightAssign" => 1,
 			"MusterSheet" => 1,
 			"PTSheet" => 1,
@@ -136,6 +142,7 @@
 			"EventContactSheet" => 1,
 			"SignUpEdit" => 1,
 			"CopyEvent" => 1,
+			"LinkEvent" => 1,
 			"ORMOPORD" => 1,
 			"DeleteEvent" => 1,
 			"AssignPosition" => 1,
@@ -146,6 +153,7 @@
 			"AddTeam" => 1,
 			"EditTeam" => 1,
 			"FileManagement" => 1,
+			"ManageBlog" => 1,
 
 			"PermissionsManagement" => 1,
 			"DownloadCAPWATCH" => 1,
