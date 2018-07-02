@@ -1145,6 +1145,27 @@
             return isset($p) ? $p : '';
         }
 
+		public function getContacts ($contacts) {
+			$ret = [];
+			for ($i = 0; $i < count($contacts); $i++) {
+				$cont = $this->contact[$contacts[$i]];
+				$added = [];
+				for ($j = 0; $j < count($cont['PRIMARY']); $j++) {
+					$added[] = $cont['PRIMARY'][$j];
+				}
+				for ($j = 0; $j < count($cont['SECONDARY']); $j++) {
+					$added[] = $cont['SECONDARY'][$j];
+				}
+				if (count($added) == 0) {
+					for ($j = 0; $j < count($cont['EMERGENCY']); $j++) {
+						$added[] = $cont['EMERGENCY'][$j];
+					}
+				}
+				$ret = $ret + $added;
+			}
+			return $ret;
+		}
+
         /**
          * Gets all email addresses for a member
          *

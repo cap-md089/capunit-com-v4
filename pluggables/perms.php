@@ -6,6 +6,12 @@
 <div>
 EOD;
 		$t = 0;
+		$t++;
+		$l1 = new Link("emailselector", "Selected Email addresses");
+		$html .= "$l1<br />";
+		$t++;
+		$l1 = new Link("emailselectorblank", "Unselected Email addresses");
+		$html .= "$l1<br />";
 		if ($m->hasPermission('PermissionsManagement')) {
 			$t++;
 			$l1 = new Link("permmgmt", "Manage permissions");

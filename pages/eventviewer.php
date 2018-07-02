@@ -1,6 +1,14 @@
 <?php
 	define ("USER_REQUIRED", true);
-	
+
+	function copyArray($arr) {
+		$ret = [];
+		foreach ($arr as $key => $val) {
+			$ret[$key] = $val;
+		}
+		return $ret;
+	}
+
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
 			global $_ACCOUNT;
@@ -69,21 +77,29 @@
 			if($l) {
 				$perm = false;
 				foreach ($m->genAccounts() as $acc) {
-					$perm = $perm || $m->hasPermission('LinkEvent', 1, $acc); 
+					$perm = $perm || $m->hasPermission('LinkEvent', 1, $acc);
 				}
+				echo "Has permission: " . ($perm ? 't' : 'f') . "\n\n";
 				$stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE SourceEventNumber=:sen AND SourceAccountID=:sai;');
 				$stmt->bindValue(':sen', $ev);
 				$stmt->bindValue(':sai', $_ACCOUNT->id);
 				$evdata = DB_Utils::ExecutePDOStatement($stmt);
 				$homeAccount = UtilCollection::GetAccountIDFromUnit($m->Squadron);
 				$eventLinked = false;
+				$moreHtml = '';
 				if (count($evdata) > 0) {
+					$moreHtml = "<br /><br />This event is linked to by the following event";
+					if (count($evdata) > 1) { $moreHtml .= "s"; }
+					$moreHtml .= ":<br />";
 					foreach($evdata as $datum) {
-						if($datum['AccountID'] == $homeAccount) { 
+						$newAccount = new Account($datum['AccountID']);
+						$moreHtml .= "<a href=\"https://{$newAccount->id}.capunit.com/eventviewer/".$datum['EventNumber']."/\" target=\"_blank\">$newAccount-".$datum['EventNumber']."</a><br />";
+						if($datum['AccountID'] == $homeAccount) {
 							$eventLinked=true;
 						}
 					}
 				}
+				if ($a->hasMember($m) && !$eventLinked) { $html .= $moreHtml; }
 				if ($perm && !$a->hasMember($m) && !$eventLinked) {
 					$html .= (new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
 //				} else if ($perm && $notInAcct) {
@@ -285,7 +301,13 @@
 								'cid' => $capid,
 								'eid' => $event->EventNumber
 							));
-							$memberinfo = "$capid: $member->memberRank $member->memberName";
+							if($data['Status'] == 'No show') {
+								$memberinfo = "<font color=\"red\">$capid: $member->memberRank $member->memberName</font>";
+							} else if($data['Status'] == 'Rescinded commitment to attend') {
+								$memberinfo = "<font color=\"green\">$capid: $member->memberRank $member->memberName</font>";
+							} else {
+								$memberinfo = "$capid: $member->memberRank $member->memberName";
+							}
 							if(strlen($member->Squadron)>1) {
 								if($a->hasMember($member)) {
 									$memberinfo .= " [".$member->Squadron."]";
@@ -529,6 +551,7 @@
 			}
 
 			if ($func == "delete" && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
+				eventMailerDelete($m, $event);
 				$data = $event->remove();
 				var_export($data);
 				echo "$event->EventNumber\n";
@@ -608,7 +631,7 @@
 					//need to indicate to user that calendar update failed
 				}
 				//eventMailer should return an execution status and be reported/error recorded
-				eventMailer($m, $ne);
+				eventMailerClone($m, $event, $ne);
 				return [
 					'body' => [
 						'MainBody' => $ne->EventNumber,
@@ -678,31 +701,34 @@
 				}
 
 				$d = $event->data;
-				unset($d['EventNumber']);
-				$d['CAPPOC1ID'] = $m->capid;
-				$d['CAPPOC1Name'] = $m->RankName;
-				$d['CAPPOC1Phone'] = $m->getBestPhone();
-				$d['CAPPOC1Email'] = $m->getBestEmail();
-				$d['CAPPOC1RxUpdates'] = 1;  //unused?
-				$d['CAPPOC1RxRoster'] = 1;  //unused?
-				$d['CAPPOC2ID'] = 0;
-				$d['CAPPOC2Name'] = '';
-				$d['CAPPOC2Phone'] = '';
-				$d['CAPPOC2Email'] = '';
-				$d['CAPPOC2RxUpdates'] = 0;  //unused?
-				$d['CAPPOC2RxRoster'] = 0;  //unused?
-				$d['CAPPOC1ReceiveEventUpdates'] = true;
-				$d['CAPPOC1ReceiveSignUpUpdates'] = true;
-				$d['CAPPOC2ReceiveEventUpdates'] = false;
-				$d['CAPPOC2ReceiveSignUpUpdates'] = false;
-				$d['ExtPOCReceiveEventUpdates'] = true;
-				$d['ExtPOCName'] = $event->CAPPOC1Name;
-				$d['ExtPOCPhone'] = $event->CAPPOC1Phone;
-				$d['ExtPOCEmail'] = $event->CAPPOC1Email;
-				$d['SourceEventNumber'] = $event->EventNumber;
-				$d['SourceAccountID'] = $a->id;
-				$d['Created'] = time();
-				$ne = Event::Create($d, $account, $m);
+				$data = copyArray($d);
+				unset($data['EventNumber']);
+//				unset($data['AccountID']);
+				$data['CAPPOC1ID'] = $m->capid;
+				$data['CAPPOC1Name'] = $m->RankName;
+				$data['CAPPOC1Phone'] = $m->getBestPhone();
+				$data['CAPPOC1Email'] = $m->getBestEmail();
+				$data['CAPPOC1RxUpdates'] = 1;
+				$data['CAPPOC1RxRoster'] = 1;
+				$data['CAPPOC2ID'] = 0;
+				$data['CAPPOC2Name'] = '';
+				$data['CAPPOC2Phone'] = '';
+				$data['CAPPOC2Email'] = '';
+				$data['CAPPOC2RxUpdates'] = 0;
+				$data['CAPPOC2RxRoster'] = 0;
+				$data['CAPPOC1ReceiveEventUpdates'] = true;
+				$data['CAPPOC1ReceiveSignUpUpdates'] = true;
+				$data['CAPPOC2ReceiveEventUpdates'] = false;
+				$data['CAPPOC2ReceiveSignUpUpdates'] = false;
+				$data['ExtPOCReceiveEventUpdates'] = true;
+				$data['ExtPOCName'] = $event->CAPPOC1Name;
+				$data['ExtPOCPhone'] = $event->CAPPOC1Phone;
+				$data['ExtPOCEmail'] = $event->CAPPOC1Email;
+				$data['SourceEventNumber'] = $event->EventNumber;
+				$data['SourceAccountID'] = $a->id;
+				$data['Created'] = time();
+				Event::SetAccount($account);
+				$ne = Event::Create($data, $account, $m);
 
 //return "New Account=".$account->id." New EventNumber=".$ne->EventNumber." Current Account=".$a->id." Current EventNumber=".$event->EventNumber;
 
@@ -726,13 +752,16 @@
 				//eventMailer should return an execution status and be reported/error recorded
 
 				//send email to home squadron
-				eventMailer($m, $ne);
+//				eventMailer($m, $ne);  //not needed because linked ExtPOC is primary POC1
 				//send email to linked squadron
-				eventMailer($m, $ne, null, $event);
+				eventMailerLinkSet($m, $ne, $event);
+
+				$ne->_destroy();
 
 				return 'Successfully linked to this event.';
 
 			} else if ($func == 'linku' && ($m->hasPermission("LinkEvent"))) {
+				eventMailerLinkUnset($m, $event);
 				$event->SourceAccountID = '';
 				$event->SourceEventNumber = 0;
 				$event->save();
@@ -796,7 +825,7 @@
 				foreach ($att as $cid => $data) {
 					$attendee = Member::Estimate($cid);
 					if($attendee) {
-						$html .= $attendee->getBestEmail().', ';
+						$html .= $attendee->getAllEmailAddresses().', ';
 					}
 				}
 				$emails = explode(", ", $html);
