@@ -72,7 +72,7 @@
                 return UtilCollection::sendFormattedEmail(
                     $contact,
                     $html,
-                    "Event $form->EventNumber created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
+                    "Event $_ACCOUNT-$form->EventNumber created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
                 );
             }
         } else { // Event was changed, data is available for comparison
@@ -166,7 +166,7 @@
                     return UtilCollection::sendFormattedEmail(
                         $contact,
                         $html,
-                        "Event $form->EventNumber updated: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
+                        "Event $_ACCOUNT-$form->EventNumber updated: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
                     );
                 }
             }
