@@ -5,7 +5,7 @@
 	
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
-			if (!$l) {
+			if (!$l && !isset($c['ISRIOUX'])) {
 				return [
 					'title' => 'Calendar',
 					'body' => $a->getGoogleCalendarEmbedLink()
