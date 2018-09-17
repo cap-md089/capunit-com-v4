@@ -3,17 +3,18 @@
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
 			if (!$m->hasPermission('FlightAssign')) return ['error' => 401];
-			
+
 			$flights = [
 				'Alpha',
 				'Bravo',
 				'Charlie',
+				'Delta',
 				'Staff',
 				'XRay'
 			];
 
 			$pdo = DBUtils::CreateConnection();
-			
+
 //			$stmt = $pdo->prepare("insert into ".DB_TABLES['Flights']." (CAPID, Flight, Mentor, AccountID) select 
 //			".DB_TABLES['Member'].".CAPID, 'Charlie' as Flight, Null as Mentor, :aid as AccountID from ".DB_TABLES['Member']."
 //			left join ".DB_TABLES['Flights']." on ".DB_TABLES['Member'].".CAPID = ".DB_TABLES['Flights'].".CAPID
@@ -73,15 +74,16 @@
 				'title' => 'Flight assignments'
 			];
 		}
-		
+
 		public static function doPost ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
 			if (!$m->hasPermission('FlightAssign')) return ['error' => 401];
-			
+
 			$flights = [
 				'Alpha',
 				'Bravo',
 				'Charlie',
+				'Delta',
 				'Staff',
 				'XRay'
 			];
