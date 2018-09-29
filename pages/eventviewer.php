@@ -196,9 +196,11 @@
 				$html .= "<b>Non-Squadron Point of Contact email:</b> ".$event->ExtPOCEmail."<br />";
 			}
 			if ($l) {
-				$member = Member::Estimate($event->Author);
-				if($member && strlen($member->RankName) > 0) {
-					$html .= "<b>Event Author:</b> ".$member->RankName."<br />";
+				if ($event->Author != 0) {
+						$member = Member::Estimate($event->Author);
+						if($member && strlen($member->RankName) > 0) {
+							$html .= "<b>Event Author:</b> ".$member->RankName."<br />";
+						}
 				}
 				if (strlen($event->AdditionalEmailAddresses) > 0) {
 					$html .= "<b>Additional Email Addresses:</b> ".$event->AdditionalEmailAddresses.'<br />';
@@ -269,15 +271,20 @@
 				}
 			}
 
-			if ($l && $a->hasMember($m)) {
+//			if ($l && $a->hasMember($m)) {
+			if ($l) {
+//				print_r($attendance);
+//				echo "\n\n";
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
 				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");
 				$clist = new AsyncButton(null, "Cronological list", "chronoNamePopup");
+				$slist = new AsyncButton(null, "Signup list", "signupPopup");
 				if(count($attendance->EventAttendance) > 0) {
 					$html .= $alist->getHtml('atdir'.$event->EventNumber);
 					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
 					$html .= " | ".$clist->getHtml('atchr'.$event->EventNumber);
+					$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
 				}
 				foreach ($attendance as $capid => $data) {
 					$member = Member::Estimate($capid);
@@ -304,7 +311,7 @@
 							if($data['Status'] == 'No show') {
 								$memberinfo = "<font color=\"red\">$capid: $member->memberRank $member->memberName</font>";
 							} else if($data['Status'] == 'Rescinded commitment to attend') {
-								$memberinfo = "<font color=\"green\">$capid: $member->memberRank $member->memberName</font>";
+								$memberinfo = "<font color=\"#FFA500\">$capid: $member->memberRank $member->memberName</font>";
 							} else {
 								$memberinfo = "$capid: $member->memberRank $member->memberName";
 							}
@@ -348,6 +355,7 @@
 						}
 					}
 				}
+
 				if(count($attendance->EventAttendance) > 0) {
 					$html .= $dlist;
 				}
@@ -789,6 +797,30 @@
 					$attendee = Member::Estimate($myRecord['CAPID']);
 					if($attendee) {
 						$html .= date(DATE_RSS, $myRecord['Timestamp']).': '.$myRecord['MemberRankName'].'<br />';
+					}
+				}
+				return $html;
+			} else if (($func == 'atsul' && $m->AccessLevel == "Admin")) {
+				//sign-up list
+				$html = '';
+				$event = Event::Get((int)$data);
+				$pdo = DB_Utils::CreateConnection();
+
+				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
+				$sqlin .= ' WHERE EventID=:eid AND AccountID=:aid ';
+				$sqlin .= ' ORDER BY Timestamp;';
+				$stmt = $pdo->prepare($sqlin);
+				$stmt->bindValue(':aid', $a->id);
+				$stmt->bindValue(':eid', $event->EventNumber);
+				$attendancerecords = DB_Utils::ExecutePDOStatement($stmt);
+
+				$html = "Status: C=Committed, N=No Show, R=Rescinded; Transportation: Y or -<br />";
+				$html .= 'S T Rank Name: Comments<br />';
+				foreach ($attendancerecords as $myRecord) {
+					$attendee = Member::Estimate($myRecord['CAPID']);
+					if($attendee) {
+						$html .= substr($myRecord['Status'],0,1)." ".($myRecord['PlanToUseCAPTransportation']?"Y":"-")." ";
+						$html .= $myRecord['MemberRankName'].": ".$myRecord['Comments'].'<br />';
 					}
 				}
 				return $html;

@@ -66,6 +66,9 @@
             if (!$m->hasPermission("FileManagement")) return ['error' => 402];
             
             $f = File::Get($e['raw']['data']);
+			if (!$f) {
+				return "File does not exist";
+			}
             if ($f->AccountID == 'www') {
                 return "That file cannot be deleted";
             }

@@ -58,31 +58,31 @@ function createDate(string) { // Date.parse is inconsistent
 function checkInputs($form) {
     ins = [];
 
-    let eventName = $("input[name=eventName]").val();
+    var eventName = $("input[name=eventName]").val();
     if(!eventName) {
         customDialog("Form Input Error", "The Event Name field cannot be blank");
         return false;
     }
 
-    let meetLocation = $("input[name=meetLocation]").val();
+    var meetLocation = $("input[name=meetLocation]").val();
     if(!meetLocation) {
         customDialog("Form Input Error", "The Meet Location field cannot be blank");
         return false;
     }
 
-    let eventLocation = $("input[name=eventLocation]").val();
+    var eventLocation = $("input[name=eventLocation]").val();
     if(!eventLocation) {
         customDialog("Form Input Error", "The Event Location field cannot be blank");
         return false;
     }
 
-    let pickupLocation = $("input[name=pickupLocation]").val();
+    var pickupLocation = $("input[name=pickupLocation]").val();
     if(!pickupLocation) {
         customDialog("Form Input Error", "The Pickup Location field cannot be blank");
         return false;
     }
 
-    let uniform = $("input[name=uniform\\[\\]]:checked").length;
+    var uniform = $("input[name=uniform\\[\\]]:checked").length;
     if(!uniform) {
         customDialog("Form Input Error", "A uniform must be selected to submit this form");
         return false;
@@ -417,7 +417,11 @@ function attendanceEmailPopup (data) {
 }
 
 function chronoNamePopup (data) {
-    customDialog("Chronological Sign-up List", data);
+    customDialog("Chronological Sign-up List", "<div style=\"overflow: auto;height: 300px;font-family:courier\">"+data+"</div>");
+}
+
+function signupPopup (data) {
+    customDialog("Sign-up List", "<div style=\"overflow: auto;height: 300px;font-family:courier\">"+data+"</div>");
 }
 
 function pageLink_prepush (a, data) {

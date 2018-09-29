@@ -355,3 +355,8 @@ function alertReload (data) {
 function attendanceListingPopup (data) {
     customDialog("Short Attendance Listing", data);
 }
+
+function signupPopup (data) {
+    customDialog("Signup Listing", data);
+}
+

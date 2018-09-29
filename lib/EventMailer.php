@@ -177,7 +177,7 @@
     function eventMailerNew(Member $member, Event $form) {
         //compare form and database for changed values
         //build changed values string and full event string
-
+/*
         $homeUnit = $member->Squadron;
         $homeAccountID = UtilCollection::GetAccountIDFromUnit($homeUnit);  //lib/general.php
         $_ACCOUNTm = new Account($homeAccountID);
@@ -217,7 +217,7 @@
                 "Event $_ACCOUNTl-$form->EventNumber created: $form->EventName (".date('h:i A n/j/Y', $form->StartDateTime).")"
             );
         }
-    }
+*/    }
 
     function eventMailerEdit(Member $member, Event $form, Event $database) {
         //compare form and database for changed values
