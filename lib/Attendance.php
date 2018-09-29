@@ -10,11 +10,12 @@
 			global $_ACCOUNT;
 			$this->position = 0;
 			$pdo = DB_Utils::CreateConnection();
-			$sqlin = "(SELECT * FROM DEventManagement.Attendance WHERE (AccountID=:aid AND EventID=:ev)) UNION ";
-			$sqlin .= "(SELECT Attendance.* FROM DEventManagement.Attendance INNER JOIN ";
-			$sqlin .= "(SELECT AccountID, EventNumber FROM DEventManagement.EventInformation ";
-			$sqlin .= "WHERE SourceEventNumber=:ev AND SourceAccountID=:aid) AS t2 ON ";
-			$sqlin .= "(Attendance.AccountID=t2.AccountID AND Attendance.EventID=t2.EventNumber));";
+			$sqlin = "(SELECT * FROM Attendance WHERE (AccountID=:aid AND EventID=:ev)) ";
+			// $sqlin .= "UNION (SELECT * FROM Attendance INNER JOIN ";
+			// $sqlin .= "(SELECT AccountID, EventNumber FROM EventInformation ";
+			// $sqlin .= "WHERE SourceEventNumber=:ev AND SourceAccountID=:aid) AS t2 ON ";
+			// $sqlin .= "(Attendance.AccountID COLLATE utf16_general_ci=t2.AccountID AND Attendance.EventID";
+			// $sqlin .= " COLLATE utf16_general_ci=t2.EventNumber));";
 			$stmt = $pdo->prepare($sqlin);
 			$stmt->bindValue(':ev', $ev);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);

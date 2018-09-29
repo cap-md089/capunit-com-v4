@@ -6,13 +6,13 @@
     Class SignUps {
         static function Add($account, $EventNumber) {
             $pdo = DBUtils::CreateConnection();
-            $sqlin = 'INSERT INTO '.DB_TABLES['SignUpQueue']; 
+            $sqlin = 'INSERT INTO '.DB_TABLES['SignUpQueue'];
             $sqlin .= ' (AccountID, EventNumber) VALUES (:account, :EventNumber);';
             $stmt = $pdo->prepare($sqlin);
             $stmt->bindValue(':account', $account);
             $stmt->bindValue(':EventNumber', $EventNumber);
             // $return = DBUtils::ExecutePDOStatement($stmt);
-            
+
             //error checking
             if (!$stmt->execute()) {
                 if ($stmt->errorInfo()[1] == 1062) {
@@ -26,23 +26,23 @@
         static function Send() {
             //query SignUpQueue
             $pdo = DBUtils::CreateConnection();
-            $sqlin = 'SELECT AccountID, EventNumber FROM '.DB_TABLES['SignUpQueue'].' WHERE SummarySent=0;'; 
+            $sqlin = 'SELECT AccountID, EventNumber FROM '.DB_TABLES['SignUpQueue'].' WHERE SummarySent=0;';
             $stmt = $pdo->prepare($sqlin);
             $signups = DBUtils::ExecutePDOStatement($stmt);
             global $_ACCOUNT;
             $retval = '';
-            //if returns, 
+            //if returns,
             if(count($signups) > 0) {
                 foreach ($signups as $signup) {
                     $_ACCOUNT = new Account($signup['AccountID']);
                     self::SendEvent($signup['AccountID'], $signup['EventNumber']);
                     $sqlin = 'UPDATE '.DB_TABLES['SignUpQueue'].' SET SummarySent=:nowtime WHERE AccountID=:account ';
-                    $sqlin .= 'AND EventNumber=:evnum AND SummarySent=0;'; 
+                    $sqlin .= 'AND EventNumber=:evnum AND SummarySent=0;';
                     $stmt = $pdo->prepare($sqlin);
                     $stmt->bindValue(':nowtime', time());
                     $stmt->bindValue(':account', $signup['AccountID']);
                     $stmt->bindValue(':evnum', $signup['EventNumber']);
-  
+
                     try {
                         if (!$stmt->execute()) {
                             $retval .= "Couldn't execute update signup, ". var_export($stmt->errorInfo(), true)."\n";
@@ -142,8 +142,8 @@
                 $subject .= ': '.$event['EventName'].' on ';
                 $subject .= date(DATE_RSS, $event['StartDateTime']);
 
-                $html = 'View all event details at <a href=\"https://'.$account;
-                $html .= '.capunit.com/eventviewer/'.$EventNumber.'\">this page</a>/<br /><br />';
+                $html = 'View all event details at <a href="https://'.$account;
+                $html .= '.capunit.com/eventviewer/'.$EventNumber.'/">this page</a><br /><br />';
 
                 $altHtml = 'View all event details at this page: https://'.$account;
                 $altHtml .= '.capunit.com/eventviewer/'.$EventNumber.'/<br /><br />';
