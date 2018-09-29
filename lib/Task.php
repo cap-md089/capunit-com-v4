@@ -60,10 +60,12 @@
 				global $_USER;
 				$mem = $_USER;
 			}
+			global $_ACCOUNT;
 			$pdo = DBUtils::CreateConnection();
 
-			$stmt = $pdo->prepare("SELECT TaskID FROM ".DB_TABLES['TaskRecipients']." WHERE CAPID = :cid AND Done = 0;");
+			$stmt = $pdo->prepare("SELECT TaskID FROM ".DB_TABLES['TaskRecipients']." WHERE CAPID = :cid AND Done = 0 AND AccountID = :aid;");
 			$stmt->bindValue(':cid', $mem->uname);
+			$stmt->bindValue(':aid', $_ACCOUNT->id);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			$ret = [];
 			foreach ($data as $datum) {
@@ -78,11 +80,14 @@
 				$mem = $_USER;
 			}
 
+			global $_ACCOUNT;
+
 			$pdo = DBUtils::CreateConnection();
 
-			$stmt = $pdo->prepare("SELECT ID FROM ".DB_TABLES['Tasks']." WHERE Tasker = :cid AND Done = :done;");
+			$stmt = $pdo->prepare("SELECT ID FROM ".DB_TABLES['Tasks']." WHERE Tasker = :cid AND Done = :done AND AccountID = :aid;");
 			$stmt->bindValue(':cid', $mem->uname);
 			$stmt->bindValue(':done', $done ? 1 : 0);
+			$stmt->bindValue(':aid', $_ACCOUNT->id);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			$ret = [];
 			foreach ($data as $datum) {
