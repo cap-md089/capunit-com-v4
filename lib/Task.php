@@ -63,9 +63,8 @@
 			global $_ACCOUNT;
 			$pdo = DBUtils::CreateConnection();
 
-			$stmt = $pdo->prepare("SELECT TaskID FROM ".DB_TABLES['TaskRecipients']." WHERE CAPID = :cid AND Done = 0 AND AccountID = :aid;");
+			$stmt = $pdo->prepare("SELECT TaskID FROM ".DB_TABLES['TaskRecipients']." WHERE CAPID = :cid AND Done = 0;");
 			$stmt->bindValue(':cid', $mem->uname);
-			$stmt->bindValue(':aid', $_ACCOUNT->id);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			$ret = [];
 			foreach ($data as $datum) {

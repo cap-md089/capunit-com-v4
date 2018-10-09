@@ -107,12 +107,10 @@
 			foreach ($e['form-data']['capids'] as $capid) {
 				$data = explode(':', $capid);
 				$stmt = $pdo->prepare("UPDATE ".DB_TABLES['Flights']." SET Flight=:flight WHERE CAPID=:cid AND AccountID=:aid;");
-				print_r($data);
 				$stmt->bindValue(":flight", $data[1]);
 				$stmt->bindValue(":cid", $data[0]);
 				$stmt->bindValue(':aid', $a->id);
 				$success = $stmt->execute();
-				var_export($success);
 				if (!$success) {
 					trigger_error($stmt->errorInfo()[2], 512);
 				}

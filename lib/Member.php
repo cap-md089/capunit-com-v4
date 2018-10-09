@@ -15,6 +15,7 @@
 	require_once (BASE_DIR . "lib/logger.php");
     require_once (BASE_DIR . "lib/Permissions.php");
 	require_once (BASE_DIR . "lib/Registry.php");
+	require_once (BASE_DIR . "lib/Notify.php");
 
     function _g ($html, $key) {
         $indexWorking = 0;$indexStart = 0;$indexEnd = 0;$strTemp = $html;
@@ -252,6 +253,7 @@
                     return $m;
                 }
             }
+            $ci = "";
             $m = new self ();
             $m->uname = $uname;
             $m->upass = $upass;
@@ -273,12 +275,13 @@
                     error_reporting(E_ALL);
 
 
-                    // Code to get member name
+                    // Code to get member info
                     $fn = $h->getElementById("txtFirstName");
                     $mn = $h->getElementById("txtMI");
                     $ln = $h->getElementById("txtLastName");
                     $s = $h->getElementById("txtSuffix");
                     $sq = $h->getElementById("txtSquadron");
+                    $ci = $h->getElementById("imgMbrPhoto");
 
                     $m->memberName = "No name";
 
@@ -306,13 +309,20 @@
                     if ($sq && $sq->hasAttribute("value") && $sq->getAttribute("value") != '') {
                         $m->Squadron = $sq->getAttribute("value");
                     }
+                    if ($ci && $ci->hasAttribute("src") && $ci->getAttribute("src") != '') {
+                        $ci_val = $ci->getAttribute("src");
+                        $build_ci = "";
+                        for ($i = 0; $i < strlen($ci_val); $i++) {
+                            if (is_numeric($ci_val[$i])) { $build_ci .= $ci_val[$i]; }
+                        }
+                        $ci = $build_ci;
+                    }
 
                     // Get the member rank
                     $r = $h->getElementById("txtRank");
                     $m->seniorMember = false;
                     if ($r) {
                         $m->memberRank = $r->getAttribute("value");
-                        // Does the member rank start with C/...? If so, it is a cadet.
                         if ($h->getElementByID("txtType") == "Cadet") { $m->seniorMember = false; } else { $m->seniorMember = true; }
                     } else {
                         $m->memberRank = "CADET";
@@ -423,6 +433,9 @@
                 $stmt->bindValue(':cid', $m->capid);
                 $stmt->bindValue(':aid', $account->id);
                 $data = DB_Utils::ExecutePDOStatement($stmt);
+		if(!is_numeric($m->capid) && is_numeric($ci)) {
+                    $m->capid = $ci;
+                }
                 if (count($data) != 1) {
                     //insert new row
                     $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc);");
@@ -437,7 +450,7 @@
                     $stmt->bindValue(':contacts', json_encode($m->contact));
                     $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
-                    $stmt->bindValue(':coc', var_export($coc,true));
+                    $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
                     // $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
@@ -467,7 +480,7 @@
                     $stmt->bindValue(':contacts', json_encode($m->contact));
                     $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
-                    $stmt->bindValue(':coc', var_export($coc,true));
+                    $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
                     // $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
