@@ -40,7 +40,7 @@
 				$rhtml .= $html;
 			} else
 			{
-				$rhtml = "<h2 class=\"title\">No New Notifications</h2>";
+				$rhtml = "<h2 class=\"title\">No Notifications</h2>";
 			}
 
 			return [

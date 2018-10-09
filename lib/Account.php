@@ -168,17 +168,17 @@
 			return $this->getGoogleCalendarAccountId("Wing");
 		}
 
-		public function getGoogleCalendarShareLink() {                                        
+		public function getGoogleCalendarShareLink() {
 			return $this->getGoogleCalendarAccountId("Share");
 		}
 
-		public function getGoogleCalendarEmbedLink() {                                        
+		public function getGoogleCalendarEmbedLink() {
 			return $this->getGoogleCalendarAccountId("Embed");
 		}
 
 		private function getGoogleCalendarAccountId($calType) {
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CalendarID FROM ".DB_TABLES['GoogleCalendarIDs']." 
+			$stmt = $pdo->prepare("SELECT CalendarID FROM ".DB_TABLES['GoogleCalendarIDs']."
 				WHERE AccountID = :id AND CalendarType = :calType;");
 			$stmt->bindValue(":id", $this->id);
 			$stmt->bindValue(":calType", $calType);
@@ -194,8 +194,8 @@
 			$ret = [];
 			$nowtime = time();
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE Expiration<:nowt AND ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
-			$stmt->bindValue(":id", $this->id);
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE Expiration>:nowt AND ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
+//			$stmt->bindValue(":id", $this->id);
 			$stmt->bindValue(':nowt', $nowtime);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
@@ -208,8 +208,8 @@
 			$ret = [];
 			$nowtime = time();
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE Expiration<:nowt AND ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
-			$stmt->bindValue(':id', $this->id);
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE Expiration>:nowt AND ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
+//			$stmt->bindValue(':id', $this->id);
 			$stmt->bindValue(':nowt', $nowtime);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
