@@ -64,7 +64,7 @@
 				$mem = Member::Estimate($n);
 				if ($mem && $mem->uname != 0) {
 					$memails = $mem->getAllEmailAddresses();
-					$emails .= $memails . '; ';
+					$emails .= $memails;
 				}
 			}
 			$emails = rtrim($emails, '; ');
