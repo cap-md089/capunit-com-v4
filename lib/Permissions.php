@@ -37,7 +37,9 @@
 
 			"PermissionsManagement" => 0,
 			"DownloadCAPWATCH" => 0,
-			"RegistryEdit" => 0
+			"RegistryEdit" => 0,
+			"PersonnelFilesDel" => 0,
+			"PersonnelFiles" => 0
 		];
 
 		/**
@@ -77,7 +79,9 @@
 
 			"PermissionsManagement" => 0,
 			"DownloadCAPWATCH" => 0,
-			"RegistryEdit" => 0
+			"RegistryEdit" => 0,
+			"PersonnelFilesDel" => 0,
+			"PersonnelFiles" => 0
 		];
 
 		/**
@@ -117,7 +121,9 @@
 
 			"PermissionsManagement" => 0,
 			"DownloadCAPWATCH" => 0,
-			"RegistryEdit" => 0
+			"RegistryEdit" => 0,
+			"PersonnelFilesDel" => 0,
+			"PersonnelFiles" => 1
 		];
 
 		/**
@@ -157,7 +163,9 @@
 
 			"PermissionsManagement" => 1,
 			"DownloadCAPWATCH" => 1,
-			"RegistryEdit" => 1
+			"RegistryEdit" => 1,
+			"PersonnelFilesDel" => 1,
+			"PersonnelFiles" => 1
 		];
 
 		public static function GetPermissions (\Member $mem) {

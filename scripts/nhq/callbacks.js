@@ -17,6 +17,11 @@ function deleteEventFile (data, details, jqxhr, a) {
 	getHtml();
 }
 
+function deleteMemberFile (data, details, jqxhr, a) {
+	customDialog("Deletion results", data);
+	getHtml();
+}
+
 function deletePhotos_prepush() {
     return "photo";
 }
@@ -362,6 +367,15 @@ function su_prepush() {
             }
         }, false);
     });
+}
+
+function personnel_prepush() {
+        memberSelect(function(data) {
+            if (typeof data[0] != 'undefined') {
+		getHtml('/personnel/'+data[0].id);
+            }
+        }, false);
+	return false;
 }
 
 function teamCreateAddUser_prepush(a, retclass) {
