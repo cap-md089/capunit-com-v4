@@ -115,8 +115,8 @@
                                 if (isset ($e['form-data']['memberFiles'][0])) {
 					$fileinfo = $e['form-data']['memberFiles'][0];
 						$sqlstmt = "INSERT INTO ".DB_TABLES['FileMemberAssignments'];
-						$sqlstmt .= " (FileID, MemberID, FileType, Uploaded, Requested, Approved, Award, Comment) ";
-						$sqlstmt .= "VALUES (:fileid, :mid, :ftype, :dteup, :dtereq, :dteapp, :award, :comment);";
+						$sqlstmt .= " (FileID, MemberID, FileType, Requested, Approved, Award, Comment) ";
+						$sqlstmt .= "VALUES (:fileid, :mid, :ftype, :dtereq, :dteapp, :award, :comment);";
                                                 $stmt = $pdo->prepare($sqlstmt);
                                                 $stmt->bindValue(':fileid', rtrim($fileinfo));
                                                 $stmt->bindValue(':mid', $mem->uname);
