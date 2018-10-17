@@ -9,31 +9,50 @@
 				$mem = Member::Estimate($data, true);
 
                                 $pdo = DBUtils::CreateConnection();
-                                $stmt = $pdo->prepare("SELECT FileID FROM ".DB_TABLES['FileMemberAssignments']." WHERE MemberID = :mid;");
+                                $stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['FileMemberAssignments']." WHERE MemberID = :mid;");
                                 $stmt->bindValue(':mid', $mem->uname);
                                 $filedata = DBUtils::ExecutePDOStatement($stmt);
                                 // if (count($data) > 0) {
                                         $html = "<br /><br /><h2>Member Files for $mem->RankName</h2>";
                                 // }
                                 $hasfiles = false;
+				$rowhtml = "";
                                 foreach ($filedata as $row) {
                                         $file = File::Get($row["FileID"]);
                                         if(!!$file) {
+						$rowhtml .= "<tr><td>";
                                                 $ab = new AsyncButton(Null,  "Delete", "deleteMemberFile");
                                                 $ab->data = 'delfi'.json_encode(array(
                                                         'fid' => $file->ID,
                                                         'mid' => $mem->uname
                                                 ));
-                                                $html .= (new FileDownloader($file->Name, $file->ID))." ";
+                                                $rowhtml .= (new FileDownloader($file->Name, $file->ID))." ";
                                                 if(($m->hasPermission('PersonnelFilesDel'))) {
-                                                        $html .= $ab."<br />";
+                                                        $rowhtml .= $ab;
                                                 }
+						$rowhtml .= "</td><td>".$row['FileType']."</td><td>";
+						$rowhtml .= date("Y-m-d", $row['Requested'])."</td><td>";
+						$rowhtml .= date("Y-m-d", $row['Approved'])."</td><td>".$row['Award']."</td><td>".$row['Comment']."</td>";
+						$rowhtml .= "</tr>";
                                                 $hasfiles = true;
                                         }
                                 }
                                 if(!$hasfiles) { $html .= "There are no files associated with this member.<br />"; }
+				else {
+					$html .= "<table><tr><th>File</th><th>File Type</th><th>Uploaded</th><th>Requested</th><th>Approved</th><th>Award</th><th>Comment</th></tr>";
+					$html .= $rowhtml."</table>";
+				}
                                 $form = new AsyncForm (Null, 'Add File');
                                 $form->addField ('memberFiles', '&nbsp;', 'file');
+				$form->addField ('fileType', 'Select Type', 'select', null, [
+					'CAPF 2', 'CAPF 2A', 'CAPF 5', 'CAPF 31', 'CAPF 60-80', 'CAPF 60-91', 'CAPF 60-92', 'CAPF 60-93', 'CAPF 60-94', 'Other'
+				], 'CAPF 2A');
+				$form->addField ('requested', 'Form Requested', 'datetime-local');
+				$form->addField ('approved', 'Form Approved', 'datetime-local');
+				$form->addField ('award', 'Award Ribbon', 'select', null, [
+					'Command Service Ribbon', 'Red Service Ribbon', 'Find Ribbon', 'Other'
+				], 'Other');
+				$form->addField ('comment', 'Comment', 'text');
                                 $form->addHiddenField ('mid', $mem->uname);
                                 $form->addHiddenField ('func', 'addfiles');
                                 $form->reload = true;
@@ -94,12 +113,20 @@
                                 $success = true;
                                 $pdo = DBUtils::CreateConnection();
                                 if (isset ($e['form-data']['memberFiles'][0])) {
-                                        foreach ($e['form-data']['memberFiles'] as $fileID) {
-                                                $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES['FileMemberAssignments']." (FileID, MemberID) VALUES (:fileid, :mid);");
-                                                $stmt->bindValue(':fileid', rtrim($fileID));
+					$fileinfo = $e['form-data']['memberFiles'][0];
+						$sqlstmt = "INSERT INTO ".DB_TABLES['FileMemberAssignments'];
+						$sqlstmt .= " (FileID, MemberID, FileType, Uploaded, Requested, Approved, Award, Comment) ";
+						$sqlstmt .= "VALUES (:fileid, :mid, :ftype, :dteup, :dtereq, :dteapp, :award, :comment);";
+                                                $stmt = $pdo->prepare($sqlstmt);
+                                                $stmt->bindValue(':fileid', rtrim($fileinfo));
                                                 $stmt->bindValue(':mid', $mem->uname);
+                                                $stmt->bindValue(':ftype', $e['form-data']['fileType']);
+                                                $stmt->bindValue(':dtereq', $e['form-data']['requested']);
+                                                $stmt->bindValue(':dteapp', $e['form-data']['approved']);
+                                                $stmt->bindValue(':award', $e['form-data']['award']);
+                                                $stmt->bindValue(':comment', $e['form-data']['comment']);
+
                                                 $success = $stmt->execute() && $success;
-                                        }
                                 }
                                 return [
                                         'body' => $success ? 'All file uploads worked!' : 'A file failed to upload'
