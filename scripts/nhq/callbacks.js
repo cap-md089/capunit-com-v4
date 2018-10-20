@@ -22,6 +22,11 @@ function deleteMemberFile (data, details, jqxhr, a) {
 	getHtml();
 }
 
+function verifyMemberFile (data, details, jqxhr, a) {
+	customDialog("Update results", data);
+	getHtml();
+}
+
 function deletePhotos_prepush() {
     return "photo";
 }
