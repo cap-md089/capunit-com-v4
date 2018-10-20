@@ -60,8 +60,8 @@
 					'Cadet Community Service Ribbon', 'Cadet Special Activities Ribbon',
 					'Cadet Orientation Pilot Ribbon', 'Counter Drug Ribbon',
 					'Encampment Ribbon', 'Recruiter Ribbon', 'A Scott Crossfield Award',
-					'Other'
-				], 'Other');
+					'Other', 'Not Applicable'
+				], 'Not Applicable');
 				$form->addField ('comment', 'Comment', 'text');
                                 $form->addHiddenField ('mid', $m->uname);
                                 $form->addHiddenField ('func', 'addfiles');
@@ -112,6 +112,7 @@
                                                 $abver = new AsyncButton(Null,  "Verify", "verifyMemberFile");
                                                 $abver->data = 'verfi'.json_encode(array(
                                                         'fid' => $file->ID,
+							'fname' => $file->Name,
                                                         'mid' => $mem->uname
                                                 ));
                                                 $rowhtml .= (new FileDownloader($file->Name, $file->ID))." ";
@@ -276,14 +277,34 @@
 				} else if ($func == 'verfi') {
         	                        $pdo = DBUtils::CreateConnection();
                 	                $data = json_decode($data, true);
+
+					//set verified flag in file table
                         	        $stmt = $pdo->prepare("UPDATE ".DB_TABLES['FileMemberAssignments']." SET Verified=1 WHERE FileID = :fid AND MemberID = :mid;");
 	                                $stmt->bindValue(':fid', $data['fid']);
         	                        $stmt->bindValue(':mid', $data['mid']);
                 	                $verifyreturn = $stmt->execute() ? 'File verified. ' : 'Error when updating file status. ';
+
+					//remove group notification of pending file verification
 					$stmt = $pdo->prepare("UPDATE ".DB_TABLES['Notifications']." SET deleted=1 WHERE FileID=:fid AND CAPID=990101;");
 	                                $stmt->bindValue(':fid', $data['fid']);
-					$removenotice = $stmt->execute() ? 'Notice deleted' : 'Error when deleting notice';
-					return $verifyreturn.$removenotice;
+					$removenotice = $stmt->execute() ? '<br />Group notice deleted' : '<br />Error when deleting group notice';
+
+					//add member notification of file verification completion
+					$message = "File ".$data['fname']." verified.";
+					$remarks = "Verified by ".$m->RankName." on ".date("Y-m-d", time());
+		                        $sqlin = 'INSERT INTO '.DB_TABLES['Notifications'];
+		                        $sqlin .= '(CAPID, AccountID, timestamp, message, FileID, remarks)';
+		                        $sqlin .= 'VALUES (:cid, :acct, :time, :msg, :fid, :rmks);';
+		                        $stmt = $pdo->prepare($sqlin);
+		                        $stmt->bindValue(':cid', $data['mid']);
+		                        $stmt->bindValue(':acct', $a->id);
+		                        $stmt->bindValue(':time', time());
+		                        $stmt->bindValue(':msg', $message);
+		                        $stmt->bindValue(':fid', $data['fid']);
+		                        $stmt->bindValue(':rmks', $remarks);
+		                        $addnotice = $stmt->execute() ? '<br />Member notice added' : '<br />Error when adding member notice';
+
+					return $verifyreturn.$removenotice.$addnotice;
                         	}  else {
 	                                return ['error' => '402'];
         	                }
