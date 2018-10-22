@@ -48,7 +48,9 @@
                                 $form->addField ('memberFiles', '&nbsp;', 'file');
 				$form->addField ('fileType', 'Select Type', 'select', null, [
 					'CAPF 2', 'CAPF 2A', 'CAPF 5', 'CAPF 31', 'CAPF 60-80', 'CAPF 60-91',
-					'CAPF 60-92', 'CAPF 60-93', 'CAPF 60-94', 'Other'
+					'CAPF 60-92', 'CAPF 60-93', 'CAPF 60-94',
+					'Drill Test', 'Answer Sheet', 'Speech Critique', 'Essay Critique', 'SDA',
+					'Other'
 				], 'CAPF 2A');
 				$form->addField ('requested', 'Form Requested', 'datetime-local');
 				$form->addField ('approved', 'Form Approved', 'datetime-local');
@@ -149,8 +151,9 @@
                                 $form = new AsyncForm (Null, 'Add File');
                                 $form->addField ('memberFiles', '&nbsp;', 'file');
 				$form->addField ('fileType', 'Select Type', 'select', null, [
-					'CAPF 2', 'CAPF 2A', 'CAPF 5', 'CAPF 31', 'CAPF 60-80',
-					'CAPF 60-91', 'CAPF 60-92', 'CAPF 60-93', 'CAPF 60-94',
+					'CAPF 2', 'CAPF 2A', 'CAPF 5', 'CAPF 31', 'CAPF 60-80', 'CAPF 60-91',
+					'CAPF 60-92', 'CAPF 60-93', 'CAPF 60-94',
+					'Drill Test', 'Answer Sheet', 'Speech Critique', 'Essay Critique', 'SDA',
 					'Other'
 				], 'CAPF 2A');
 				$form->addField ('requested', 'Form Requested', 'datetime-local');
