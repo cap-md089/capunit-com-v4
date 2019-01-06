@@ -15,9 +15,17 @@
             $sql .= "WHERE $tblAtt.AccountID=:aid AND $tblEvt.AccountID=:aid AND $tblAtt.CAPID=:cid AND ";
             $sql .= "$tblAtt.Status='Committed/Attended' ORDER BY StartDateTime DESC;";
 
+			$cid = $m->capid;
+
+			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
+
+			if ($ev && $m->hasPermission("EditEvent")) {
+				$cid = $ev;
+			}
+
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':aid', $a->id);
-            $stmt->bindValue(':cid', $m->capid);
+            $stmt->bindValue(':cid', $cid);
 
             $data = DBUtils::ExecutePDOStatement($stmt);
 
