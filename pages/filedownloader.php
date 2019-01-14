@@ -48,8 +48,6 @@
 //				$text = $file->Data;
 //			}
 
-			header("X-Being-Downloaded: ".($download?'t':'f'));
-
 			if (!$file->IsPhoto || $download) {
 				header ("Content-Disposition: attachment; filename=\"$file->Name\"");
 				header ("Content-Type: application/octet-stream");
@@ -81,8 +79,6 @@
 				$stmt = $pdo->prepare("SELECT * FROM ".DB_TABLES['FileSessions']." WHERE fileid = :fid AND sessid = :sid;");
 				$stmt->bindValue(':fid', $e['raw']['data']);
 				$stmt->bindValue(':sid', $sid);
-				print_r(DBUtils::ExecutePDOStatement($stmt));
-				echo "\n\n";
 				return '/filedownloader/'.$file->ID.'/1'.$sid.'?ajax=true';
 			} else {
 				return [

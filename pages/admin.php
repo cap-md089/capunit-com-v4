@@ -8,7 +8,7 @@
 			$pdo = DB_Utils::CreateConnection();
 
 			$funcs = scandir(BASE_DIR."pluggables");
-	
+
 			$links = [];
 
 			for ($i = 0; $i < count($funcs); $i++) {

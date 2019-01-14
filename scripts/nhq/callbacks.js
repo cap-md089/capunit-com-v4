@@ -191,6 +191,12 @@ function fileDownloader(data, status, jqxhr, a) {
     window.open(data);
 }
 
+function attendanceDownload_prepush(a, data) {
+    window.open('/downloadattendance/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;
