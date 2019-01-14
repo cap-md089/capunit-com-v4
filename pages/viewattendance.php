@@ -29,7 +29,9 @@
 
             $data = DBUtils::ExecutePDOStatement($stmt);
 
-            $html = "<h2>Tab-delimited raw attendance data</h2>";
+			$html = "</br>".(new AsyncButton('downloadattendance', 'Download your attendance', 'attendanceDownload'))->getHtml($cid);
+
+            $html .= "</br></br><h2>Tab-delimited raw attendance data</h2>";
 
             $attendanceData = "<pre>";
             $columns[0] = "Event Number";
