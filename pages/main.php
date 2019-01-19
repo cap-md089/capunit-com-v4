@@ -137,7 +137,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
             $leftsection1 = <<<leftsection
             <section class="halfSection" style="float:left">
                 <div>
-            
+
                 </div>
                 <h4>How to become a Senior Member (Age 18+)</h4>
                 <div>
@@ -173,7 +173,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                         oppurtunities, and traing and participation in Search and Rescue operations.
                     </p>
                     <p>
-                        The application form can be downloaded from <a href="https://drive.google.com/open?id=1qAh_B3XHR2AFLkRG7og2297IRLDXm_4_">this link</a>. 
+                        The application form can be downloaded from <a href="https://drive.google.com/open?id=136TeTQYn_DnOqyi_ZJl2Ho5ts1WoCJMw">this link</a>. 
                         The online application (recommended) may be accessed at <a href="https://www.capnhq.gov/CAP.MembershipSystem.Web/CadetOnlineApp.aspx">this link</a>.
                     </p>
                 </div>
@@ -181,7 +181,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
 leftsection;
 
             $dir = HOST_SUB_DIR;
-            
+
             $ae = new Link ("page", "<img src=\"/{$dir}images/aerospace.png\" /><p style=\"text-align:center;\">Aerospace Education</p>", ['aerospaceeducation']);
             $cp = new Link ("page", "<img style=\"display:block;margin:0 auto;\" src=\"/{$dir}images/programs.png\" /><p style=\"text-align:center;\">Cadet Programs</p>", ['cadetprograms']);
             $es = new Link ("page", "<img style=\"display:block;margin:0 auto;\" src=\"/{$dir}images/emergency.png\" /><p style=\"text-align:center;\">Emergency Services</p>", ['emergencyservices']);
@@ -201,7 +201,7 @@ leftsection;
     </div>
 </section>
 rightsection;
-            
+
             // $html .= $leftsection1 . $rightsection1 . "<div class=\"divider\"></div>";
             if($l && $a->hasMember($m)) {
                 // $html .= "paid: ".$a->paid." expiresIn: ".$a->expiresIn." expired: ".$a->expired;
@@ -244,20 +244,20 @@ rightsection;
                         $html .= "<div class=\"divider\"></div>";
                     }
                 } else {
-                    $html .= "<section><h3 style=\"text-align: center\">";
+//                    $html .= "<section><h4 style=\"text-align: center\">";
                     //need to add unit admin email addresses as a link here
-                    $html .= "This is the FREE version of CAPUnit.com.  To gain access to many additional features, please ";
-                    $html .= "contact someone on your account administrative staff (";
-                    foreach ($a->adminName as $capid => $rankname) {
-                        $html .= "<a href=\"mailto:".$a->adminEmail[$capid];
-                        $html .= "?subject=Upgrade our CAPUnit.com account, please";
-                        $html .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account!\">";
-                        $html .= $rankname."</a>, ";
-                    }
-                    $html = rtrim($html, ', ');
-                    $html .= ") to request a CAPUnit.com account upgrade.";
-                    $html .= "</h3></section>";
-                    $html .= "<div class=\"divider\"></div>";
+//                    $html .= "This is the free version of CAPUnit.com.  To gain access to unlimited events many additional features, please ";
+//                    $html .= "contact someone on your account administrative staff (";
+//                    foreach ($a->adminName as $capid => $rankname) {
+//                        $html .= "<a href=\"mailto:".$a->adminEmail[$capid];
+//                        $html .= "?subject=Upgrade our CAPUnit.com account, please";
+//                        $html .= "&body=".$rankname.", please contact sales@capunit.com to upgrade our CAPUnit.com account!\">";
+//                        $html .= $rankname."</a>, ";
+//                    }
+//                    $html = rtrim($html, ', ');
+//                    $html .= ") to request a CAPUnit.com account upgrade.";
+//                    $html .= "</h4></section>";
+//                    $html .= "<div class=\"divider\"></div>";
                 }
             }
 

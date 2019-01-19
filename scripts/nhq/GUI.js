@@ -8,9 +8,9 @@ var SIGNIN_FORM = '<?php
 
     $form = new AsyncForm('/signin', 'Sign in', 'hidden', 'signin');
 
-    $message = "Enter your eServices login information below to sign into the site.  Your password is not ";
-    $message .= "permanently stored.  By providing your eServices information you agree to the terms and conditions ";
-    $message .= "located at <a href='https://www.capunit.com/eula'>https://www.capunit.com/eula</a>";
+    $message = "<div style=\"line-height: 1.6em\">Enter your eServices login information below to sign into the site.<br />Your password is not";
+    $message .= "permanently stored.  By providing your eServices<br />information you agree to the terms and conditions ";
+    $message .= "located at <a href='https://www.capunit.com/eula'>https://www.capunit.com/eula</a><br /></div>";
     $form->addField('eula',$message,'textread');
     $form->addField('name', 'CAP ID')->addField('password', 'Password', 'password')->setSubmitInfo('Log in');
 
