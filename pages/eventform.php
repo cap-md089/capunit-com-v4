@@ -441,7 +441,7 @@
 						'No Meals Provided', 'Meals Provided', 'Bring Own Food', 'Bring Money', 'Other'
 					]),
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Squadron Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
 					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
 					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],
@@ -595,7 +595,7 @@
 						'No Meals Provided', 'Meals Provided', 'Bring Own Food', 'Bring Money', 'Other'
 					]),
 					'Activity' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['activity'], [
-						'Recurring Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
+						'Squadron Meeting', 'Classroom/Tour/Light', 'Backcountry', 'Flying', 'Physically Rigorous', 'Other'
 					]),
 					'HighAdventureDescription' => $eventdata['form-data']['highAdventureDescription'],
 					'RequiredEquipment' => $eventdata['form-data']['requiredEquipment'],

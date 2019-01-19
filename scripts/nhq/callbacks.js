@@ -197,6 +197,12 @@ function attendanceDownload_prepush(a, data) {
     return false;
 }
 
+function participationView_prepush(a, data) {
+    window.open('/participationview/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;
