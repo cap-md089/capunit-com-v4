@@ -203,6 +203,18 @@ function participationView_prepush(a, data) {
     return false;
 }
 
+function rosterCadet_prepush(a, data) {
+    window.open('/rostercadet/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
+function rosterSenior_prepush(a, data) {
+    window.open('/rostersenior/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;

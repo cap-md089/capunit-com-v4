@@ -23,6 +23,7 @@
 				];
 			}
 
+//                        $html = "</br>".(new AsyncButton('downloadattendance', 'Download your attendance', 'attendanceDownload'))->getHtml($cid);
 			$html = '';
 
 			$breaks = 'false';
@@ -34,6 +35,8 @@
 				if ($m->hasPermission("CopyEvent")) {
 					$html .= " | ".(new AsyncButton(Null, 'Copy event', 'copyEvent'))->getHtml("clone".$ev)."<span style=\"display:none\" id=\"dateTimeOfCurrentEvent\">".date('Y-m-d\TH:i:s',$event->StartDateTime)."</span>";
 				}
+				$html .= " | ".(new AsyncButton('rostercadet', 'Download Cadet roster', 'rosterCadet'))->getHtml($ev);
+				$html .= " | ".(new AsyncButton('rostersenior', 'Download Senior Member roster', 'rosterSenior'))->getHtml($ev);
 				if ($m->hasPermission("SignUpEdit")) {
 					$html .= "<br />".new Link ("multiadd", "Add attendees", [$ev]);
 					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
@@ -101,7 +104,7 @@
 				}
 				if ($a->hasMember($m) && !$eventLinked) { $html .= $moreHtml; }
 				if ($perm && !$a->hasMember($m) && !$eventLinked) {
-					$html .= (new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
+					$html .= " | ".(new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
 //				} else if ($perm && $notInAcct) {
 //					$html .= new Link ("linkeventunset", "Unlink from this event in the ".$m->Squadron." calendar", [$ev]);
 					//need to implement unlink in own event view page, not just in remote account event
