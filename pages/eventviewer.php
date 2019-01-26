@@ -23,7 +23,6 @@
 				];
 			}
 
-//                        $html = "</br>".(new AsyncButton('downloadattendance', 'Download your attendance', 'attendanceDownload'))->getHtml($cid);
 			$html = '';
 
 			$breaks = 'false';
@@ -289,6 +288,7 @@
 					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
 					$html .= " | ".$clist->getHtml('atchr'.$event->EventNumber);
 					$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
+					$html .= " | ".(new AsyncButton('signupevent', 'Download Sign-up roster', 'signupEvent'))->getHtml($ev);
 				}
 				foreach ($attendance as $capid => $data) {
 					$member = Member::Estimate($capid);
