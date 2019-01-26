@@ -215,6 +215,12 @@ function rosterSenior_prepush(a, data) {
     return false;
 }
 
+function signupEvent_prepush(a, data) {
+    window.open('/signupEvent/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;

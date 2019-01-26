@@ -40,7 +40,7 @@
 			$sql = 'SELECT CONCAT(Data_Member.NameLast, ", ", Data_Member.NameFirst, " ", ';
 			$sql .= 'LEFT(Data_Member.NameMiddle,1)) as Name, ';
 			$sql .= 'if(Data_Member.Rank="CADET","C/AB",Data_Member.Rank) as Grade, ';
-			$sql .= 'Data_Member.CAPID, FROM_UNIXTIME(Data_Member.Expiration) as Expiration, ';
+			$sql .= 'Data_Member.CAPID, Data_Member.Expiration as Expiration, ';
 			$sql .= 'Flights.Flight FROM Data_Member LEFT JOIN Flights ON Data_Member.CAPID=Flights.CAPID ';
 			$sql .= 'WHERE Data_Member.Type="CADET" AND Data_Member.ORGID IN ';
 			$sql .= "(SELECT UnitID FROM Accounts WHERE AccountID=:aid) ORDER BY Name ASC;";
@@ -137,7 +137,7 @@
 			$pdf->Cell(0,.3,$unitString."    ".$unitName,0,1);
 
 
-			$wMember = 1.5;  $wGrade = 0.5;  $wCAPID = 0.8;
+			$wMember = 1.5;  $wGrade = 0.55;  $wCAPID = 0.8;
 			$wExpiration = 1.0;  $wSignature = 1.5;  $wFlight = 1.0;
 			$cellHeight = 0.18;  $border = 0;  $fillState = false;
 			$pdf->Cell($wMember,$cellHeight,"Member",$border,0,"L",$fillState);
@@ -151,7 +151,6 @@
 			$pdf->SetFillColor(210);
 			$cellHeight = 0.18;  $border = 0;  $fillState = false;
 			$alternator=0;
-//		$pdf->Cell($wMember,$cellHeight,count($data),$border,1,"C");
 			foreach($data as $datum) {
 				if(!$alternator) {
 					$fillState = false;
@@ -160,14 +159,14 @@
 					$fillState = true;
 					$alternator = 0;
 				}
-//		$pdf->Cell($pdf->GetStringWidth("."),$cellHeight,".",$border,0,"C",$fillState);
 
-//				$expireDate = date('Y-m-d',$datum['Expiration']);
-				$expireDate = substr($datum['Expiration'],0,10);
+				$expireDate = date('Y-m-d',$datum['Expiration']);
 				$pdf->Cell($wMember,$cellHeight,$datum['Name'],$border,0,"L",$fillState);
 				$pdf->Cell($wGrade,$cellHeight,$datum['Grade'],$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
+				if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
 				$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
+				$border = 0;
 				$pdf->Cell($wSignature,$cellHeight,"",$border,0,"C",$fillState);
 				$pdf->Cell($wFlight,$cellHeight,$datum['Flight'],$border,1,"L",$fillState);
 			}
