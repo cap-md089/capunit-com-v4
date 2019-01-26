@@ -82,7 +82,6 @@
 				foreach ($m->genAccounts() as $acc) {
 					$perm = $perm || $m->hasPermission('LinkEvent', 1, $acc);
 				}
-				echo "Has permission: " . ($perm ? 't' : 'f') . "\n\n";
 				$stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE SourceEventNumber=:sen AND SourceAccountID=:sai;');
 				$stmt->bindValue(':sen', $ev);
 				$stmt->bindValue(':sai', $_ACCOUNT->id);
@@ -104,7 +103,7 @@
 				}
 				if ($a->hasMember($m) && !$eventLinked) { $html .= $moreHtml; }
 				if ($perm && !$a->hasMember($m) && !$eventLinked) {
-					$html .= " | ".(new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
+					$html .= "<br />".(new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
 //				} else if ($perm && $notInAcct) {
 //					$html .= new Link ("linkeventunset", "Unlink from this event in the ".$m->Squadron." calendar", [$ev]);
 					//need to implement unlink in own event view page, not just in remote account event
@@ -268,6 +267,10 @@
 						addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
 						addHiddenField('eid', $ev)->
 						addHiddenField('func', 'signup');
+					if ($event->IsSpecial) {
+						$form
+							->addField('geoloc', 'What is your geographic location?', 'text');
+					}
 					$form->reload = true;
 					$html .= $form;
 					$html .= "<br /><br />";
@@ -276,8 +279,6 @@
 
 //			if ($l && $a->hasMember($m)) {
 			if ($l) {
-//				print_r($attendance);
-//				echo "\n\n";
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
 				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");
@@ -306,6 +307,9 @@
 							$form->addHiddenField('capid', $capid);
 							$form->addHiddenField('eid', $ev);
 							$form->addHiddenField('func', 'signupedit');
+							if ($event->IsSpecial) {
+								$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
+							}
 							$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
 							$ab->data = 'atdel'.json_encode(array(
 								'cid' => $capid,
@@ -487,8 +491,8 @@
 						}
 					}
 				}
-				$attendance = new Attendance($e['form-data']['eid']);
 				$ev = Event::Get($e['form-data']['eid']);
+				$attendance = $ev->attendance;
 				if ($attendance->has($m)) {
 					return "You're already signed up!";
 				}
@@ -504,10 +508,12 @@
 				'Event signup: Event '.$ev->EventNumber);
 				return $attendance->add($m, 
 					$e['form-data']['capTransport'] == 'true', 
-					$e['form-data']['comments']) ? 
+					$e['form-data']['comments'],
+					$e['form-data']['geoloc']) ? 
 						"You're signed up!" : "Something went wrong!";
 			} else if ($e['raw']['func'] == 'signupedit') {
-				$attendance = new Attendance($e['form-data']['eid']);
+				$event = Event::Get($e['form-data']['eid']);
+				$attendance = $event->getAttendance();
 				$mem = Member::Estimate($e['form-data']['capid']);
 				if (!$mem || !$attendance->has($mem)) {
 					return ['error' => 311];
@@ -518,7 +524,7 @@
 					$member = $m;
 				}
 				$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
-					$e['form-data']['comments'], $e['form-data']['status']);
+					$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc']);
 			} else {
 				return [
 					'error' => 311

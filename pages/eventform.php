@@ -300,6 +300,7 @@
 					->addField ('adminComments', 'Administrative Comments', 'textarea')
 					->addField ('TeamID', 'Team ID', 'text')
 					->addField ('Debrief', 'Debrief', 'textarea')
+					->addField ('isSpecial', 'Special GES event?', 'checkbox')
 					->addField ('eventFiles', 'Event files', 'file');
 
 
@@ -484,6 +485,7 @@
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
 					'PartTime' => true,
 					'Status' => $eventdata['form-data']['eventStatus'],
+					'IsSpecial' => $eventdata['form-data']['isSpecial'] == 'true',
 					'TeamID' => $eventdata['form-data']['TeamID']
 				), Null, $member);
 
@@ -640,6 +642,7 @@
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
 					'Status' => $eventdata['form-data']['eventStatus'],
 					'PartTime' => true,
+					'IsSpecial' => $eventdata['form-data']['isSpecial'] == 'true',
 					'TeamID' => $eventdata['form-data']['TeamID']
 				));
 

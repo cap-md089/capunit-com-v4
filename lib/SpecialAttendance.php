@@ -1,5 +1,5 @@
 <?php
-	class Attendance implements Iterator {
+	class SpecialAttendance implements Iterator {
 		private $position = 0;
 
 		public $EventNumber;
@@ -10,7 +10,7 @@
 			global $_ACCOUNT;
 			$this->position = 0;
 			$pdo = DB_Utils::CreateConnection();
-			$sqlin = "(SELECT * FROM Attendance WHERE (AccountID=:aid AND EventID=:ev));";
+			$sqlin = "(SELECT * FROM SpecialAttendance WHERE (AccountID=:aid AND EventID=:ev)) ";
 			$stmt = $pdo->prepare($sqlin);
 			$stmt->bindValue(':ev', $ev);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -25,8 +25,8 @@
 			$events = DB_Utils::ExecutePDOStatement($stmt);
 
 			foreach ($events as $eventInfo) {
-				$acc = new Account($events['AccountID']);
-				$ev = Event::Get($events['EventNumber'], $acc);
+				$acc = new Account($eventInfo['AccountID']);
+				$ev = Event::Get($eventInfo['EventNumber'], $acc);
 
 				$att = $ev->getAttendance();
 
@@ -50,10 +50,10 @@
 			return false;
 		}
 
-		public function add (\Member $member, $plantouse=false, $comments='') {
+		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='') {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent);');
+			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['SpecialAttendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :geoloc);');
 			$time = time();
 			$stmt->bindValue(':plantouse', $plantouse ? 1 : 0);
 			$stmt->bindValue(':time', $time);
@@ -65,6 +65,7 @@
 			$stmt->bindValue(':accountid', $_ACCOUNT->id);
 			$stmt->bindValue(':reqs', '');
 			$stmt->bindValue(':sent', 0);
+			$stmt->bindValue(':geoloc', $geoloc);
 			$this->EventAttendance[] = [
 				'PlanToUseCAPTransportation' => $plantouse ? 1 : 0,
 				'Timestamp' => $time,
@@ -74,7 +75,8 @@
 				'Comments' => $comments,
 				'Status' => 'Commited/Attended',
 				'Requirements' => '',
-				'SummaryEmailSent' => 0
+				'SummaryEmailSent' => 0,
+				'GeoLoc' => $geoloc
 			];
 			if (!$stmt->execute()) {
 				if ($stmt->errorInfo()[1] == 1062) {
@@ -88,7 +90,7 @@
 		public function remove (\Member $member) {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('DELETE FROM '.DB_TABLES['Attendance'].' WHERE CAPID = :cid AND EventID = :eid AND AccountID = :aid;');
+			$stmt = $pdo->prepare('DELETE FROM '.DB_TABLES['SpecialAttendance'].' WHERE CAPID = :cid AND EventID = :eid AND AccountID = :aid;');
 			$stmt->bindValue(':cid', $member->uname);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -104,23 +106,30 @@
 			return true;
 		}
 
-		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null) {
+		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null) {
 			global $_ACCOUNT;
+			$found = false;
 			for ($i = 0; $i < count($this->EventAttendance); $i++) {
 				if ($this->EventAttendance[$i]["CAPID"] == $member->capid) {
+					$found = true;
 					break;
 				}
+			}
+			if (!$found) {
+				return false;
 			}
 			$row = $this->EventAttendance[$i];
 			if (isset($plantouse)) $row['PlanToUseCAPTransportation'] = $plantouse;
 			if (isset($comments)) $row['Comments'] = $comments;
 			if (isset($status)) $row['Status'] = $status;
+			if (isset($geoloc)) $row['GeoLoc'] = $geoloc;
 
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('UPDATE '.DB_TABLES['Attendance'].' SET
+			$stmt = $pdo->prepare('UPDATE '.DB_TABLES['SpecialAttendance'].' SET
 				PlanToUseCAPTransportation=:plantouse,
 				Comments=:comments,
-				Status=:status
+				Status=:status,
+				GeoLoc=:geoloc
 			WHERE
 				EventID=:eid
 			AND
@@ -130,6 +139,7 @@
 			$stmt->bindValue(':plantouse', $row['PlanToUseCAPTransportation'] ? 1 : 0);
 			$stmt->bindValue(':comments', $row['Comments']);
 			$stmt->bindValue(':status', $row['Status']);
+			$stmt->bindValue(':geoloc', $row['GeoLoc']);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':capid', $row['CAPID']);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -142,7 +152,7 @@
 		public function clearAll () {
 			global $_ACCOUNT;
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare ("DELETE FROM ".DB_TABLES['Attendance']." WHERE EventID = :id AND AccountID=:aid;");
+			$stmt = $pdo->prepare ("DELETE FROM ".DB_TABLES['SpecialAttendance']." WHERE EventID = :id AND AccountID=:aid;");
 			$stmt->bindValue(':id', $this->EventNumber);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
 			if (!$stmt->execute()) {
@@ -170,7 +180,8 @@
 				'Timestamp' => $row['Timestamp'],
 				'MemberRankName' => $row['MemberRankName'],
 				'Comments' => $row['Comments'],
-				'Status' => $row['Status']
+				'Status' => $row['Status'],
+				'GeoLoc' => $row['GeoLoc']
 			];
 		}
 
