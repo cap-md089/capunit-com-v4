@@ -2,7 +2,7 @@
 	define ("USER_REQUIRED", true);
 	require_once (BASE_DIR."lib/logger.php");
 	require_once (BASE_DIR."lib/general.php");
-	
+
 	function mdate ($time) {
 		if ($time>0) {
 			return date('Y-m-d\TH:i:s', $time);
@@ -36,7 +36,7 @@
 				//check to see if within event limit, if applicable
 				if(!$account->paid || ($account->paid && $account->expired)) {
 					$pdo = DB_Utils::CreateConnection();
-		
+
 					//get month date range
 					$monthNumber = (int)date('n',$event->StartDateTime)-1;
 					$thisYear = (int)date('Y',$event->StartDateTime);
@@ -387,11 +387,11 @@
 			if ($eventdata['form-data']['function'] == 'create') {
 				if (!$member->hasPermission('AddEvent') && $member->AccessLevel !== 'CadetStaff') return ['error' => 402];
 
-				//compare to event limit and deny add if at or over limit				
+				//compare to event limit and deny add if at or over limit
 				if (count($monthevents) >= $eventLimit) {
 					$months = ['January','February','March','April','May','June','July',
 						'August','September','October','November','December'];
-					// $response = 'Events this month: '.count($monthevents).' event limit: '.$eventLimit.'</br>';
+					$response = 'Events this month: '.count($monthevents).' event limit: '.$eventLimit.'</br>';
 					$response .= "This account has exceeded the allowable event count limit for the month of ";
 					$response .= $months[$monthNumber]." ".$thisYear." and your requested event cannot be added at this time.  ";
 					$response .= "Please contact someone on your account administrative staff (";

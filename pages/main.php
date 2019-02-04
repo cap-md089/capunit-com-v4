@@ -1,6 +1,6 @@
 <?php
     define ("USER_REQUIRED", false);
-    
+
     class Output {
         public static function doGet($e, $c, $l, $m, $a) {
             if (Registry::get("Styling.Preset") == 'marylandwing') {
