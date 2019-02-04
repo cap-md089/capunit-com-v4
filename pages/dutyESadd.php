@@ -5,15 +5,12 @@
             if (!$l) return false;
             if (!$m->hasPermission('AddTeam')) return ['error' => 402];
 
-            $butt = new AsyncButton (Null, "Select", 'teamCreateAddUser');
+            $butt = new AsyncButton (Null, "Select", 'dutyESCreateAddUser');
 
             $form = new AsyncForm(Null, 'Create Team');
             $form
-                ->addField('teamName', 'Team name', 'text', Null, Null)
+                ->addField('eventESName', 'ES Event Name', 'text', Null, Null)
                 ->addField('description', 'Description', 'textarea', Null, Null)
-                ->addField('teamMentor', 'Team Mentor ('.$butt->getHtml('mentor').')', 'text', 'mentor', Null)
-                ->addField('teamCoach', 'Team Coach ('.$butt->getHtml('coach').')', 'text', 'coach', Null)
-                ->addField('teamLeader', 'Team Leader ('.$butt->getHtml('leader').')', 'text', 'leader', Null)
                 ->addField("capids[]", (new AsyncButton(Null, 'Remove person', 'removeTeamUserMultiAdd'))->getHtml(), Null, Null, Null, Null, 'templateAdder')
                 ->addField('roles[]', 'Role', 'text', Null, Null, Null, 'templateAdder')
                 ->addField('', (new AsyncButton(Null, "Add Team Member", "addUserToTeam"))->getHtml(), 'textread', Null, Null, Null, Null);
@@ -33,8 +30,8 @@
 							'Text' => 'Administration'
 						],
 						[
-							'Target' => '/teamadd',
-							'Text' => 'Add a team'
+							'Target' => '/dutyESadd',
+							'Text' => 'Add an ES team'
 						]
                     ])
                 ],
@@ -57,8 +54,6 @@
                 'TeamLead' => $e['form-data']['teamLeader'],
                 'TeamName' => $e['form-data']['teamName'],
                 'TeamDescription' => $e['form-data']['description'],
-                'TeamCoach' => $e['form-data']['teamCoach'],
-                'TeamMentor' => $e['form-data']['teamMentor']
             ));
 
             for ($i = 1; $i < count($e['form-data']['capids']); $i++) {

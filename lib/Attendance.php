@@ -25,8 +25,8 @@
 			$events = DB_Utils::ExecutePDOStatement($stmt);
 
 			foreach ($events as $eventInfo) {
-				$acc = new Account($events['AccountID']);
-				$ev = Event::Get($events['EventNumber'], $acc);
+				$acc = new Account($eventInfo['AccountID']);
+				$ev = Event::Get($eventInfo['EventNumber'], $acc);
 
 				$att = $ev->getAttendance();
 

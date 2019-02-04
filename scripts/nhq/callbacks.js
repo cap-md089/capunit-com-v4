@@ -221,6 +221,18 @@ function signupEvent_prepush(a, data) {
     return false;
 }
 
+function signupSpecial_prepush(a, data) {
+    window.open('/signupSpecial/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
+function idFront_prepush(a, data) {
+    window.open('/idcardfront/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;
@@ -414,6 +426,17 @@ function personnel_prepush() {
 }
 
 function teamCreateAddUser_prepush(a, retclass) {
+    memberSelect(function(data) {
+        if (data[0] != undefined) {
+            id = data[0].id;
+            $("." + retclass).val(id);
+        }
+    }, false);
+
+    return false;
+}
+
+function dutyESCreateAddUser_prepush(a, retclass) {
     memberSelect(function(data) {
         if (data[0] != undefined) {
             id = data[0].id;

@@ -642,7 +642,7 @@
 					'ExtPOCReceiveEventUpdates' => $eventdata['form-data']['ExtPOCEUpdates'] == 'true',
 					'Status' => $eventdata['form-data']['eventStatus'],
 					'PartTime' => true,
-					'IsSpecial' => $eventdata['form-data']['isSpecial'] == 'true',
+					'IsSpecial' => $event->IsSpecial,
 					'TeamID' => $eventdata['form-data']['TeamID']
 				));
 

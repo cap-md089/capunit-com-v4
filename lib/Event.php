@@ -121,7 +121,7 @@
          * @var string Location to meet
          */
         public $LodgingArrangements = '';
-         
+
                  /**
          * @var string Activity description
          */
@@ -320,14 +320,14 @@
          */
         public static function Get (int $ev, \Account $acc = Null) {
             global $_ACCOUNT;
-            if (isset ($acc)) {
-                $_ACCOUNT = $acc;
+            if (!isset ($acc)) {
+                $acc = $_ACCOUNT;
             }
 
             $pdo = DB_Utils::CreateConnection();
             $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE EventNumber = :ev AND AccountID = :id;');
             $stmt->bindValue(':ev', $ev);
-            $stmt->bindValue(':id', $_ACCOUNT->id);
+            $stmt->bindValue(':id', $acc->id);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) != 1) {
                 return false;
@@ -352,14 +352,14 @@
             $data['Author'] = isset($member) ? $member->uname : 0;
 
             $event = new self($data);
-            
+
             $errors = $event->checkErrors();
             if (!!$errors) {
                 return $errors;
             }
 
             $pdo = DB_Utils::CreateConnection();
-            
+
             if (!isset($data['EventNumber'])) {
                 $stmt = $pdo->prepare('SELECT(SELECT MAX(EventNumber) FROM '.DB_TABLES['EventInformation'].' WHERE AccountID=:aid)+1 AS EventNumber');
                 $stmt->bindValue(":aid", $_ACCOUNT->id);
@@ -789,12 +789,11 @@
         /**
          * Removes the event and unsets this object
          */
-        public function remove () {
-            global $_ACCOUNT;
+        public function remove (\Account $acct) {
             try {
                 GoogleCalendar::removeCalendarEvent($this);
             } catch (Exception $e) {
-                
+
             }
             $pdo = DB_Utils::CreateConnection();
             // if (Registry::get('Administration.ArchiveDeleteEvents')) {
@@ -811,11 +810,11 @@
             // var_export($_ACCOUNT->id);
             // echo PHP_EOL;
             // $stmt->bindValue(':status', "Deleted");
-            $stmt->bindValue(':aid', $_ACCOUNT->id);
+            $stmt->bindValue(':aid', $acct->id);
             $stmt->bindValue(':ev', $this->EventNumber);
             // unset($this);
             $stmt->execute();
-            return [$_ACCOUNT->id, $this->EventNumber, $stmt->errorInfo(), $stmt->rowCount()];
+            return [$acct->id, $this->EventNumber, $stmt->errorInfo(), $stmt->rowCount()];
             // return [];
         }
 

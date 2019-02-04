@@ -50,10 +50,10 @@
 			return false;
 		}
 
-		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='') {
+		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='') {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['SpecialAttendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :geoloc);');
+			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['SpecialAttendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :geoloc, :duty);');
 			$time = time();
 			$stmt->bindValue(':plantouse', $plantouse ? 1 : 0);
 			$stmt->bindValue(':time', $time);
@@ -66,6 +66,7 @@
 			$stmt->bindValue(':reqs', '');
 			$stmt->bindValue(':sent', 0);
 			$stmt->bindValue(':geoloc', $geoloc);
+			$stmt->bindValue(':duty', $duty);
 			$this->EventAttendance[] = [
 				'PlanToUseCAPTransportation' => $plantouse ? 1 : 0,
 				'Timestamp' => $time,
@@ -76,7 +77,8 @@
 				'Status' => 'Commited/Attended',
 				'Requirements' => '',
 				'SummaryEmailSent' => 0,
-				'GeoLoc' => $geoloc
+				'GeoLoc' => $geoloc,
+				'DutyPreference' => $duty
 			];
 			if (!$stmt->execute()) {
 				if ($stmt->errorInfo()[1] == 1062) {
@@ -106,7 +108,7 @@
 			return true;
 		}
 
-		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null) {
+		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null, $duty=Null) {
 			global $_ACCOUNT;
 			$found = false;
 			for ($i = 0; $i < count($this->EventAttendance); $i++) {
@@ -123,13 +125,15 @@
 			if (isset($comments)) $row['Comments'] = $comments;
 			if (isset($status)) $row['Status'] = $status;
 			if (isset($geoloc)) $row['GeoLoc'] = $geoloc;
+			if (isset($duty)) $row['DutyPreference'] = $duty;
 
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('UPDATE '.DB_TABLES['SpecialAttendance'].' SET
 				PlanToUseCAPTransportation=:plantouse,
 				Comments=:comments,
 				Status=:status,
-				GeoLoc=:geoloc
+				GeoLoc=:geoloc,
+				DutyPreference=:duty
 			WHERE
 				EventID=:eid
 			AND
@@ -140,6 +144,7 @@
 			$stmt->bindValue(':comments', $row['Comments']);
 			$stmt->bindValue(':status', $row['Status']);
 			$stmt->bindValue(':geoloc', $row['GeoLoc']);
+			$stmt->bindValue(':duty', $row['DutyPreference']);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':capid', $row['CAPID']);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -181,7 +186,8 @@
 				'MemberRankName' => $row['MemberRankName'],
 				'Comments' => $row['Comments'],
 				'Status' => $row['Status'],
-				'GeoLoc' => $row['GeoLoc']
+				'GeoLoc' => $row['GeoLoc'],
+				'DutyPreference' => $row['DutyPreference']
 			];
 		}
 

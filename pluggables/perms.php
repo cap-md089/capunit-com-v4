@@ -62,9 +62,10 @@ EOD;
 			$l1 = new Link("viewattendance", "View Attendance");
 			$html .= "$l1<br />";
 		}
-		if ($m->hasPermission("ViewAttendance")) {
+		if ($m->hasPermission("Developer")) {
 			$t++;
 			$l1 = (new AsyncButton('participationview', 'Download Participation Visualization', 'participationView'))->getHtml($m->capid);
+			$l1 = (new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront'))->getHtml($m->capid);
 			$html .= "$l1<br />";
 		}
 		if ($m->hasPermission("DownloadStaffGuide")) {

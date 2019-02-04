@@ -15,7 +15,7 @@
 			$pdo = DB_Utils::CreateConnection();
 
 			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
-			$event = $ev ? Event::Get((int)$ev) : false;
+			$event = $ev ? Event::Get((int)$ev, $a) : false;
 
 			if (!$event) {
 				return [
@@ -268,7 +268,8 @@
 						addHiddenField('func', 'signup');
 					if ($event->IsSpecial) {
 						$form
-							->addField('geoloc', 'What is your geographic location?', 'text');
+							->addField('geoloc', 'What is your geographic location?', 'text')
+							->addField('duty', 'What are your top three desired duty/training positions?', 'text');
 					}
 					$form->reload = true;
 					$html .= $form;
@@ -288,7 +289,11 @@
 					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
 					$html .= " | ".$clist->getHtml('atchr'.$event->EventNumber);
 					$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
-					$html .= " | ".(new AsyncButton('signupevent', 'Download Sign-up roster', 'signupEvent'))->getHtml($ev);
+					if($event->IsSpecial) {
+						$html .= " | ".(new AsyncButton('signupspecial', 'Download Sign-up roster', 'signupSpecial'))->getHtml($ev);
+					} else {
+						$html .= " | ".(new AsyncButton('signupevent', 'Download Sign-up roster', 'signupEvent'))->getHtml($ev);
+					}
 				}
 				foreach ($attendance as $capid => $data) {
 					$member = Member::Estimate($capid);
@@ -309,6 +314,7 @@
 							$form->addHiddenField('func', 'signupedit');
 							if ($event->IsSpecial) {
 								$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
+								$form->addField('duty', 'What are your top 3 desired duty/training positions?', 'text', Null, Null, $data['DutyPreference']);
 							}
 							$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
 							$ab->data = 'atdel'.json_encode(array(
@@ -454,7 +460,7 @@
 			if ($e['raw']['func'] == 'addfiles') {
 				$event = null;
 				if (isset ($e['form-data']['eid'])) {
-					$event = Event::Get($e['form-data']['eid']);
+					$event = Event::Get($e['form-data']['eid'], $a);
 					if (!$event) {
 						return ['error' => 311];
 					}
@@ -491,7 +497,7 @@
 						}
 					}
 				}
-				$ev = Event::Get($e['form-data']['eid']);
+				$ev = Event::Get($e['form-data']['eid'], $a);
 				$attendance = $ev->attendance;
 				if ($attendance->has($m)) {
 					return "You're already signed up!";
@@ -506,13 +512,14 @@
 				], $m->RankName.', you have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
 				View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
 				'Event signup: Event '.$ev->EventNumber);
-				return $attendance->add($m, 
-					$e['form-data']['capTransport'] == 'true', 
+				return $attendance->add($m,
+					$e['form-data']['capTransport'] == 'true',
 					$e['form-data']['comments'],
-					$e['form-data']['geoloc']) ? 
+					$e['form-data']['geoloc'],
+					$e['form-data']['duty']) ?
 						"You're signed up!" : "Something went wrong!";
 			} else if ($e['raw']['func'] == 'signupedit') {
-				$event = Event::Get($e['form-data']['eid']);
+				$event = Event::Get($e['form-data']['eid'], $a);
 				$attendance = $event->getAttendance();
 				$mem = Member::Estimate($e['form-data']['capid']);
 				if (!$mem || !$attendance->has($mem)) {
@@ -524,7 +531,7 @@
 					$member = $m;
 				}
 				$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
-					$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc']);
+					$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty']);
 			} else {
 				return [
 					'error' => 311
@@ -543,24 +550,24 @@
 				$func = substr($ev, 0, 5);
 				$data = substr($ev, 5);
 				if ($func == 'delet') {
-					$event = Event::Get($data);
+					$event = Event::Get($data, $a);
 					if (!$event) return ['error' => '311'];
 					$func = 'delete';
 				} else if ($func == 'clone') {
 					$ev = $data;
-					$event = Event::Get($ev);
+					$event = Event::Get($ev, $a);
 					if (!$event) return ['error' => '311'];
 				} else if ($func == 'links') {
 					$ev = $data;
-					$event = Event::Get($ev);
+					$event = Event::Get($ev, $a);
 					if (!$event) return ['error' => '311'];
 				} else if ($func == 'linku') {
 					$ev = $data;
-					$event = Event::Get($ev);
+					$event = Event::Get($ev, $a);
 					if (!$event) return ['error' => '311'];
 				} else if ($func == 'atmod' || $func == 'atdel') {
 					$data = json_decode($data, true);
-					$event = Event::Get($data['eid']);
+					$event = Event::Get($data['eid'], $a);
 					if (!$event) return ['error' => '311'];
 				}
 			} else {
@@ -569,7 +576,7 @@
 
 			if ($func == "delete" && ($event->isPOC($m) || $m->hasPermission("EditEvent"))) {
 				eventMailerDelete($m, $event);
-				$data = $event->remove();
+				$data = $event->remove($a);
 				var_export($data);
 				echo "$event->EventNumber\n";
 				return JSSnippet::PageRedirect('Calendar') . ($data ? "Event deleted" : "Some error occurred");
@@ -790,7 +797,7 @@
 			} else if (($func == 'atchr' && $m->AccessLevel == "Admin")) {
 				//chronological sign-up list (need to separate by Senior/Cadet)
 				$html = '';
-				$event = Event::Get((int)$data);
+				$event = Event::Get((int)$data, $a);
 				$pdo = DB_Utils::CreateConnection();
 
 				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
@@ -812,7 +819,7 @@
 			} else if (($func == 'atsul' && $m->AccessLevel == "Admin")) {
 				//sign-up list
 				$html = '';
-				$event = Event::Get((int)$data);
+				$event = Event::Get((int)$data, $a);
 				$pdo = DB_Utils::CreateConnection();
 
 				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
@@ -835,7 +842,7 @@
 				return $html;
 			} else if (($func == 'atdir')) {
 				$html = '';
-				$event = Event::Get((int)$data);
+				$event = Event::Get((int)$data, $a);
 				if ($event->CAPPOC1ID != '') {
 					$html .= $event->CAPPOC1ID.", ";
 				}
@@ -852,7 +859,7 @@
 				return rtrim($html, ', ');
 			} else if (($func == 'ateml')) {
 				$html = '';
-				$event = Event::Get((int)$data);
+				$event = Event::Get((int)$data, $a);
 				if ($event->CAPPOC1Email != '') {
 					$html .= $event->CAPPOC1Email.", ";
 				}
@@ -874,7 +881,7 @@
 				$html = implode(", ", $emails);
 				return rtrim($html, ', ');
 			} else if (($func == 'sende')) {
-				$event = Event::Get((int)$data);
+				$event = Event::Get((int)$data, $a);
 				return SignUps::SendEvent($a->id, $event->EventNumber, true);
 			} else if (($func == 'delfi') && $m->hasPermission('EditEvent')) {
 				$pdo = DBUtils::CreateConnection();

@@ -1,6 +1,6 @@
 <?php
     define ("USER_REQUIRED", false);
-    
+
     class Output {
         public static function doGet($e, $c, $l, $m, $a) {
             if (Registry::get("Styling.Preset") == 'marylandwing') {
@@ -271,7 +271,7 @@ rightsection;
             if (count($event) !== 1) {
                 $html .= "<section class=\"halfSection\" style=\"text-align: center\"><h3 style=\"text-align: center\">No Upcoming Meeting</h3></section>";
             } else {
-                $e = Event::Get($event[0]['EventNumber']);
+                $e = Event::Get($event[0]['EventNumber'], $a);
 				if (!!$e) {
                 $link = new Link('eventviewer', "View details", [$e->EventNumber]);
                 $html .= "<section class=\"halfSection\" style=\"text-align: left\">
@@ -286,25 +286,30 @@ rightsection;
             }
 
             // $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND (ShowUpcoming = 1 OR Activity LIKE '%Recurring Meeting%') LIMIT :limit;");
-            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE PickupDateTime > :now AND Status!='Draft' AND AccountID = :aid AND ShowUpcoming = 1 ORDER BY MeetDateTime ASC LIMIT :limit;");
+            $sqlString = "SELECT EventNumber FROM ".DB_TABLES['EventInformation'];
+            $sqlString .= " WHERE PickupDateTime > :now AND Status!='Draft' AND AccountID = :aid AND ShowUpcoming = 1 ORDER BY MeetDateTime ASC LIMIT :limit;";
+            $stmt = $pdo->prepare($sqlString);
             $stmt->bindValue(':now', time());
 			$stmt->bindValue(':aid', $a->id);
             $stmt->bindValue(':limit', (int)Registry::get('Website.ShowUpcomingEvents'), PDO::PARAM_INT);
             $data = DBUtils::ExecutePDOStatement($stmt);
             $html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">";
             if (count($data) > 0) {
+//			$params = "time= ".time()." account= ".$a->id." limit= ".(int)Registry::get('Website.ShowUpcomingEvents');
+//			SetNotify(546319, "mdx89", "data-count: ".count($data), 0, $params);
                 $html .= "<h3 style=\"text-align:center;line-height:initial\">Upcoming Events</h3>";
+                foreach ($data as $datum) {
+//			SetNotify(546319, "mdx89", "datum-eventnumber: ".$datum['EventNumber'], 0);
+                    $e = Event::Get($datum['EventNumber'], $a);
+                    if($e->Status == "Cancelled") $html .= "<span style=\"color:red\">";
+                    $html .= "<strong>".date('j F', $e->MeetDateTime)."</strong> ";
+                    if($e->Status == "Cancelled") $html .= "</span>";
+                    $html .= (new Link('eventviewer', $e->EventName, [$e->EventNumber]));
+                    if($e->Status == "Cancelled") $html .= " <strong><span style=\"color:red\">Cancelled!</span></strong>";
+                    $html .= '<br />';
+                }
             } else {
                 $html .= "<h3 style=\"text-align:center;line-height:initial\">No Upcoming Events</h3>";
-            }
-            foreach ($data as $datum) {
-                $e = Event::Get($datum['EventNumber']);
-                if($e->Status == "Cancelled") $html .= "<span style=\"color:red\">";
-                $html .= "<strong>".date('j F', $e->MeetDateTime)."</strong> ";
-                if($e->Status == "Cancelled") $html .= "</span>";
-                $html .= (new Link('eventviewer', $e->EventName, [$e->EventNumber]));
-                if($e->Status == "Cancelled") $html .= " <strong><span style=\"color:red\">Cancelled!</span></strong>";
-                $html .= '<br />';
             }
             $html .= "</section>";
 
