@@ -6,10 +6,11 @@
      *
      * @author Andrew Rioux <arioux303931@gmail.com>
      *
-     * @copyright 2016-2017 Rioux Development Team
+     * @copyright 2016-2019 Rioux Development Team
      */
 
     require_once (BASE_DIR."lib/Attendance.php");
+    require_once (BASE_DIR."lib/SpecialAttendance.php");
     require_once (BASE_DIR."lib/Account.php");
 
     /**
@@ -119,8 +120,8 @@
         /**
          * @var string Location to meet
          */
-         public $LodgingArrangements = '';
-         
+        public $LodgingArrangements = '';
+
                  /**
          * @var string Activity description
          */
@@ -261,6 +262,11 @@
          */
         public $PartTime = false;
 
+		/**
+		 * @var bool Whether or not this event is special, requiring a special attendance table
+		 */
+		public $IsSpecial = false;
+
         /**
          * @var int Is this event for a team? If so, TeamID, else 0
          */
@@ -314,14 +320,14 @@
          */
         public static function Get (int $ev, \Account $acc = Null) {
             global $_ACCOUNT;
-            if (isset ($acc)) {
-                $_ACCOUNT = $acc;
+            if (!isset ($acc)) {
+                $acc = $_ACCOUNT;
             }
 
             $pdo = DB_Utils::CreateConnection();
             $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['EventInformation'].' WHERE EventNumber = :ev AND AccountID = :id;');
             $stmt->bindValue(':ev', $ev);
-            $stmt->bindValue(':id', $_ACCOUNT->id);
+            $stmt->bindValue(':id', $acc->id);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) != 1) {
                 return false;
@@ -346,14 +352,14 @@
             $data['Author'] = isset($member) ? $member->uname : 0;
 
             $event = new self($data);
-            
+
             $errors = $event->checkErrors();
             if (!!$errors) {
                 return $errors;
             }
 
             $pdo = DB_Utils::CreateConnection();
-            
+
             if (!isset($data['EventNumber'])) {
                 $stmt = $pdo->prepare('SELECT(SELECT MAX(EventNumber) FROM '.DB_TABLES['EventInformation'].' WHERE AccountID=:aid)+1 AS EventNumber');
                 $stmt->bindValue(":aid", $_ACCOUNT->id);
@@ -372,7 +378,7 @@
                     CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email, CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, 
                     CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, 
                     AdditionalEmailAddresses, ExtPOCName, ExtPOCPhone, ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID,
-                    SourceEventNumber, SourceAccountID
+                    SourceEventNumber, SourceAccountID, IsSpecial
 				) VALUES (
                     :created, :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
                     :endDate, :pickupLocation, :pickupDate, :transportationProvided, :transportationDescription, 
@@ -383,7 +389,7 @@
                     :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email, :CAPPOC1REU, :CAPPOC1RSU, 
                     :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
                     :additionalEmailAddresses, :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid,
-                    :sourceEventNumber, :sourceAccountID
+                    :sourceEventNumber, :sourceAccountID, :isSpecial
 				);");
 
             $stmt->bindValue(':created', time());
@@ -444,6 +450,7 @@
             $stmt->bindValue(':teamid', $event->TeamID);
             $stmt->bindValue(':sourceEventNumber', $event->SourceEventNumber);
             $stmt->bindValue(':sourceAccountID', $event->SourceAccountID);
+			$stmt->bindValue(':isSpecial', $event->IsSpecial ? 1 : 0);
 
             $event->success = $stmt->execute() ? true : false;
             $event->error = $stmt->errorInfo();
@@ -485,7 +492,8 @@
                 "CAPPOC1ReceiveSignUpUpdates",
                 "CAPPOC2ReceiveEventUpdates",
                 "CAPPOC2ReceiveSignUpUpdates",
-                "ExtPOCReceiveEventUpdates"
+                "ExtPOCReceiveEventUpdates",
+				"IsSpecial"
             ];
             foreach ($boolvars as $bool) {
                 $this->$bool = (gettype($this->$bool) == 'boolean' ? $this->$bool : ($this->$bool == 1));
@@ -508,7 +516,11 @@
                 $this->$int = (int)$this->$int;
             }
 
-            $this->attendance = new Attendance($this->EventNumber);
+			if ($this->IsSpecial) {
+				$this->attendance = new SpecialAttendance($this->EventNumber);
+			} else {
+				$this->attendance = new Attendance($this->EventNumber);
+			}
         }
 
         /**
@@ -547,7 +559,7 @@
                 ExtPOCEmail = :ExtPOCEmail, Author = :author, PartTime = :parttime, TeamID = :teamid,
                 CAPPOC1ReceiveEventUpdates = :POC1REU, CAPPOC1ReceiveSignUpUpdates = :POC1RSU,
                 CAPPOC2ReceiveEventUpdates = :POC2REU, CAPPOC2ReceiveSignUpUpdates = :POC2RSU,
-                ExtPOCReceiveEventUpdates = :ExtREU, SourceEventNumber = :sourceEventNumber, SourceAccountID = :sourceAccountID
+                ExtPOCReceiveEventUpdates = :ExtREU, SourceEventNumber = :sourceEventNumber, SourceAccountID = :sourceAccountID, IsSpecial = :isSpecial
                 WHERE EventNumber = :ev AND AccountID = :aid;');
 
             $stmt->bindValue(':eventName', $this->EventName);
@@ -605,6 +617,7 @@
             $stmt->bindValue(':teamid', $this->TeamID);
             $stmt->bindValue(':sourceEventNumber', $this->SourceEventNumber);
             $stmt->bindValue(':sourceAccountID', $this->SourceAccountID);
+			$stmt->bindValue(':isSpecial', $this->IsSpecial ? 1 : 0);
             $stmt->bindValue(':ev', $this->EventNumber);
             $stmt->bindValue(':aid', $_ACCOUNT->id);
 
@@ -776,12 +789,11 @@
         /**
          * Removes the event and unsets this object
          */
-        public function remove () {
-            global $_ACCOUNT;
+        public function remove (\Account $acct) {
             try {
                 GoogleCalendar::removeCalendarEvent($this);
             } catch (Exception $e) {
-                
+
             }
             $pdo = DB_Utils::CreateConnection();
             // if (Registry::get('Administration.ArchiveDeleteEvents')) {
@@ -798,11 +810,11 @@
             // var_export($_ACCOUNT->id);
             // echo PHP_EOL;
             // $stmt->bindValue(':status', "Deleted");
-            $stmt->bindValue(':aid', $_ACCOUNT->id);
+            $stmt->bindValue(':aid', $acct->id);
             $stmt->bindValue(':ev', $this->EventNumber);
             // unset($this);
             $stmt->execute();
-            return [$_ACCOUNT->id, $this->EventNumber, $stmt->errorInfo(), $stmt->rowCount()];
+            return [$acct->id, $this->EventNumber, $stmt->errorInfo(), $stmt->rowCount()];
             // return [];
         }
 
