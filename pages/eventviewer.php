@@ -522,7 +522,7 @@
 				} else {
 					return $attendance->add($m,
 						$e['form-data']['capTransport'] == 'true',
-						$e['form-data']['comments'] ?
+						$e['form-data']['comments']) ?
 							"You're signed up!" : "Something went wrong!";
 				}
 			} else if ($e['raw']['func'] == 'signupedit') {
