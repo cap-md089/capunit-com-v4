@@ -37,14 +37,14 @@
 			$tblAtt = DB_TABLES['SpecialAttendance'];
 			$tblEvt = DB_TABLES['EventInformation'];
 
-			$sql = "Call DEventManagement.SignUpSpecial(:aid, :eid, :cadet)";
+			$sql = "Call SignUpSpecial(:aid, :eid, :cadet)";
 			$stmt = $pdo->prepare($sql);
 			$stmt->bindValue(':aid', $a->id);
 			$stmt->bindValue(':eid', $event->EventNumber);
 			$stmt->bindValue(':cadet', 1);
 			$cadetData = DBUtils::ExecutePDOStatement($stmt);
 
-			$sql = "Call DEventManagement.SignUpSpecial(:aid, :eid, :cadet)";
+			$sql = "Call SignUpSpecial(:aid, :eid, :cadet)";
 			$stmt = $pdo->prepare($sql);
 			$stmt->bindValue(':aid', $a->id);
 			$stmt->bindValue(':eid', $event->EventNumber);
@@ -61,8 +61,8 @@
 			$unitData = DBUtils::ExecutePDOStatement($stmt);
 
 			//merge sign-in data into member tables
-			$sqlSignin = "SELECT SignInData.* FROM DEventManagement.SignInData WHERE SignInData.CAPID NOT IN ";
-			$sqlSignin .= "(SELECT Data_Member.CAPID FROM DEventManagement.Data_Member) ";
+			$sqlSignin = "SELECT SignInData.* FROM SignInData WHERE SignInData.CAPID NOT IN ";
+			$sqlSignin .= "(SELECT Data_Member.CAPID FROM Data_Member) ";
 			$sqlSignin .= "ORDER BY SignInData.LastAccessTime DESC;";
 			$stmtSignin = $pdo->prepare($sqlSignin);
 			$mergeData = DBUtils::ExecutePDOStatement($stmtSignin);

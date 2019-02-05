@@ -512,12 +512,19 @@
 				], $m->RankName.', you have successfully signed up for event '.$a.'-'.$e['form-data']['eid'].', '.$ev->EventName.'.
 				View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
 				'Event signup: Event '.$ev->EventNumber);
-				return $attendance->add($m,
-					$e['form-data']['capTransport'] == 'true',
-					$e['form-data']['comments'],
-					$e['form-data']['geoloc'],
-					$e['form-data']['duty']) ?
-						"You're signed up!" : "Something went wrong!";
+				if($ev->IsSpecial) {
+					return $attendance->add($m,
+						$e['form-data']['capTransport'] == 'true',
+						$e['form-data']['comments'],
+						$e['form-data']['geoloc'],
+						$e['form-data']['duty']) ?
+							"You're signed up!" : "Something went wrong!";
+				} else {
+					return $attendance->add($m,
+						$e['form-data']['capTransport'] == 'true',
+						$e['form-data']['comments'] ?
+							"You're signed up!" : "Something went wrong!";
+				}
 			} else if ($e['raw']['func'] == 'signupedit') {
 				$event = Event::Get($e['form-data']['eid'], $a);
 				$attendance = $event->getAttendance();
@@ -530,8 +537,13 @@
 				} else {
 					$member = $m;
 				}
-				$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
-					$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty']);
+				if($event->IsSpecial) {
+					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
+						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty']);
+				} else {
+					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
+						$e['form-data']['comments'], $e['form-data']['status']);
+				}
 			} else {
 				return [
 					'error' => 311
