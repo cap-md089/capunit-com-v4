@@ -282,6 +282,10 @@
                     $s = $h->getElementById("txtSuffix");
                     $sq = $h->getElementById("txtSquadron");
                     $ci = $h->getElementById("imgMbrPhoto");
+                    $rankDate = $h->getElementById("txtRankDate");
+                    $expiration = $h->getElementById("txtExpiration");
+                    $memberType = $h->getElementById("txtType");
+                    $gender = $h->getElementById("txtGender");
 
                     $m->memberName = "No name";
 
@@ -438,7 +442,9 @@
                 }
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc);");
+                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES";
+                    $stmt .= "(:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc, ";
+                    $stmt .= ":sfx, :gender, :mtype, :rdte, :exp);");
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
@@ -451,6 +457,13 @@
                     $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
+                    $stmt->bindValue(':sfx', $s);
+                    $stmt->bindValue(':gender', $gender);
+                    $stmt->bindValue(':mtype', $memberType);
+                    $stmt->bindValue(':rdte', $rankDate);
+                    $stmt->bindValue(':exp', $expiration);
+
+
                     // $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
@@ -467,7 +480,8 @@
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
                     $sql .= "MemberName=:mname, MemberNameLast=:last, MemberNameFirst=:first, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, ";
-                    $sql .= "Squadron=:sqn, ChainOfCommand=:coc WHERE CAPID=:cid AND AccountID=:aid;";
+                    $sql .= "Squadron=:sqn, ChainOfCommand=:coc, NameSuffix=:sfx, Gender=:gender, Type=:mtype, RankDate=:rdte, Expiration=:exp ";
+                    $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
@@ -481,6 +495,11 @@
                     $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
+                    $stmt->bindValue(':sfx', $s);
+                    $stmt->bindValue(':gender', $gender);
+                    $stmt->bindValue(':mtype', $memberType);
+                    $stmt->bindValue(':rdte', $rankDate);
+                    $stmt->bindValue(':exp', $expiration);
                     // $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
@@ -490,6 +509,12 @@
                     } catch (PDOException $e) {
                         $logger->Warn("$m->uname couldn't update SignInData due to exception, ".$e->getMessage(), 2);
                     }
+
+
+                    //need to insert member data into Data_Member table?
+
+
+
                 }
 
             }
