@@ -85,7 +85,7 @@
 				$stmt->bindValue(':sen', $ev);
 				$stmt->bindValue(':sai', $_ACCOUNT->id);
 				$evdata = DB_Utils::ExecutePDOStatement($stmt);
-				$homeAccount = UtilCollection::GetAccountIDFromUnit($m->Squadron);
+				$homeAccountID = UtilCollection::GetAccountIDFromUnit($m->Squadron);
 				$eventLinked = false;
 				$moreHtml = '';
 				if (count($evdata) > 0) {
@@ -94,13 +94,13 @@
 					$moreHtml .= ":<br />";
 					foreach($evdata as $datum) {
 						$newAccount = new Account($datum['AccountID']);
-						$moreHtml .= "<a href=\"https://{$newAccount->id}.capunit.com/eventviewer/".$datum['EventNumber']."/\" target=\"_blank\">$newAccount-".$datum['EventNumber']."</a><br />";
-						if($datum['AccountID'] == $homeAccount) {
-							$eventLinked=true;
+						$moreHtml .= "<a href=\"https://{$newAccount->id}.capunit.com/eventviewer/".$datum['EventNumber']."/\" target=\"_blank\">".$datum['AccountID']."-".$datum['EventNumber']."</a><br />";
+						if($datum['AccountID'] == $homeAccountID) {
+							$eventLinked = "<a href=\"https://{$newAccount->id}.capunit.com/calendar/\" target=\"_blank\">home unit calendar</a><br />";
 						}
 					}
 				}
-				if ($a->hasMember($m) && !$eventLinked) { $html .= $moreHtml; }
+				if (($a->hasMember($m) || $perm) && $eventLinked) { $html .= $moreHtml; }
 				if ($perm && !$a->hasMember($m) && !$eventLinked) {
 					$html .= "<br />".(new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
 //				} else if ($perm && $notInAcct) {
@@ -261,18 +261,23 @@
 
 				$attendance = $event->getAttendance();
 				if (!$attendance->has($m) && (time() < $event->PickupDateTime) ) {
-					$form = new AsyncForm (Null, 'Sign up');
-					$form->addField('comments', 'Comments', 'textarea')->
-						addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
-						addHiddenField('eid', $ev)->
-						addHiddenField('func', 'signup');
-					if ($event->IsSpecial) {
-						$form
-							->addField('geoloc', 'What is your geographic location?', 'text')
-							->addField('duty', 'What are your top three desired duty/training positions?', 'text');
+					if ($eventLinked) {
+						$html .= "Your home unit has one or more events linked to this one.  Please sign up ";
+						$html .= "using your $eventLinked";
+					} else { //event is not linked to home squadron
+						$form = new AsyncForm (Null, 'Sign up');
+						$form->addField('comments', 'Comments', 'textarea')->
+							addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
+							addHiddenField('eid', $ev)->
+							addHiddenField('func', 'signup');
+						if ($event->IsSpecial) {
+							$form
+								->addField('geoloc', 'What is your geographic location?', 'text')
+								->addField('duty', 'What are your top three desired duty/training positions?', 'text');
+						}
+						$form->reload = true;
+						$html .= $form;
 					}
-					$form->reload = true;
-					$html .= $form;
 					$html .= "<br /><br />";
 				}
 			}
@@ -488,11 +493,11 @@
 				$stmt->bindValue(':sen', $e['form-data']['eid']);
 				$stmt->bindValue(':sai', $a->id);
 				$data = DB_Utils::ExecutePDOStatement($stmt);
-				$homeAccount = UtilCollection::GetAccountIDFromUnit($m->Squadron);
+				$homeAccountID = UtilCollection::GetAccountIDFromUnit($m->Squadron);
 				$eventLinked = false;
 				if (count($data) > 0) {
 					foreach($data as $datum) {
-						if($datum['AccountID'] == $homeAccount) {
+						if($datum['AccountID'] == $homeAccountID) {
 							return "Your unit has at least one event linked to this one.  Please sign up on your unit's calendar.";
 						}
 					}
@@ -660,6 +665,7 @@
 				$ne->MeetDateTime = $ne->StartDateTime - $d1;
 				$ne->EndDateTime = $ne->StartDateTime + $d2;
 				$ne->PickupDateTime = $ne->StartDateTime + $d3;
+				$ne->Author = $m->uname;
 				//return value for updateCalendarEvent is currently text and is undisplayed here
 				try {
 					GoogleCalendar::updateCalendarEvent($ne);
@@ -812,7 +818,11 @@
 				$event = Event::Get((int)$data, $a);
 				$pdo = DB_Utils::CreateConnection();
 
-				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
+				if ($event->IsSpecial) {
+					$sqlin = 'SELECT * FROM '.DB_TABLES['SpecialAttendance'];
+				} else {
+					$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
+				}
 				$sqlin .= ' WHERE EventID=:eid AND AccountID=:aid ';
 				$sqlin .= ' ORDER BY Timestamp;';
 				$stmt = $pdo->prepare($sqlin);
@@ -834,7 +844,11 @@
 				$event = Event::Get((int)$data, $a);
 				$pdo = DB_Utils::CreateConnection();
 
-				$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
+				if ($event->IsSpecial) {
+					$sqlin = 'SELECT * FROM '.DB_TABLES['SpecialAttendance'];
+				} else {
+					$sqlin = 'SELECT * FROM '.DB_TABLES['Attendance'];
+				}
 				$sqlin .= ' WHERE EventID=:eid AND AccountID=:aid ';
 				$sqlin .= ' ORDER BY Timestamp;';
 				$stmt = $pdo->prepare($sqlin);
@@ -843,12 +857,16 @@
 				$attendancerecords = DB_Utils::ExecutePDOStatement($stmt);
 
 				$html = "Status: C=Committed, N=No Show, R=Rescinded; Transportation: Y or -<br />";
-				$html .= 'S T Rank Name: Comments<br />';
+				$html .= 'S T Rank Name: Comments: Locations: Duty Pref:<br />';
 				foreach ($attendancerecords as $myRecord) {
 					$attendee = Member::Estimate($myRecord['CAPID']);
 					if($attendee) {
 						$html .= substr($myRecord['Status'],0,1)." ".($myRecord['PlanToUseCAPTransportation']?"Y":"-")." ";
-						$html .= $myRecord['MemberRankName'].": ".$myRecord['Comments'].'<br />';
+						$html .= $myRecord['MemberRankName'].": ".$myRecord['Comments'];
+						if($event->IsSpecial) {
+							$html .= ": ".$myRecord['GeoLoc'].": ".$myRecord['DutyPreference'];
+						}
+						$html .= '<br />';
 					}
 				}
 				return $html;
@@ -873,19 +891,19 @@
 				$html = '';
 				$event = Event::Get((int)$data, $a);
 				if ($event->CAPPOC1Email != '') {
-					$html .= $event->CAPPOC1Email.", ";
+					$html .= $event->CAPPOC1Email."; ";
 				}
 				if ($event->CAPPOC2Email != '') {
-					$html .= $event->CAPPOC2Email.", ";
+					$html .= $event->CAPPOC2Email."; ";
 				}
 				if ($event->ExtPOCEmail != 0) {
-					$html .= $event->ExtPOCEmail.", ";
+					$html .= $event->ExtPOCEmail."; ";
 				}
 				$att = $event->getAttendance();
 				foreach ($att as $cid => $data) {
 					$attendee = Member::Estimate($cid);
 					if($attendee) {
-						$html .= $attendee->getAllEmailAddresses().', ';
+						$html .= $attendee->getAllEmailAddresses();
 					}
 				}
 				$emails = explode(", ", $html);

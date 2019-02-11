@@ -217,7 +217,7 @@
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
 				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
-				$pdf->Cell($wFlight,$cellHeight,"Flight",$border,0,"L",$fillState);
+//				$pdf->Cell($wFlight,$cellHeight,"Flight",$border,0,"L",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
 				$pdf->Cell($wCell,$cellHeight,"PriCell",$border,0,"L",$fillState);
@@ -250,7 +250,7 @@
 					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
 					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
 					$border = 0;
-						$pdf->Cell($wFlight,$cellHeight,$datum['Flight'],$border,0,"L",$fillState);
+//					$pdf->Cell($wFlight,$cellHeight,$datum['Flight'],$border,0,"L",$fillState);
 					$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
 					$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
 					$pdf->Cell($wCell,$cellHeight,$datum['PriCell'],$border,0,"L",$fillState);

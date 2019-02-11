@@ -10,30 +10,31 @@
 			global $_ACCOUNT;
 			$this->position = 0;
 			$pdo = DB_Utils::CreateConnection();
-			$sqlin = "(SELECT * FROM SpecialAttendance WHERE (AccountID=:aid AND EventID=:ev)) ";
+			$sqlin = "CALL getSpecialAttendance(:aid, :ev);";
+//			$sqlin = "(SELECT * FROM SpecialAttendance WHERE (AccountID=:aid AND EventID=:ev)) ";
 			$stmt = $pdo->prepare($sqlin);
 			$stmt->bindValue(':ev', $ev);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
 			$this->EventAttendance = DB_Utils::ExecutePDOStatement($stmt);
 			$this->EventNumber = $ev;
 
-			$eventIDsSQL = "SELECT AccountID, EventNumber FROM EventInformation ";
-			$eventIDsSQL .= "WHERE SourceEventNumber=:ev AND SourceAccountID=:aid";
-			$stmt = $pdo->prepare($eventIDsSQL);
-			$stmt->bindValue(':ev', $ev);
-			$stmt->bindValue(':aid', $_ACCOUNT->id);
-			$events = DB_Utils::ExecutePDOStatement($stmt);
-
-			foreach ($events as $eventInfo) {
-				$acc = new Account($eventInfo['AccountID']);
-				$ev = Event::Get($eventInfo['EventNumber'], $acc);
-
-				$att = $ev->getAttendance();
-
-				foreach ($att->EventAttendance as $attItem) {
-					$this->EventAttendance[] = $attItem;
-				}
-			}
+//			$eventIDsSQL = "SELECT AccountID, EventNumber FROM EventInformation ";
+//			$eventIDsSQL .= "WHERE SourceEventNumber=:ev AND SourceAccountID=:aid";
+//			$stmt = $pdo->prepare($eventIDsSQL);
+//			$stmt->bindValue(':ev', $ev);
+//			$stmt->bindValue(':aid', $_ACCOUNT->id);
+//			$events = DB_Utils::ExecutePDOStatement($stmt);
+//
+//			foreach ($events as $eventInfo) {
+//				$acc = new Account($eventInfo['AccountID']);
+//				$ev = Event::Get($eventInfo['EventNumber'], $acc);
+//
+//				$att = $ev->getAttendance();
+//
+//				foreach ($att->EventAttendance as $attItem) {
+//					$this->EventAttendance[] = $attItem;
+//				}
+//			}
 			// $sqlin .= "UNION (SELECT * FROM Attendance INNER JOIN ";
 			// $sqlin .= "(SELECT AccountID, EventNumber FROM EventInformation ";
 			// $sqlin .= "WHERE SourceEventNumber=:ev AND SourceAccountID=:aid) AS t2 ON ";

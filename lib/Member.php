@@ -841,7 +841,7 @@
                 $perms['Developer'] = 0;
             }
 
-            $this->logger->Log ("$this->uname ($this->memberName) tried to log in, got permissions ".print_r($perms, true), 4);
+//            $this->logger->Log ("$this->uname ($this->memberName) tried to log in, got permissions ".print_r($perms, true), 4);
 
             if (isset($perms['Developer']) && $perms['Developer'] && isset($su)) {
                 global $SecurityLogger;
