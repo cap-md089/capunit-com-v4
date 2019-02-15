@@ -7,6 +7,19 @@
 				return ['error' => 411];
 			}
 
+//use this URL to download 101 card information
+//https://www.capnhq.gov/CAP.OPSQuals.Web/EmergencyServices/101Card.aspx
+
+//    card legend info
+//    &infin;</div>Indicates Does Not Expire</div>
+//    &diams;</div>Indicates Skills Evaluator</div>
+//    *</div>Indicates Supervised Trainee Status</div>
+//    **</div>Indicates NIMS Training Incomplete</div>
+//    +</div>Indicates Aircraft Ground Handling Incomplete</div>
+
+//use this URL to download photo
+//https://www.capnhq.gov/images/thumb/421170.jpg
+
 
                         $cid = $m->capid;
                         $ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
@@ -39,16 +52,17 @@
 
 			$rectx = 0.375;
 			$recty = 3;
-			$rectw = 2.25;
-			$recth = 3.5;
+			$rectw = 2.13;
+			$recth = 3.36;
 			$pdf->Rect($rectx, $recty, $rectw, $recth);
 
 			//Page Title
-			$pdf->Cell(0,.3,"ID Card",0,1,"C");
+//			$pdf->Cell(0,.3,"ID Card",0,1,"C");
 			//Set text font
 			$pdf->SetFont('Arial','',11);
 			//insert CAP logo in upper left corner
-			$imagex=0.4; $imagey=3.4; $imagew=1.2; $imageh=0;
+			$pdf->Text(0.8, 3.2, "ID Card");
+			$imagex=0.4; $imagey=3.4; $imagew=0.6; $imageh=0;
 			$pdf->Image(BASE_DIR.'images/CAP_Seal_Monochrome.png',$imagex,$imagey,$imagew,$imageh);
 
 			$pdf->Output();

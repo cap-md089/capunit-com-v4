@@ -155,12 +155,12 @@
 				$pdf->SetFont('Arial','B',9);
 				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
 				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.8;
-				$wGeo = 1.0;  $wDuty = 0.9;
+				$wGeo = 1.0;  $wDuty = 1.4;
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
-				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
+//				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
 				$pdf->Cell($wCell,$cellHeight,"PriCell",$border,0,"L",$fillState);
@@ -190,9 +190,9 @@
 					$pdf->SetFont('Arial',$bolder,9);
 					$pdf->Cell($wUnit,$cellHeight,$datum['FullUnit'],$border,0,"C",$fillState);
 					$pdf->SetFont('Arial','',9);
-					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
-					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
-					$border = 0;
+//					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
+//					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
+//					$border = 0;
 					$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
 					$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
 					$pdf->Cell($wCell,$cellHeight,$datum['PriCell'],$border,0,"L",$fillState);
@@ -211,12 +211,12 @@
 				$pdf->SetFont('Arial','B',9);
 				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
 				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.8;
-				$wGeo = 1.0;  $wDuty = 0.9;
+				$wGeo = 1.0;  $wDuty = 1.4;
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
-				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
+//				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
 //				$pdf->Cell($wFlight,$cellHeight,"Flight",$border,0,"L",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
@@ -247,9 +247,9 @@
 					$pdf->SetFont('Arial',$bolder,9);
 					$pdf->Cell($wUnit,$cellHeight,$datum['FullUnit'],$border,0,"C",$fillState);
 					$pdf->SetFont('Arial','',9);
-					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
-					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
-					$border = 0;
+//					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
+//					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
+//					$border = 0;
 //					$pdf->Cell($wFlight,$cellHeight,$datum['Flight'],$border,0,"L",$fillState);
 					$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
 					$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
