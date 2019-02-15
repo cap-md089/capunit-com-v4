@@ -6,4 +6,8 @@
 	$_ACCOUNT = new Account('mdx89');
 	$mem = Member::Create('542488', 'app/xPHP091101');
 
-	print_r($mem->get101Card());
+	echo json_encode($mem->get101Card(542488), JSON_PRETTY_PRINT);
+	echo "\n";
+	$lang = $mem->get101Card(421170);
+	echo json_encode($lang, JSON_PRETTY_PRINT);
+	echo "\n" . $lang['driversLicense']['expires'];

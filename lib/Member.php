@@ -40,6 +40,15 @@
         return (rtrim($rkey));
     }
 
+	// I didn't like getting text of elements
+	function getEText ($e, $i) {
+		return str_replace([" ", "\n", "\r"], "", Util_Collection::GetTextOfElement($e->item($i)));
+	}
+	function getEText3 ($e) {
+		return Util_Collection::GetTextOfElement($e);
+	}
+
+
     /**
      * This generates a Member, a user with a name, rank, contact set, access levels, etc
      */
@@ -375,10 +384,6 @@
                     }
 
                     $trs = $table->getElementsByTagName("tr");
-                    // I didn't like getting text of elements
-                    function getEText ($e, $i) {
-                        return str_replace([" ", "\n", "\r"], "", Util_Collection::GetTextOfElement($e->item($i)));
-                    }
 
                     $l = $trs->length;
                     for ($i = 1; $i < $l; $i++) {
@@ -1254,7 +1259,198 @@
 		}
 
 		public function get101Card (int $id) {
-			
+            $url = "https://www.capnhq.gov/CAP.OPSQuals.Web/EmergencyServices/101Card.aspx";
+            
+            $ch = new MyCURL();
+
+            $ch->setOpts (array (
+                CURLOPT_HTTPHEADER => [
+                    'Host: www.capnhq.gov',
+                    'User-Agent: Mozilla/5.0 (compatible; EventManagementLoginBot/2.1)',
+                    'Accept: */*',
+                    'Accept-Language: en-US,en;q=0.5',
+                    'Accept-Encoding: gzip, deflate, br',
+                    'Referer: https://www.capnhq.gov/cap.capwatch.web/Default.aspx',
+                    'Connection: keep-alive',
+                    'Content-Type: application/json',
+                    'Cookie: '.$this->cookieData
+                ],
+            ), false);
+
+			$data = $ch->download($url);
+
+            $_ = $data["body"];
+
+            $payload = array (
+                // Fake a form submit, submitting all fields a browser sends (including the submit button)
+                "__LASTFOCUS" => "",
+				'ctl00_LeftNavigationMenu_ExpandState' => 'ennnnnenenenennnennnnnnnnenenenenenenn',
+				'ctl00_LeftNavigationMenu_SelectedNode' => 'ctl00_LeftNavigationMenun13',
+                "__EVENTTARGET" => 'ctl00$MainContentPlaceHolder$pchooser$searchBox',
+                "__EVENTARGUMENT" => "",
+				'ctl00_LeftNavigationMenu_PopulateLog' => '',
+                "__VIEWSTATE" => _g($_, "__VIEWSTATE"),
+                "__VIEWSTATEGENERATOR" => _g($_, "__VIEWSTATEGENERATOR"),
+				'ctl00$MainContentPlaceHolder$pchooser$searchBox' => $id
+            );
+
+            $fields_string = ''; // Convert an associative array to a query string
+            foreach ($payload as $key=>$value) {
+                $fields_string .= urlencode($key)."=". urlencode($value) . "&";
+            }
+            $fields_string = rtrim($fields_string, "&");
+
+			$ch = new MyCURL();
+
+            $ch->setOpts (array (
+                CURLOPT_POST => count($payload),
+                CURLOPT_POSTFIELDS => $fields_string,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTPHEADER => [ // Required headers aren't known, this just sends all headers a browser
+                    // sends (with a modified user-agent)
+                    'Host: www.capnhq.gov',
+                    'User-Agent: EventManagementLoginBot/2.0',
+                    'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*,q=0.8',
+                    'Accept-Language: en-US,en;q=0.5',
+                    'Accept-Encoding: gzip, deflate, br',
+                    'Connection: keep-alive',
+                    'Upgrade-Insecure-Requests: 1',
+					'Cookie: ' . $this->cookieData
+                ],
+            ), false);
+
+			$result = $ch->download($url);
+
+			$h = UtilCollection::ParseHTML($result['body']);
+
+			$back = $h->getElementByID("divCardBack");
+
+			$name = getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_divName'));
+			$unit = str_replace("Unit: ", "", getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_divUnit')));
+			$height = (int)str_replace(" in", "", getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnHeight')));
+			$weight = (int)str_replace(" lbs", "", getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnWeight')));
+			$eyes = getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnEyeColor'));
+			$hair = getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnHair'));
+			$driversLicenseEl = $h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_divDriversLicense');
+			$driversLicense = $driversLicenseEl == null ? null : getEText3($driversLicenseEl);
+			if ($driversLicense != null && isset($driversLicense)) {
+				$qualName = str_replace(
+					[
+						json_decode('"\u2666"'),
+						json_decode('"\u221e"'),
+						"*",
+						"+",
+						"Not Active",
+						"\r",
+						"\n",
+						"diams;",
+						"infin;"
+					],
+					"",
+					preg_replace(
+						"/\d{1,2}\/\d{1,2}\/\d\d/",
+						"",
+						$driversLicense
+					)
+				);
+
+				$expires = '';
+
+				$results = [];
+				if (preg_match(
+					"/\d{1,2}\/\d{1,2}\/\d\d/",
+					$driversLicense,
+					$results
+				)) {
+					$expires = $results[0];
+				}
+
+				$driversLicense = [
+					'details' => $qualName,
+					'expires' => $expires
+				];
+			}
+
+			$quals = [];
+
+			$allDivs = $h->getElementByID('divCardMbrAchvs')->getElementsByTagName('div');
+
+			foreach ($allDivs as $div) {
+				if (
+					isset($div->attributes) &&
+					$div->attributes->getNamedItem('class') != null &&
+					$div->attributes->getNamedItem('class')->value != null &&
+					$div->attributes->getNamedItem('class')->value == 'cardAchvs'
+				) {
+					$text = getEText3($div);
+					
+					$dne = preg_match("/\x{221e}/u", $text) == 1;
+					$evaluator = preg_match("/\x{2666}/u", $text) == 1;
+					$nims = preg_match("/\*\*/", $text) == 1;
+					$supervised = $nims ? false : preg_match("/\*/", $text) == 1;
+					$aircraft = preg_match("/\+/", $text) == 1;
+					$notActive = preg_match("/Not Active/", $text) == 1;
+
+					$qualName = str_replace(
+						[
+							json_decode('"\u2666"'),
+							json_decode('"\u221e"'),
+							"*",
+							"+",
+							"Not Active",
+							" ",
+							"\r",
+							"\n",
+							"diams;",
+							"infin;"
+						],
+						"",
+						preg_replace(
+							"/\d{1,2}\/\d\d/",
+							"",
+							$text
+						)
+					);
+
+					$expires = '';
+
+					$results = [];
+					if (preg_match(
+						"/\d{1,2}\/\d\d/",
+						$text,
+						$results
+					)) {
+						$expires = $results[0];
+					}
+
+					$quals[] = [
+						'expires' => (
+							($notActive || $supervised) ? null : (
+								$dne ? false : $expires
+							)
+						),
+						'evaluator' => $evaluator,
+						'nims' => $nims,
+						'supervised' => $supervised,
+						'aircraft' => $aircraft,
+						'active' => !($notActive || $supervised),
+
+						'name' => $qualName
+					];
+				}
+			}
+
+			return [
+				'name' => $name,
+				'unit' => $unit,
+				'CAPID' => $id,
+				'height' => $height,
+				'weight' => $weight,
+				'eyes' => $eyes,
+				'hair' => $hair,
+				'quals' => $quals,
+				'driversLicense' => $driversLicense
+			];
 		}
 
 		public function getTest101Card (int $id) {
@@ -1279,7 +1475,7 @@
 						'evaluator' => false
 					]
 				],
-				'DriversLicense' => null
+				'driversLicense' => null
 			];
 		}
 
@@ -1379,8 +1575,6 @@
 
             $url = "https://www.capnhq.gov/CAP.CapWatchAPI.Web/api/cw";
             
-            $ch = new MyCURL();
-
             $payload = array (
                 "wa" => "true",
                 "unitOnly" => "0",

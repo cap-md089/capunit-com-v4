@@ -1,5 +1,5 @@
 interface Qualification {
-	dne: boolean;
+	expires: boolean | string | null; // MM/YY
 	evaluator: boolean;
 	supervised: boolean;
 	nims: boolean;
@@ -19,5 +19,8 @@ interface Card {
 	hair: string;
 
 	quals: Qualification[];
-	DriversLicense: string | null;
+	driversLicense: {
+		expires: string;
+		details: string;
+	};
 }
