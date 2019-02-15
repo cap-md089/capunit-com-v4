@@ -1204,6 +1204,36 @@
 			return $ret;
 		}
 
+		public function get101Card (int $id) {
+			
+		}
+
+		public function getTest101Card (int $id) {
+			return [
+				'name' => 'Andrew Rioux',
+				'unit' => 'MER-MD-089',
+				'CAPID' => 542488,
+				'height' => 68,
+				'weight' => 143,
+				'eyes' => 'Blue',
+				'hair' => '',
+
+				'quals' => [
+					[
+						'name' => 'GES',
+						'dne' => false,
+						'active' => false,
+						'nims' => false,
+						'aircraft' => false,
+						'evaluator' => false,
+						'supervised' => false,
+						'evaluator' => false
+					]
+				],
+				'DriversLicense' => null
+			];
+		}
+
         /**
          * Gets all email addresses for a member
          *
