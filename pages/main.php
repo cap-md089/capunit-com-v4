@@ -262,7 +262,7 @@ rightsection;
             }
 
 			$pdo = DBUtils::CreateConnection();
-            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND Activity LIKE '%Recurring Meeting%' LIMIT 1;");
+            $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND Activity LIKE '%Squadron Meeting%' LIMIT 1;");
             $stmt->bindValue (':now', time());
 			$stmt->bindValue (':aid', $a->id);
             $event = DBUtils::ExecutePDOStatement($stmt);
