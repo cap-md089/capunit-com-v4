@@ -59,8 +59,8 @@
 			return "Member Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
 		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-			VN::$vals = $m; 
-			
+			VN::$vals = $m;
+
 			$stmt = $pdo->prepare("DELETE FROM Import_Member WHERE CAPID=:cid;");
 			$stmt->bindValue(':cid', $m[0]);
 			if (!$stmt->execute()) {
@@ -68,10 +68,12 @@
 				return "Member Delete NOT ORGID error".$stmt->errorInfo()[2];
 			}
 
-			$stmt = $pdo->prepare("INSERT INTO Import_Member VALUES (:cid, :nlast, :nfirst, :nmid, :nsuf, 
+			$stmt = $pdo->prepare("REPLACE INTO Import_Member VALUES (:ts, :src, :cid, :nlast, :nfirst, :nmid, :nsuf, 
 				:gen, :birthdte, :prof, :edu, :citi, :orgid, :wing, :unit, :rank, :joindte, :expdte, :orgjoindte, :usrid,
 				:moddte, :lsc, :type, :rdte, :reg, :mstat, :pstat, :waiv);");
 
+			$stmt->bindValue(':ts', time());
+			$stmt->bindValue(':src', "C");
 			$stmt->bindValue(':cid', VN::g('CAPID'));
 			$stmt->bindValue(':nlast', VN::g('NameLast'));
 			$stmt->bindValue(':nfirst', VN::g('NameFirst'));
@@ -108,7 +110,7 @@
 			}
 		}
 		unlink("$dir/$id-$member->capid-Member.txt");
-	
+
 		//Import MbrContact.txt file
 		flog ("Processing MbrContact");
 		$last_line=system("unzip -op $fname MbrContact.txt > $dir/$id-$member->capid-MbrContact.txt",$retval);
@@ -139,7 +141,7 @@
 			return "MbrContact Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
 		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-			VN::$vals = $m; 
+			VN::$vals = $m;
 
 			$stmt = $pdo->prepare("DELETE FROM Import_MbrContact WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -171,7 +173,7 @@
 			}
 		}
 		unlink("$dir/$id-$member->capid-MbrContact.txt");
-	
+
 		//Import CadetDutyPositions.txt file
 		flog ("Processing CadetDutyPositions");
 		$last_line=system("unzip -op $fname CadetDutyPositions.txt > $dir/$id-$member->capid-CadetDutyPositions.txt",$retval);
@@ -410,7 +412,7 @@
 			return "CadetAchvAprs Delete ORGID error: ".$stmt->errorInfo()[2];
 		}
 		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
-			VN::$vals = $m; 
+			VN::$vals = $m;
 
 			$stmt = $pdo->prepare("DELETE FROM Data_CadetAchvAprs WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
 			$stmt->bindValue(':cid', $m[0]);
@@ -447,7 +449,7 @@
 		}
 		unlink("$dir/$id-$member->capid-CadetAchvAprs.txt");
 
-		
+
 		//only import the organization files if the form checkbox is set
 		if($importOrgs == "true") {
 			//Import Organization.txt file
@@ -654,6 +656,6 @@
 
 		//clean up
 		unlink("$fname");
-		
+
 		return 0;
 	}

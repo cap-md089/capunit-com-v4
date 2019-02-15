@@ -442,9 +442,11 @@
                 }
                 if (count($data) != 1) {
                     //insert new row
-                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES";
-                    $stmt .= "(:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc, ";
-                    $stmt .= ":sfx, :gender, :mtype, :rdte, :exp);");
+//                    $stmt = $pdo->prepare("INSERT INTO ".DB_TABLES["SignInData"]." VALUES (:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc);");
+                    $sqlstmt = "INSERT INTO ".DB_TABLES["SignInData"]." VALUES ";
+                    $sqlstmt .= "(:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :contacts, :raw, :sqn, :coc, ";
+                    $sqlstmt .= ":sfx, :gender, :mtype, :rdte, :exp);";
+                    $stmt = $pdo->prepare($sqlstmt);
                     $stmt->bindValue(':cid', $m->capid);
                     $stmt->bindValue(':aid', $account->id);
                     $stmt->bindValue(':time', $newTime);
@@ -457,11 +459,15 @@
                     $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
-                    $stmt->bindValue(':sfx', $s);
-                    $stmt->bindValue(':gender', $gender);
-                    $stmt->bindValue(':mtype', $memberType);
-                    $stmt->bindValue(':rdte', $rankDate);
-                    $stmt->bindValue(':exp', $expiration);
+                    $stmt->bindValue(':sfx', $s->getAttribute("value"));
+                    $stmt->bindValue(':gender', $gender->getAttribute("value"));
+                    $stmt->bindValue(':mtype', $memberType->getAttribute("value"));
+//                    $rdval = $rankDate->getAttribute("value");
+  //                  $exval = $expiration->getAttribute("value");
+                    $rdval = strtotime($rankDate->getAttribute("value"));
+                    $exval = strtotime($expiration->getAttribute("value"));
+                    $stmt->bindValue(':rdte', $rdval);
+                    $stmt->bindValue(':exp', $exval);
 
 
                     // $logger->Log("$m->uname inserting with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
@@ -480,6 +486,7 @@
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
                     $sql .= "MemberName=:mname, MemberNameLast=:last, MemberNameFirst=:first, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, ";
+//                    $sql .= "Squadron=:sqn, ChainOfCommand=:coc WHERE CAPID=:cid AND AccountID=:aid;";
                     $sql .= "Squadron=:sqn, ChainOfCommand=:coc, NameSuffix=:sfx, Gender=:gender, Type=:mtype, RankDate=:rdte, Expiration=:exp ";
                     $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
@@ -495,11 +502,13 @@
                     $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
                     $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
-                    $stmt->bindValue(':sfx', $s);
-                    $stmt->bindValue(':gender', $gender);
-                    $stmt->bindValue(':mtype', $memberType);
-                    $stmt->bindValue(':rdte', $rankDate);
-                    $stmt->bindValue(':exp', $expiration);
+                    $stmt->bindValue(':sfx', $s->getAttribute("value"));
+                    $stmt->bindValue(':gender', $gender->getAttribute("value"));
+                    $stmt->bindValue(':mtype', $memberType->getAttribute("value"));
+                    $rdval = strtotime($rankDate->getAttribute("value"));
+                    $exval = strtotime($expiration->getAttribute("value"));
+                    $stmt->bindValue(':rdte', $rdval);
+                    $stmt->bindValue(':exp', $exval);
                     // $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
@@ -510,12 +519,52 @@
                         $logger->Warn("$m->uname couldn't update SignInData due to exception, ".$e->getMessage(), 2);
                     }
 
-
-                    //need to insert member data into Data_Member table?
-
-
-
                 }
+                    //explode squadron
+                    $unit=explode("-", $m->Squadron);
+
+                    //insert member data into Data_Member table
+                    $sqlin = "INSERT INTO EventManagement.Data_Member ";
+                    $sqlin .= "(Timestamp, DataSource, CAPID, NameLast, NameFirst, NameMiddle, NameSuffix, Gender, ORGID, Wing, UNIT, ";
+                    $sqlin .= "Rank, Expiration, Type, RankDate, Region) VALUES ";
+                    $sqlin .= "(:ts, :src, :cid, :nlast, :nfirst, :nmid, :nsuf, :gen, :orgid, :wing, :unit, :rank, :expdte, :type, :rdte, :reg) ";
+                    $sqlin .= "ON DUPLICATE KEY UPDATE Timestamp = :ts, DataSource = :src, NameLast = :nlast, NameFirst = :nfirst, ";
+                    $sqlin .= "NameMiddle = :nmid, NameSuffix = :nsuf, Gender = :gen, ORGID = :orgid, Wing = :wing, ";
+                    $sqlin .= "UNIT = :unit, Rank = :rank, Expiration = :expdte, Type = :type, RankDate = :rdte, Region = :reg;";
+                    $stmt = $pdo->prepare($sqlin);
+                    $stmt->bindValue(':ts', time());
+                    $stmt->bindValue(':src', "S");
+                    $stmt->bindValue(':cid', $m->capid);
+                    $stmt->bindValue(':nlast', $m->lastName);
+                    $stmt->bindValue(':nfirst', $m->firstName);
+                    $stmt->bindValue(':nmid', $mn->getAttribute("value"));
+                    $stmt->bindValue(':nsuf', $s->getAttribute("value"));
+                    $stmt->bindValue(':gen', $gender->getAttribute("value"));
+                    $stmt->bindValue(':orgid', UtilCollection::GetOrgIDFromUnit($m->Squadron));
+                    $stmt->bindValue(':wing', $unit[1]);
+                    $stmt->bindValue(':unit', $unit[2]);
+                    $stmt->bindValue(':rank', $m->memberRank);
+                    $stmt->bindValue(':expdte', strtotime($expiration->getAttribute("value")));
+                    $stmt->bindValue(':type', $memberType->getAttribute("value"));
+                    $stmt->bindValue(':rdte', strtotime($rankDate->getAttribute("value")));
+                    $stmt->bindValue(':reg', $unit[0]);
+
+                    try {
+                        if (!$stmt->execute()) {
+                            $logger->Warn("$m->uname couldn't execute update Data_Member, ". var_export($stmt->errorInfo(), true), 3);
+                        }
+                        $logger->Log("$m->uname update Data_Member", 4);
+                    } catch (PDOException $e) {
+                        $logger->Warn("$m->uname couldn't update Data_Member due to exception, ".$e->getMessage(), 2);
+                    }
+
+
+
+
+
+
+//                    $stmt->execute();
+
 
             }
 
