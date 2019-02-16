@@ -11,3 +11,5 @@
 	$lang = $mem->get101Card(421170);
 	echo json_encode($lang, JSON_PRETTY_PRINT);
 	echo "\n" . $lang['driversLicense']['expires'];
+
+	file_put_contents('/home/arioux/542488.jpg', $mem->download101Image(542488));
