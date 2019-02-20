@@ -233,6 +233,12 @@ function idFront_prepush(a, data) {
     return false;
 }
 
+function idBack_prepush(a, data) {
+    window.open('/idcardback/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 addFunction(function() {
     if (window.location.pathname.split("/")[1] != 'admin') {
         return true;

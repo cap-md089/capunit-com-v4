@@ -65,7 +65,10 @@ EOD;
 		if ($m->hasPermission("Developer")) {
 			$t++;
 			$l1 = (new AsyncButton('participationview', 'Download Participation Visualization', 'participationView'))->getHtml($m->capid);
+			$html .= "$l1<br />";
 			$l1 = (new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront'))->getHtml($m->capid);
+			$html .= "$l1<br />";
+			$l1 = (new AsyncButton('idcardback', 'Download ID Card Back', 'idBack'))->getHtml($m->capid);
 			$html .= "$l1<br />";
 		}
 		if ($m->hasPermission("DownloadStaffGuide")) {
