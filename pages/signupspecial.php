@@ -170,21 +170,13 @@
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
 				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
-<<<<<<< HEAD
 				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
-=======
-				$pdf->Cell($wCell,$cellHeight,"Email",$border,0,"L",$fillState);
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 
 				$pdf->SetFont('Arial','',$textFontSize);
 				$pdf->SetFillColor(210);
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$alternator=0;
-<<<<<<< HEAD
 				foreach($memberData as $datum) {
-=======
-				foreach($seniorData as $datum) {
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 					$member = Member::Estimate($datum['CAPID']);
 					if($member->seniorMember) {
 						if(!$alternator) {
@@ -195,15 +187,10 @@
 							$alternator = 0;
 						}
 
-<<<<<<< HEAD
-=======
-						$expireDate = date('Y-m-d',$datum['Expiration']);
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 						$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
 						$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
 						$bolder = 'B';
 						foreach($orgs as $org) {
-<<<<<<< HEAD
 							if($member->Squadron==$org) {$bolder = '';}
 						}
 						$pdf->SetFont('Arial',$bolder,$textFontSize);
@@ -216,20 +203,6 @@
 						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
 						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
 						$pdf->SetFont('Arial','',$textFontSize);
-=======
-							if($datum['ORGID']==$org) {$bolder = '';}
-						}
-						$pdf->SetFont('Arial',$bolder,9);
-						$pdf->Cell($wUnit,$cellHeight,$datum['FullUnit'],$border,0,"C",$fillState);
-						$pdf->SetFont('Arial','',9);
-//						if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
-//						$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
-//						$border = 0;
-						$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
-						$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 					}
 				}
 
@@ -253,22 +226,13 @@
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
 				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
-<<<<<<< HEAD
 				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
-=======
-//				$pdf->Cell($wCell,$cellHeight,"SecCell",$border,0,"L",$fillState);
-				$pdf->Cell($wCell,$cellHeight,"Email",$border,1,"L",$fillState);
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 
 				$pdf->SetFont('Arial','',$textFontSize);
 				$pdf->SetFillColor(210);
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$alternator=0;
-<<<<<<< HEAD
 				foreach($memberData as $datum) {
-=======
-				foreach($cadetData as $datum) {
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 					$member = Member::Estimate($datum['CAPID']);
 					if(!$member->seniorMember) {
 						if(!$alternator) {
@@ -279,16 +243,10 @@
 							$alternator = 0;
 						}
 
-<<<<<<< HEAD
-//						$expireDate = date('Y-m-d',$datum['Expiration']);
-=======
-						$expireDate = date('Y-m-d',$datum['Expiration']);
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 						$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
 						$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
 						$bolder = 'B';
 						foreach($orgs as $org) {
-<<<<<<< HEAD
 							if($member->Squadron==$org) {$bolder = '';}
 						}
 						$pdf->SetFont('Arial',$bolder,9);
@@ -301,21 +259,6 @@
 						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
 						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
 						$pdf->SetFont('Arial','',$textFontSize);
-=======
-							if($datum['ORGID']==$org) {$bolder = '';}
-						}
-						$pdf->SetFont('Arial',$bolder,9);
-						$pdf->Cell($wUnit,$cellHeight,$datum['FullUnit'],$border,0,"C",$fillState);
-						$pdf->SetFont('Arial','',9);
-//						if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
-//						$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
-//						$border = 0;
-//						$pdf->Cell($wFlight,$cellHeight,$datum['Flight'],$border,0,"L",$fillState);
-						$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
-						$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
->>>>>>> 872c9f181aaaf2ea7b8c0e3cc78d962b26898815
 					}
 				}
 
