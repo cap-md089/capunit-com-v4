@@ -37,11 +37,19 @@
 			$tblAtt = DB_TABLES['SpecialAttendance'];
 			$tblEvt = DB_TABLES['EventInformation'];
 
-			$sql = "Call getSpecialAttendance(:aid, :eid)";
+			$sql = "Call SignUpSpecial(:aid, :eid, :cadet)";
 			$stmt = $pdo->prepare($sql);
 			$stmt->bindValue(':aid', $a->id);
 			$stmt->bindValue(':eid', $event->EventNumber);
-			$memberData = DBUtils::ExecutePDOStatement($stmt);
+			$stmt->bindValue(':cadet', 1);
+			$cadetData = DBUtils::ExecutePDOStatement($stmt);
+
+			$sql = "Call SignUpSpecial(:aid, :eid, :cadet)";
+			$stmt = $pdo->prepare($sql);
+			$stmt->bindValue(':aid', $a->id);
+			$stmt->bindValue(':eid', $event->EventNumber);
+			$stmt->bindValue(':cadet', 0);
+			$seniorData = DBUtils::ExecutePDOStatement($stmt);
 
 			$unitSql = "SELECT Accounts.UnitID, Data_Organization.Region, Data_Organization.Wing, ";
 			$unitSql .= "Data_Organization.Unit, Data_Organization.Name FROM Accounts ";
@@ -53,11 +61,11 @@
 			$unitData = DBUtils::ExecutePDOStatement($stmt);
 
 			//merge sign-in data into member tables
-//			$sqlSignin = "SELECT SignInData.* FROM SignInData WHERE SignInData.CAPID NOT IN ";
-//			$sqlSignin .= "(SELECT Data_Member.CAPID FROM Data_Member) ";
-//			$sqlSignin .= "ORDER BY SignInData.LastAccessTime DESC;";
-//			$stmtSignin = $pdo->prepare($sqlSignin);
-//			$mergeData = DBUtils::ExecutePDOStatement($stmtSignin);
+			$sqlSignin = "SELECT SignInData.* FROM SignInData WHERE SignInData.CAPID NOT IN ";
+			$sqlSignin .= "(SELECT Data_Member.CAPID FROM Data_Member) ";
+			$sqlSignin .= "ORDER BY SignInData.LastAccessTime DESC;";
+			$stmtSignin = $pdo->prepare($sqlSignin);
+			$mergeData = DBUtils::ExecutePDOStatement($stmtSignin);
 
 			$filename = "SignUpRoster.pdf";
 			header('Content-disposition: attachment; filename="'.$filename.'"');
@@ -107,7 +115,7 @@
 			$boxSize = $pdf->GetStringWidth($title)+0.2;
 			$pdf->Cell($boxSize,$linespace,$title,0,0);
 			$pdf->SetFont('Arial','',11);
-			$pdf->MultiCell(0,$linespace,$event->Uniform,0,1);
+			$pdf->Cell(0,$linespace,$event->Uniform,0,1);
 			$pdf->Cell($spacer,$linespace,"",0,0);
 			$pdf->SetFont('Arial','B',11);
 			$title = "Activity: ";
@@ -122,6 +130,7 @@
 			$firstUnit="";
 			$orgs=[];
 			foreach($unitData as $units) {
+				array_push($orgs, $units['UnitID']);
 				if(!$firstUnit) {
 					$firstUnit=$units['Region']."-".$units['Wing'];
 					$unitString=$firstUnit."-".$units['Unit'];
@@ -134,76 +143,61 @@
 					}
 					$unitName .= "/".$units['Name'];
 				}
-				array_push($orgs, $firstUnit."-".$units['Unit']);
 			}
 			$pdf->SetFont('Arial','B',9);
 			$pdf->Cell(0,.3,$unitString."    ".$unitName,0,1);
 
-			$seniorCount=0;
-			$cadetCount=0;
-
-			function compareLastFirst($a, $b) {
-				return strcmp($a['NameLast'].$a['NameFirst'], $b['NameLast'].$b['NameFirst']);
-			}
-			usort($memberData, 'compareLastFirst');
-
-			foreach($memberData as $datum) {
-				if(substr($datum['MemberRankName'],0,2) == "C/") {$cadetCount++;
-				} elseif (substr($datum['MemberRankName'],0,5) == "CADET") {$cadetCount++;
-				} else {$seniorCount++;}
-			}
 
 			//insert senior member information
-			if($seniorCount>0) {
-				$titleFontSize = 10;  $textFontSize = 9;
-				$s = "";  if($seniorCount>1) {$s = "s";}
-				$pdf->SetFont('Arial','B',$titleFontSize);
-				$pdf->Cell(0,.3,"[".$seniorCount."] Senior Member".$s,0,1,"C");
-				$pdf->SetFont('Arial','B',$textFontSize);
+			if(count($seniorData)>0) {
+				$pdf->SetFont('Arial','B',10);
+				$pdf->Cell(0,.3,"Senior Members",0,1,"C");
+				$pdf->SetFont('Arial','B',9);
 				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
-				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.9;  $wEmail = 1.5;
-				$wGeo = 0.9;  $wDuty = 1.4;
+				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.8;
+				$wGeo = 1.0;  $wDuty = 1.4;
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
+//				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
-				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
-				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"PriCell",$border,0,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"SecCell",$border,0,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"Emergency",$border,1,"L",$fillState);
 
-				$pdf->SetFont('Arial','',$textFontSize);
+				$pdf->SetFont('Arial','',9);
 				$pdf->SetFillColor(210);
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$alternator=0;
-				foreach($memberData as $datum) {
-					$member = Member::Estimate($datum['CAPID']);
-					if($member->seniorMember) {
-						if(!$alternator) {
-							$fillState = false;
-							$alternator = 1;
-						} else {
-							$fillState = true;
-							$alternator = 0;
-						}
-
-						$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
-						$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
-						$bolder = 'B';
-						foreach($orgs as $org) {
-							if($member->Squadron==$org) {$bolder = '';}
-						}
-						$pdf->SetFont('Arial',$bolder,$textFontSize);
-						$pdf->Cell($wUnit,$cellHeight,$member->Squadron,$border,0,"C",$fillState);
-						$pdf->SetFont('Arial','',$textFontSize);
-						$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
-						$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
-						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
-						$pdf->SetFont('Arial','',$textFontSize);
+				foreach($seniorData as $datum) {
+					if(!$alternator) {
+						$fillState = false;
+						$alternator = 1;
+					} else {
+						$fillState = true;
+						$alternator = 0;
 					}
+
+					$expireDate = date('Y-m-d',$datum['Expiration']);
+					$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
+					$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
+					$bolder = 'B';
+					foreach($orgs as $org) {
+						if($datum['ORGID']==$org) {$bolder = '';}
+					}
+					$pdf->SetFont('Arial',$bolder,9);
+					$pdf->Cell($wUnit,$cellHeight,$datum['FullUnit'],$border,0,"C",$fillState);
+					$pdf->SetFont('Arial','',9);
+//					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
+//					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
+//					$border = 0;
+					$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
+					$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
+					$pdf->Cell($wCell,$cellHeight,$datum['PriCell'],$border,0,"L",$fillState);
+					$pdf->Cell($wCell,$cellHeight,$datum['SecCell'],$border,0,"L",$fillState);
+					$pdf->Cell($wCell,$cellHeight,$datum['EmgCell'],$border,1,"L",$fillState);
 				}
 
 			}  //end of print senior data section
@@ -211,56 +205,57 @@
 
 			$pdf->Cell($spacer,$linespace,"",0,1);
 			//insert cadet member information
-			if($cadetCount>0) {
-				$s = "";  if($cadetCount>1) {$s = "s";}
-				$pdf->SetFont('Arial','B',$titleFontSize);
-				$pdf->Cell(0,.3,"[".$cadetCount."] Cadet Member".$s,0,1,"C");
-				$pdf->SetFont('Arial','B',$textFontSize);
+			if(count($cadetData)>0) {
+				$pdf->SetFont('Arial','B',10);
+				$pdf->Cell(0,.3,"Cadet Members",0,1,"C");
+				$pdf->SetFont('Arial','B',9);
 				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
-				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.9;  $wEmail = 1.5;
-				$wGeo = 0.9;  $wDuty = 1.4;
+				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.8;
+				$wGeo = 1.0;  $wDuty = 1.4;
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
+//				$pdf->Cell($wExpiration,$cellHeight,"Expiration",$border,0,"L",$fillState);
+//				$pdf->Cell($wFlight,$cellHeight,"Flight",$border,0,"L",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
-				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
-				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"PriCell",$border,0,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"SecCell",$border,0,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"Emergency",$border,1,"L",$fillState);
 
-				$pdf->SetFont('Arial','',$textFontSize);
+				$pdf->SetFont('Arial','',9);
 				$pdf->SetFillColor(210);
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$alternator=0;
-				foreach($memberData as $datum) {
-					$member = Member::Estimate($datum['CAPID']);
-					if(!$member->seniorMember) {
-						if(!$alternator) {
-							$fillState = false;
-							$alternator = 1;
-						} else {
-							$fillState = true;
-							$alternator = 0;
-						}
-
-//						$expireDate = date('Y-m-d',$datum['Expiration']);
-						$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
-						$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
-						$bolder = 'B';
-						foreach($orgs as $org) {
-							if($member->Squadron==$org) {$bolder = '';}
-						}
-						$pdf->SetFont('Arial',$bolder,9);
-						$pdf->Cell($wUnit,$cellHeight,$member->Squadron,$border,0,"C",$fillState);
-						$pdf->SetFont('Arial','',9);
-						$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
-						$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
-						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
-						$pdf->SetFont('Arial','',$textFontSize);
+				foreach($cadetData as $datum) {
+					if(!$alternator) {
+						$fillState = false;
+						$alternator = 1;
+					} else {
+						$fillState = true;
+						$alternator = 0;
 					}
+
+					$expireDate = date('Y-m-d',$datum['Expiration']);
+					$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
+					$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
+					$bolder = 'B';
+					foreach($orgs as $org) {
+						if($datum['ORGID']==$org) {$bolder = '';}
+					}
+					$pdf->SetFont('Arial',$bolder,9);
+					$pdf->Cell($wUnit,$cellHeight,$datum['FullUnit'],$border,0,"C",$fillState);
+					$pdf->SetFont('Arial','',9);
+//					if($datum['Expiration'] <= time()+(60*60*24*30)) {$border = "TBLR";}
+//					$pdf->Cell($wExpiration,$cellHeight,$expireDate,$border,0,"L",$fillState);
+//					$border = 0;
+//					$pdf->Cell($wFlight,$cellHeight,$datum['Flight'],$border,0,"L",$fillState);
+					$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
+					$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
+					$pdf->Cell($wCell,$cellHeight,$datum['PriCell'],$border,0,"L",$fillState);
+					$pdf->Cell($wCell,$cellHeight,$datum['SecCell'],$border,0,"L",$fillState);
+					$pdf->Cell($wCell,$cellHeight,$datum['EmgCell'],$border,1,"L",$fillState);
 				}
 
 			}  //end of print cadet data section

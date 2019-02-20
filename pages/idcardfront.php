@@ -42,28 +42,28 @@
 			$pdf->AliasNbPages();
 			$pdf->SetTitle("ID Front");
 			$pdf->AddPage();
-			$pdf->SetMargins(0.25,0.25,0.25);
+//			$pdf->SetMargins(0.25,0.25,0.25);
 			$pdf->SetAutoPageBreak('true',0.5);
 			//Set Title font
 			$pdf->SetFont('Arial','B',14);
 			$pdf->SetTextColor(0);
-			$pdf->SetFillColor(0);
 			$pdf->SetFillColor(0);
 
 			$rectx = 0.375;
 			$recty = 3;
 			$rectw = 2.13;
 			$recth = 3.36;
-			$pdf->Rect($rectx, $recty, $rectw, $recth);
+//			$pdf->Rect($rectx, $recty, $rectw, $recth);
 
 			//Page Title
 //			$pdf->Cell(0,.3,"ID Card",0,1,"C");
 			//Set text font
-			$pdf->SetFont('Arial','',11);
+			$pdf->SetFont('Arial','',9);
 			//insert CAP logo in upper left corner
-			$pdf->Text(0.8, 3.2, "ID Card");
+			$pdf->Text(0.8, 3.2, "Civil Air Patrol");
+			$pdf->Text(0.4, 3.4, "Security                     Badge");
 			$imagex=0.4; $imagey=3.4; $imagew=0.6; $imageh=0;
-			$pdf->Image(BASE_DIR.'images/CAP_Seal_Monochrome.png',$imagex,$imagey,$imagew,$imageh);
+//			$pdf->Image(BASE_DIR.'images/CAP_Seal_Monochrome.png',$imagex,$imagey,$imagew,$imageh);
 
 			$pdf->Output();
 			exit(0);
