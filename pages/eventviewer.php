@@ -314,6 +314,9 @@
 								'Rescinded commitment to attend',
 								'No show'
 							], $data['Status']);
+
+							$idf = (new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront'))->getHtml($capid);
+
 							$form->addHiddenField('capid', $capid);
 							$form->addHiddenField('eid', $ev);
 							$form->addHiddenField('func', 'signupedit');

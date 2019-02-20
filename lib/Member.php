@@ -1260,7 +1260,7 @@
 
 		public function get101Card (int $id) {
             $url = "https://www.capnhq.gov/CAP.OPSQuals.Web/EmergencyServices/101Card.aspx";
-            
+
             $ch = new MyCURL();
 
             $ch->setOpts (array (
@@ -1351,7 +1351,15 @@
 					preg_replace(
 						"/\d{1,2}\/\d{1,2}\/\d\d/",
 						"",
-						$driversLicense
+						preg_replace(
+							"/\s*Printed on .*/",
+							"<2000)",
+							preg_replace(
+								"/TT2000/",
+								"TT<2000,TT>2000",
+								$driversLicense
+							)
+						)
 					)
 				);
 
@@ -1384,9 +1392,9 @@
 					$div->attributes->getNamedItem('class')->value == 'cardAchvs'
 				) {
 					$text = getEText3($div);
-					
-					$dne = preg_match("/\x{221e}/u", $text) == 1;
-					$evaluator = preg_match("/\x{2666}/u", $text) == 1;
+
+					$dne = preg_match("/\x{221e}/u", $text) == 1 || preg_match("/infin;/", $text) == 1;
+					$evaluator = preg_match("/\x{2666}/u", $text) == 1 || preg_match("/diams;/", $text) == 1;
 					$nims = preg_match("/\*\*/", $text) == 1;
 					$supervised = $nims ? false : preg_match("/\*/", $text) == 1;
 					$aircraft = preg_match("/\+/", $text) == 1;
@@ -1430,6 +1438,7 @@
 								$dne ? false : $expires
 							)
 						),
+						'dne' => $dne,
 						'evaluator' => $evaluator,
 						'nims' => $nims,
 						'supervised' => $supervised,
