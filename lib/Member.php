@@ -1331,6 +1331,7 @@
 			$weight = (int)str_replace(" lbs", "", getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnWeight')));
 			$eyes = getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnEyeColor'));
 			$hair = getEText3($h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_spnHair'));
+			$image = $h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_imgPic');
 			$driversLicenseEl = $h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_divDriversLicense');
 			$driversLicense = $driversLicenseEl == null ? null : getEText3($driversLicenseEl);
 			if ($driversLicense != null && isset($driversLicense)) {
@@ -1453,30 +1454,8 @@
 			];
 		}
 
-		public function getTest101Card (int $id) {
-			return [
-				'name' => 'Andrew Rioux',
-				'unit' => 'MER-MD-089',
-				'CAPID' => 542488,
-				'height' => 68,
-				'weight' => 143,
-				'eyes' => 'Blue',
-				'hair' => '',
-
-				'quals' => [
-					[
-						'name' => 'GES',
-						'dne' => false,
-						'active' => false,
-						'nims' => false,
-						'aircraft' => false,
-						'evaluator' => false,
-						'supervised' => false,
-						'evaluator' => false
-					]
-				],
-				'driversLicense' => null
-			];
+		public function download101Image (int $id) {
+			return $this->goToPage("/images/thumb/$id.jpg")['body'];
 		}
 
         /**
