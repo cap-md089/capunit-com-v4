@@ -8,8 +8,8 @@
 	$mem = Member::Create('542488', 'app/xPHP091101');
 
 	echo json_encode($mem->get101Card(542488), JSON_PRETTY_PRINT);
-	echo json_encode($mem->get101Card(111413), JSON_PRETTY_PRINT);
-	echo json_encode($mem->get101Card(386791), JSON_PRETTY_PRINT);
+	echo json_encode($mem->get101Card(368556), JSON_PRETTY_PRINT);
+//	echo json_encode($mem->get101Card(386791), JSON_PRETTY_PRINT);
 	echo "\n";
 //	$lang = $mem->get101Card(421170);
 //	$lang = $mem->get101Card(386791);

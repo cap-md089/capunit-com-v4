@@ -1380,6 +1380,10 @@
 				];
 			}
 
+			$img101 = $h->getElementByID('ctl00_MainContentPlaceHolder_uc101Card_imgPic');
+
+			$hasImage = isset($img101->attributes) && $img101->attributes->getNamedItem('src') != null && $img101->attributes->getNamedItem('src')->value != '../../images/thumb/NoVal.jpg';
+
 			$quals = [];
 
 			$allDivs = $h->getElementByID('divCardMbrAchvs')->getElementsByTagName('div');
@@ -1459,7 +1463,8 @@
 				'eyes' => $eyes,
 				'hair' => $hair,
 				'quals' => $quals,
-				'driversLicense' => $driversLicense
+				'driversLicense' => $driversLicense,
+				'hasImage' => $hasImage
 			];
 		}
 
