@@ -158,7 +158,7 @@
 					$html = "";
 				}
 
-                                if(!$hasfiles) { $html .= "There are no files associated with this member.<br />"; }
+                                if(!$hasfiles) { $html .= "There are no files associated with ".$mem->RankName.".<br />"; }
 
                                 $form = new AsyncForm (Null, 'Add File');
                                 $form->addField ('memberFiles', '&nbsp;', 'file');
