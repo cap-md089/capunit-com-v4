@@ -35,7 +35,13 @@
 			foreach ($flights as $flight) {
 				$hhtml .= "<div class=\"title\">$flight</div>";
 				$fhtml = "<div class=\"flight $flight\">";
-				$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Flights']." WHERE Flight = :fly AND AccountID = :aid;");
+				$sqlstmt = "SELECT Flights.CAPID FROM ".DB_TABLES['Flights']." INNER JOIN ";
+				$sqlstmt .= "CAPID_To_Account ON Flights.CAPID=CAPID_To_Account.CAPID AND ";
+				$sqlstmt .= "Flights.AccountID=CAPID_To_Account.AccountID ";
+				$sqlstmt .= " WHERE Flight = :fly AND AccountID = :aid;";
+
+//				$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Flights']." WHERE Flight = :fly AND AccountID = :aid;");
+				$stmt = $pdo->prepare($sqlstmt);
 				$stmt->bindValue(":fly", $flight);
 				$stmt->bindValue(":aid", $a->id);
 				$data = DBUtils::ExecutePDOStatement($stmt);
