@@ -451,16 +451,20 @@ window.loaded.push(function() {
             els[i].ondrop = function (ev) {
                 ev.preventDefault();
                 ev.target.prepend(document.getElementById(ev.dataTransfer.getData('text')));
-                var cs = Array.prototype.slice.apply(ev.target.classList);
-                cs.splice(cs.indexOf('flight'), 1);
-                var input = document.getElementById(ev.dataTransfer.getData('text')).children[0];
-                input.value = input.value.split(':')[0] + ':' + cs[0];
                 var el = document.getElementById(ev.dataTransfer.getData('text'));
                 console.log(el.parentElement);
+					var cs;
                 console.log(el.parentElement.classList);
                 if (Array.prototype.slice.apply(el.parentElement.classList).indexOf('flight') == -1) {
                     el.parentElement.parentElement.prepend(el);
+                cs = Array.prototype.slice.apply(ev.target.parentElement.classList);
+                cs.splice(cs.indexOf('flight'), 1);
+				} else {
+                cs = Array.prototype.slice.apply(ev.target.classList);
+                cs.splice(cs.indexOf('flight'), 1);
                 }
+				var input = document.getElementById(ev.dataTransfer.getData('text')).children[0];
+				input.value = input.value.split(':')[0] + ':' + cs[0];
             };
             els[i].ondragover = function (ev) {
                 ev.preventDefault();
