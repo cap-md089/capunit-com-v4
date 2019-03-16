@@ -22,9 +22,6 @@
 						<?php echo new Link('main', 'Home', null, null, 'main'); ?>
 					</li>
 					<li>
-						<?php echo new Link('blog', 'News', null, null, 'blog'); ?>
-					</li>
-					<li>
 						<?php echo new Link('calendar', 'Calendar', null, null, 'calendar'); ?>
 					</li>
 					<li>
