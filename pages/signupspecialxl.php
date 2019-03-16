@@ -1,87 +1,75 @@
 <?php
-    class Output {
-        public static function doGet ($e, $c, $l, $m, $a) {
+	require_once(BASE_DIR."lib/xlsxwriter.class.php");
+	class Output {
+		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) {
 				return ['error' => 411];
 			}
-			if (!$a->paid) {return ['error' => 501];}
-            $html = '';
-            $pdo = DBUtils::CreateConnection();
 
-            $tblAtt = DB_TABLES['Attendance'];
-            $tblEvt = DB_TABLES['EventInformation'];
-            $sql = "SELECT $tblAtt.*, $tblEvt.EventName, $tblEvt.EventLocation, $tblEvt.StartDateTime, ";
-            $sql .= "$tblEvt.EndDateTime FROM $tblEvt INNER JOIN $tblAtt ON $tblAtt.EventID = $tblEvt.EventNumber ";
-            $sql .= "WHERE $tblAtt.AccountID=:aid AND $tblEvt.AccountID=:aid AND $tblAtt.CAPID=:cid AND ";
-            $sql .= "$tblAtt.Status='Committed/Attended' ORDER BY StartDateTime DESC;";
+			$pdo = DBUtils::CreateConnection();
 
-			$cid = $m->capid;
+			$tblAtt = DB_TABLES['SpecialAttendance'];
+			$tblEvt = DB_TABLES['EventInformation'];
 
-			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
+                        $ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
+                        $event = $ev ? Event::Get((int)$ev, $a) : false;
 
-			if ($ev && $m->hasPermission("EditEvent")) {
-				$cid = $ev;
+                        if (!$event) {
+                                return [
+                                        'error' => 311
+                                ];
+                        }
+
+                        $sql = "Call getSpecialAttendance(:aid, :eid)";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->bindValue(':aid', $a->id);
+                        $stmt->bindValue(':eid', $event->EventNumber);
+                        $data = DBUtils::ExecutePDOStatement($stmt);
+
+			$filename = "SpecialEvent_".$data[0]['AccountID']."-".$data[0]['EventID'].".xlsx";
+			header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
+			header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+			$writer = new XLSXWriter();
+			$writer->setAuthor('CAPUnit.com');
+
+//			$header=array(
+//				"Timestamp"=>'string',"EventID"=>'string',
+//				"CAPID"=>'string',"Rank Name"=>'string',"Status"=>'string',
+//				"Plan to use CAP Transport"=>'string',"GeoLoc"=>'string',"DutyPref"=>'string',"Comments"=>'string'
+//			);
+//			$writer->writeSheetHeader('Sheet1', $header);
+//			$counter=1;
+
+/*			foreach($data as $datum) {
+				$eventID=$datum['AccountID']."-".$datum['EventID'];
+				if(!$datum['PlanToUseCAPTransportation']) {$PTUCT='No';} else {$PTUCT='Yes';}
+				$row = array(
+					$datum['Timestamp'],
+					$eventID,
+					$datum['CAPID'],
+					$datum['MemberRankName'],
+					$datum['Status'],
+					$PTUCT,
+					$datum['GeoLoc'],
+					$datum['DutyPreference'],
+					$datum['Comments']
+				);
+				$writer->writeSheetRow('Sheet1', $row);
+				++$counter;
 			}
-
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':aid', $a->id);
-            $stmt->bindValue(':cid', $cid);
-
-            $data = DBUtils::ExecutePDOStatement($stmt);
-
-			$html = "</br>".(new AsyncButton('downloadattendance', 'Download your attendance', 'attendanceDownload'))->getHtml($cid);
-
-            $html .= "</br></br><h2>Tab-delimited raw attendance data</h2>";
-
-            $attendanceData = "<pre>";
-            $columns[0] = "Event Number";
-            $columns[1] = "Event Name";
-            $columns[2] = "Event Location";
-            $columns[3] = "Start Date/Time";
-            $columns[4] = "End Date/Time";
-            $columns[5] = "Plan to use CAP Transport";
-            $columns[6] = "Comments";
-            for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
-            $line = substr($line, 0, strlen($line) - 2)."";
-            // for ($line = "", $i = 0 ; $i < 5 ; $i++) { $line .= $columns[$i].","; }
-            // $line = substr($line, 0, strlen($line) - 2);
-            $attendanceData .= $line."\r\n";
-
-            foreach ($data as $datum) {
-                $columns[0] = $a->id."-".$datum['EventID'];
-                $columns[1] = $datum['EventName'];
-                $columns[2] = $datum['EventLocation'];
-                $columns[3] = date('d M Y, H:i',$datum['StartDateTime']);
-                $columns[4] = date('d M Y, H:i',$datum['EndDateTime']);
-                if(!$datum['PlanToUseCAPTransportation']) {$columns[5]='No';} else {$columns[5]='Yes';}
-                $columns[6] = $datum['Comments'];
-
-                for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
-                $line = substr($line, 0, strlen($line) - 2)."";
-                $attendanceData .= $line."\r\n";
-                // for ($line = "", i = 0 ; i <= 5 ; i++) { $line .= $columns[i].","; }
-                // $line = left($line, strlen($line) - 2);
-                // $attendanceData .= $line."\r\n";
-    
-            }
-            $attendanceData .= "</pre>";
+*/
 
 
-            return [
-                'body' => [
-                    'MainBody' => $html.$attendanceData,
-                    'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
-                        [
-							'Target' => '/',
-							'Text' => 'Home'
-						],
-						[
-							'Target' => '/viewattendance',
-							'Text' => 'View Attendance'
-						]
-                    ])
-                ],
-                'title' => 'Attendance'
-            ];
-        }
-    }
+				$row = array('Timestamp','eventID','CAPID','MemberRankName',
+					'Status','PTUCT','GeoLoc','DutyPreference','Comments'
+				);
+				$writer->writeSheetRow('Sheet1', $row);
+
+
+
+
+			echo $writer->writeToString();
+			exit(0);
+		}
+	}

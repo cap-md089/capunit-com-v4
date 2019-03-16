@@ -35,10 +35,11 @@
 			foreach ($flights as $flight) {
 				$hhtml .= "<div class=\"title\">$flight</div>";
 				$fhtml = "<div class=\"flight $flight\">";
-				$sqlstmt = "SELECT Flights.CAPID FROM ".DB_TABLES['Flights']." INNER JOIN ";
+				$sqlstmt = "SELECT Flights.CAPID, CAPID_To_Account.NameLast, CAPID_To_Account.NameFirst FROM ".DB_TABLES['Flights']." INNER JOIN ";
 				$sqlstmt .= "CAPID_To_Account ON Flights.CAPID=CAPID_To_Account.CAPID AND ";
 				$sqlstmt .= "Flights.AccountID=CAPID_To_Account.AccountID ";
-				$sqlstmt .= " WHERE Flight = :fly AND AccountID = :aid;";
+				$sqlstmt .= " WHERE Flights.Flight = :fly AND Flights.AccountID = :aid";
+				$sqlstmt .= " ORDER BY CAPID_To_Account.NameLast, CAPID_To_Account.NameFirst;";
 
 //				$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Flights']." WHERE Flight = :fly AND AccountID = :aid;");
 				$stmt = $pdo->prepare($sqlstmt);

@@ -227,6 +227,12 @@ function signupSpecial_prepush(a, data) {
     return false;
 }
 
+function signupSpecialXL_prepush(a, data) {
+    window.open('/signupspecialxl/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 function idFront_prepush(a, data) {
     window.open('/idcardfront/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
 

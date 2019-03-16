@@ -30,7 +30,7 @@
 				$event = false;
 			}
 
-			if (!$a->paid) {return ['error' => 501];}
+//			if (!$a->paid) {return ['error' => 501];}
 
 			$pdo = DBUtils::CreateConnection();
 
@@ -107,7 +107,7 @@
 			$boxSize = $pdf->GetStringWidth($title)+0.2;
 			$pdf->Cell($boxSize,$linespace,$title,0,0);
 			$pdf->SetFont('Arial','',11);
-			$pdf->Cell(0,$linespace,$event->Uniform,0,1);
+			$pdf->MultiCell(0,$linespace,$event->Uniform,0,1);
 			$pdf->Cell($spacer,$linespace,"",0,0);
 			$pdf->SetFont('Arial','B',11);
 			$title = "Activity: ";

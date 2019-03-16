@@ -30,7 +30,7 @@
 				$event = false;
 			}
 
-			if (!$a->paid) {return ['error' => 501];}
+//			if (!$a->paid) {return ['error' => 501];}
 
 			$pdo = DBUtils::CreateConnection();
 

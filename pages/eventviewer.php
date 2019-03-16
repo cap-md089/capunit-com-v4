@@ -38,7 +38,7 @@
 				$html .= " | ".(new AsyncButton('rostersenior', 'Download Senior Member roster', 'rosterSenior'))->getHtml($ev);
 				if ($m->hasPermission("SignUpEdit")) {
 					$html .= "<br />".new Link ("multiadd", "Add attendees", [$ev]);
-					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
+//					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
 				}
 				if ($event->SourceEventNumber > 0) {
 					$sourceEvent = Event::Get($event->SourceEventNumber, new Account($event->SourceAccountID));
@@ -293,10 +293,11 @@
 					$html .= $alist->getHtml('atdir'.$event->EventNumber);
 					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
 					$html .= " | ".$clist->getHtml('atchr'.$event->EventNumber);
-					$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
 					if($event->IsSpecial) {
+						$html .= " | ".(new AsyncButton('signupspecialxl', 'Download Signup spreadsheet', 'signupSpecialXL'))->getHtml($ev);
 						$html .= " | ".(new AsyncButton('signupspecial', 'Download Sign-up roster', 'signupSpecial'))->getHtml($ev);
 					} else {
+						$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
 						$html .= " | ".(new AsyncButton('signupevent', 'Download Sign-up roster', 'signupEvent'))->getHtml($ev);
 					}
 				}
