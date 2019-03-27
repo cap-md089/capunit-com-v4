@@ -62,15 +62,6 @@ EOD;
 			$l1 = new Link("viewattendance", "View Attendance");
 			$html .= "$l1<br />";
 		}
-		if ($m->hasPermission("Developer")) {
-			$t++;
-			$l1 = (new AsyncButton('participationview', 'Download Participation Visualization', 'participationView'))->getHtml($m->capid);
-			$html .= "$l1<br />";
-			$l1 = (new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront'))->getHtml($m->capid);
-			$html .= "$l1<br />";
-			$l1 = (new AsyncButton('idcardback', 'Download ID Card Back', 'idBack'))->getHtml($m->capid);
-			$html .= "$l1<br />";
-		}
 		if ($m->hasPermission("DownloadStaffGuide")) {
 			$fileid = Registry::get('Administration.CadetStaffGuideID');
 			if ($fileid != '') {
@@ -83,6 +74,6 @@ EOD;
 		if ($t == 0) return '';
 		return [
 			'text' => $html,
-			'title' => 'Administration'	
+			'title' => 'Administration'
 		];
 	}

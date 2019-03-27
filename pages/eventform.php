@@ -128,7 +128,7 @@
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
 						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
-						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
+						'CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
@@ -247,7 +247,7 @@
 					->addField ('requiredForms', 'Required Forms', 'multcheckbox', Null, [
 						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
-						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
+						'CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
@@ -450,7 +450,7 @@
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
-						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
+						'CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',
@@ -605,7 +605,7 @@
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAP Identification Card',
 						'CAPF 31 Application For CAP Encampment Or Special Activity', 
-						'CAPF 32 Civil Air Patrol Cadet Activity Permission Slip',
+						'CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
 						'CAPF 161 Emergency Information',

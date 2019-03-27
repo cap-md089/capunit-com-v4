@@ -233,6 +233,12 @@ function signupSpecialXL_prepush(a, data) {
     return false;
 }
 
+function capf6080_prepush(a, data) {
+    window.open('/capf6080/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
+
+    return false;
+}
+
 function idFront_prepush(a, data) {
     window.open('/idcardfront/' + data + '?ajax=true&cookies='+encodeURIComponent(JSON.stringify(getCookies())));
 

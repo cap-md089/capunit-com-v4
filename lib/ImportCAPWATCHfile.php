@@ -635,8 +635,10 @@
 			ErrorMSG::Log("Update Member Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
 			return "Update Member Stored Procedure Failed";
 		}
-		$stmt = $pdo->prepare("CALL Flights_Update(:orgid);");
+		$defFlight = Registry::Get("Administration.FlightNames.Default");
+		$stmt = $pdo->prepare("CALL Flights_Update(:orgid, :defflight);");
 		$stmt->bindValue(':orgid', $id);
+		$stmt->bindValue(':defflight', $defFlight);
 		if (!$stmt->execute()) {
 			ErrorMSG::Log("Update Flights Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
 			return "Update Flights Stored Procedure Failed";

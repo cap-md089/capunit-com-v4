@@ -4,7 +4,7 @@
 			if (!$l) {
 				return ['error' => 411];
 			}
-			if (!$a->paid) {return ['error' => 501];}
+//			if (!$a->paid) {return ['error' => 501];}
             $html = '';
             $pdo = DBUtils::CreateConnection();
 

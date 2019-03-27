@@ -5,6 +5,15 @@
 			if (!$m->hasPermission('FlightAssign')) return ['error' => 401];
 
 			$flights = [
+				Registry::Get("Administration.FlightNames.Flight1"),
+				Registry::Get("Administration.FlightNames.Flight2"),
+				Registry::Get("Administration.FlightNames.Flight3"),
+				Registry::Get("Administration.FlightNames.Flight4"),
+				Registry::Get("Administration.FlightNames.Flight5"),
+				Registry::Get("Administration.FlightNames.Flight6"),
+			];
+/*
+			$flights = [
 				'Alpha',
 				'Bravo',
 				'Charlie',
@@ -12,7 +21,7 @@
 				'Staff',
 				'XRay'
 			];
-
+}*/
 			$pdo = DBUtils::CreateConnection();
 
 //			$stmt = $pdo->prepare("insert into ".DB_TABLES['Flights']." (CAPID, Flight, Mentor, AccountID) select 

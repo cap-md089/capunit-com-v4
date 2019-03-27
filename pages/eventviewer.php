@@ -141,7 +141,14 @@
 				$html .= "<b>Activity:</b> ".$event->Activity.'<br />';
 			}
 			if(strlen($event->RequiredForms) > 0) {
-				$html .= "<b>Required forms:</b> ".$event->RequiredForms.'<br />';  
+					$html .= "<b>Required forms:</b> ".$event->RequiredForms.'<br />';
+				if($l) {
+					$formsText = $event->RequiredForms;
+					if(strstr($formsText, "CAPF 32") || strstr($formsText, "CAPF 60-80")) {
+						$html .= "<b>Click on link to download pre-filled form:</b> ".(new AsyncButton('capf6080', 'CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip', 'capf6080'))->getHtml($ev).'<br />';
+					}
+				} else {
+				}
 			}
 			if(strlen($event->RequiredEquipment) > 0) {
 				$html .= "<b>Required equipment:</b> ".$event->RequiredEquipment.'<br />';
@@ -183,18 +190,24 @@
 			// Fourth block
 			if ($event->CAPPOC1ID != 0) {
 				$html .= "<b>CAP Squadron Primary Point of Contact:</b> ".$event->CAPPOC1Name."<br />";
-				$html .= "<b>CAP Squadron Primary Point of Contact phone:</b> ".$event->CAPPOC1Phone."<br />";
-				$html .= "<b>CAP Squadron Primary Point of Contact email:</b> ".$event->CAPPOC1Email."<br />";
+				if($l) {
+					$html .= "<b>CAP Squadron Primary Point of Contact phone:</b> ".$event->CAPPOC1Phone."<br />";
+					$html .= "<b>CAP Squadron Primary Point of Contact email:</b> ".$event->CAPPOC1Email."<br />";
+				}
 			}
 			if ($event->CAPPOC2ID != 0) {
 				$html .= "<b>CAP Squadron Secondary Point of Contact:</b> ".$event->CAPPOC2Name."<br />";
-				$html .= "<b>CAP Squadron Secondary Point of Contact phone:</b> ".$event->CAPPOC2Phone."<br />";
-				$html .= "<b>CAP Squadron Secondary Point of Contact email:</b> ".$event->CAPPOC2Email."<br />";
+				if($l) {
+					$html .= "<b>CAP Squadron Secondary Point of Contact phone:</b> ".$event->CAPPOC2Phone."<br />";
+					$html .= "<b>CAP Squadron Secondary Point of Contact email:</b> ".$event->CAPPOC2Email."<br />";
+				}
 			}
 			if ($event->ExtPOCName != '') {
 				$html .= "<b>Non-Squadron Point of Contact:</b> ".$event->ExtPOCName."<br />";
-				$html .= "<b>Non-Squadron Point of Contact phone:</b> ".$event->ExtPOCPhone."<br />";
-				$html .= "<b>Non-Squadron Point of Contact email:</b> ".$event->ExtPOCEmail."<br />";
+				if($l) {
+					$html .= "<b>Non-Squadron Point of Contact phone:</b> ".$event->ExtPOCPhone."<br />";
+					$html .= "<b>Non-Squadron Point of Contact email:</b> ".$event->ExtPOCEmail."<br />";
+				}
 			}
 			if ($l) {
 				if ($event->Author != 0) {
