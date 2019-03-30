@@ -184,7 +184,7 @@
 								if ($other == '') $other = $v;
 								else $other .= ', '.$v;
 							}
-						}	
+						}
 					}
 					$html = "<section class=\"$class\">";
 					for ($i = 0; $i < count($data); $i++) {
@@ -323,7 +323,8 @@
 				break;
 
 				default :
-					$html = "<input ".(isset($default)?"value=\"$default\" ":"")."type=\"$type\" name=\"$name\" class=\"$class\"";
+					$rowid = isset($rowid) ? $rowid : '';
+					$html = "<input ".(isset($default)?"value=\"$default\" ":"")."type=\"$type\" name=\"$name\" $rowid class=\"$class\"";
 					if ($data != [] && isset($data)) {
 						foreach ($data as $k => $v) {
 							$html .= " $k=\"$v\"";
