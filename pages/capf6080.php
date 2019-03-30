@@ -59,6 +59,16 @@
 
 			$lineHeight = 0.17;
 
+			if(substr($m->memberRank,0,2) == "C/") {
+				$textRankName = $m->RankName."  ";
+				$textCAPID = $m->uname."  ";
+				$textSquadron = $m->Squadron."  ";
+			} else {
+				$textRankName = "                                                                                     ";
+				$textCAPID = " ";
+				$textSquadron = "                       ";
+			}
+
 			//Page Title
 			$pdf->SetFont('Arial','B',14);
 			$pdf->Cell(0,.3,"CIVIL AIR PATROL CADET ACTIVITY PERMISSION SLIP","T",1,"C");
@@ -76,7 +86,7 @@
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell($strlen,$lineHeight,$textString,0,0,"L");
 			$pdf->SetFont('Arial','',10);
-			$textString = $m->RankName."  ";
+			$textString = $textRankName;
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell($strlen,$lineHeight,$textString,0,0,"L");
 			$pdf->SetFont('Arial','B',10);
@@ -84,7 +94,7 @@
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell($strlen,$lineHeight,$textString,0,0,"L");
 			$pdf->SetFont('Arial','',10);
-			$textString = $m->uname."  ";
+			$textString = $textCAPID;
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell(0,$lineHeight,$textString,0,1,"L");
 
@@ -93,7 +103,7 @@
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell($strlen,$lineHeight,$textString,0,0,"L");
 			$pdf->SetFont('Arial','',10);
-			$textString = $m->Squadron."  ";
+			$textString = $textSquadron;
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell($strlen,$lineHeight,$textString,0,0,"L");
 			$pdf->SetFont('Arial','B',10);
@@ -191,13 +201,21 @@
 			$pdf->SetX($tabstop);
 			//check for 'other' by deleting from string all listed forms, then if there is any text left, it is 'other'
 			$formString = $event->RequiredForms;
-			$formArray = ["CAP Identification Card, ",
+			$formArray = [
+				"CAP Identification Card, ",
 				"CAPF 31 Application For CAP Encampment Or Special Activity, ",
 				"CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip, ",
 				"CAPF 101 Specialty Qualification Card, ",
 				"CAPF 160 CAP Member Health History Form, ",
 				"CAPF 161 Emergency Information, ",
-				"CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication, "];
+				"CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication, ",
+				"CAP Identification Card",
+				"CAPF 31 Application For CAP Encampment Or Special Activity",
+				"CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip",
+				"CAPF 101 Specialty Qualification Card",
+				"CAPF 160 CAP Member Health History Form",
+				"CAPF 161 Emergency Information",
+				"CAPF 163 Permission For Provision Of Minor Cadet Over-The-Counter Medication"];
 			foreach($formArray as $formName) {
 				if(strstr($formString, $formName)) {$formString = substr($formString, strlen($formName));}
 			}
@@ -350,7 +368,7 @@
 			$textString = $event->MeetLocation."  ";
 			$charCount = strlen($textString);
 			$checkHeight->MultiCell(0,$lineHeight,$textString,0,"L");
-			$maxLines = 1;
+			$maxLines = 2;
 			while($checkHeight->GetY() > ($lineHeight * $maxLines)) {
 				$textString = substr($textString, 0, $charCount-1);
 				$charCount = strlen($textString);
@@ -379,7 +397,7 @@
 			$textString = $event->EventLocation."  ";
 			$charCount = strlen($textString);
 			$checkHeight->MultiCell(0,$lineHeight,$textString,0,"L");
-			$maxLines = 1;
+			$maxLines = 2;
 			while($checkHeight->GetY() > ($lineHeight * $maxLines)) {
 				$textString = substr($textString, 0, $charCount-1);
 				$charCount = strlen($textString);
@@ -418,7 +436,7 @@
 			$textString = $event->PickupLocation."  ";
 			$charCount = strlen($textString);
 			$checkHeight->MultiCell(0,$lineHeight,$textString,0,"L");
-			$maxLines = 1;
+			$maxLines = 2;
 			while($checkHeight->GetY() > ($lineHeight * $maxLines)) {
 				$textString = substr($textString, 0, $charCount-1);
 				$charCount = strlen($textString);
