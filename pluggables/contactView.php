@@ -7,11 +7,12 @@
 			$emails = '';
 			$stmt = $pdo->prepare("SELECT Flights.Flight, Member.CAPID, Member.Rank, Member.NameFirst, Member.NameLast, Absentee.AbsentUntil,
 Absentee.AbsentNotes, (Absentee.AbsentUntil - :time) AS Absent FROM ".DB_TABLES['Member']." AS Member INNER JOIN ".DB_TABLES['Flights']." AS Flights ON Member.CAPID = Flights.CAPID
-AND Flights.Flight = :flight LEFT JOIN ".DB_TABLES['Absentee']." AS Absentee ON Absentee.capid = Member.CAPID 
+AND Flights.Flight = :flight LEFT JOIN ".DB_TABLES['Absentee']." AS Absentee ON Absentee.capid = Member.CAPID WHERE Flights.AccountID = :aid 
 ORDER BY Absent;");
 			$flight = $m->getFlight();
 			$stmt->bindValue(':flight', $flight);
 			$stmt->bindValue(':time', time());
+			$stmt->bindParam(':aid', $a->id);
 			$data = DB_Utils::ExecutePDOStatement($stmt);
 			$flightmembers = [];
 			foreach ($data as $datum) {
@@ -92,10 +93,11 @@ HTM;
 			$emails = '';
 			$stmt = $pdo->prepare("SELECT Flights.Flight, Member.CAPID, Member.Rank, Member.NameFirst, Member.NameLast, Absentee.AbsentUntil,
 Absentee.AbsentNotes, (Absentee.AbsentUntil - :time) AS Absent FROM ".DB_TABLES['Member']." AS Member INNER JOIN ".DB_TABLES['Flights']." AS Flights ON Member.CAPID = Flights.CAPID 
-LEFT JOIN ".DB_TABLES['Absentee']." AS Absentee ON Absentee.capid = Member.CAPID 
+LEFT JOIN ".DB_TABLES['Absentee']." AS Absentee ON Absentee.capid = Member.CAPID WHERE Flights.AccountID = :aid 
 ORDER BY Absent;");
 			$flight = $m->getFlight();
 			$stmt->bindValue(':time', time());
+			$stmt->bindParam(':aid', $a->id);
 			$data = DB_Utils::ExecutePDOStatement($stmt);
 			$flightmembers = [];
 			foreach ($data as $datum) {
@@ -117,7 +119,7 @@ ORDER BY Absent;");
 					continue;
 				}
 				$flightmember = $flightmembers[$datum['CAPID']];
-				
+
 				$contact = $flightmember['Contact'];
 
 				$contact[] = [

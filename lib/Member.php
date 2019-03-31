@@ -246,13 +246,13 @@
         public static function Create ($uname, $upass, $mname=Null, $contact=Null, $ins=false) {
             $logger = New Logger ("CreateMemberObject");
             global $_ACCOUNT;
-            if (self::SkipNHQ) { // Used to create a member for testing with something like SQLMap or MetaSploit to 
+            if (self::SkipNHQ) { // Used to create a member for testing with something like SQLMap or MetaSploit to
                 // handle security stuff, NHQ is trusted to have done the same
                 $m = self::Estimate(542488);
                 $m->setSessionID();
                 return $m;
             }
-            if (substr($uname, 0, 1) == "9") { // Used to create a member for testing  
+            if (substr($uname, 0, 1) == "9") { // Used to create a member for testing
                 $cookiedata = self::GetLoginCookies(546319, $upass);
                 $msuccess = $cookiedata["success"];
                 $accountTest = substr($_ACCOUNT, 0, 2);
@@ -676,7 +676,12 @@
                 global $_ACCOUNT;
                 $account = $_ACCOUNT;
             }
-            $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY LastAccessTime DESC Limit 1;');
+
+            $sqlin = 'SELECT * FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ';
+            $sqlin .= 'AND CAPID NOT IN (SELECT CAPID FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid) ';
+            $sqlin .= 'ORDER BY LastAccessTime DESC Limit 1;';
+            $stmt = $pdo->prepare($sqlin);
+//            $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY LastAccessTime DESC Limit 1;');
             $stmt->bindValue(':cid', $capid);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) == 1) {

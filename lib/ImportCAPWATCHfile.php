@@ -643,6 +643,21 @@
 			ErrorMSG::Log("Update Flights Stored Procedure Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
 			return "Update Flights Stored Procedure Failed";
 		}
+/*
+		$sqlin = "INSERT IGNORE INTO Flights (Flights.CAPID, Flights.AccountID, Flights.Flight) ";
+		$sqlin .= "SELECT CAPID_To_Account.CAPID, :orgid AS AccountID, :defflight AS Flight FROM ";
+		$sqlin .= "CAPID_To_Account WHERE Type=\"CADET\" AND AccountID=:orgid AND CAPID NOT IN ";
+		$sqlin .= "(SELECT Flights.CAPID FROM Flights);";
+
+		$stmt = $pdo-prepare($sqlin);
+		$stmt->bindValue(':orgid', $id);
+		$stmt->bindValue(':defflight', $defFlight);
+		if (!$stmt->execute()) {
+			ErrorMSG::Log("Update Flights Query Failed. ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname,"ImportCAPWATCHfile.php");
+			return "Update Flights Query Failed";
+		}
+*/
+
 		// $stmt = $pdo->prepare("CALL UpdateMemberMatch(:orgid);");
 		// $stmt->bindValue(':orgid', $id);
 		// if (!$stmt->execute()) {
