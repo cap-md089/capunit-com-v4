@@ -54,7 +54,7 @@
 		public function add (\Member $member, $plantouse=false, $comments='') {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent);');
+			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :confirmed);');
 			$time = time();
 			$stmt->bindValue(':plantouse', $plantouse ? 1 : 0);
 			$stmt->bindValue(':time', $time);
@@ -66,6 +66,7 @@
 			$stmt->bindValue(':accountid', $_ACCOUNT->id);
 			$stmt->bindValue(':reqs', '');
 			$stmt->bindValue(':sent', 0);
+			$stmt->bindValue(':confirmed', 0);
 			$this->EventAttendance[] = [
 				'PlanToUseCAPTransportation' => $plantouse ? 1 : 0,
 				'Timestamp' => $time,
@@ -75,7 +76,8 @@
 				'Comments' => $comments,
 				'Status' => 'Commited/Attended',
 				'Requirements' => '',
-				'SummaryEmailSent' => 0
+				'SummaryEmailSent' => 0,
+				'Confirmed' => 0
 			];
 			if (!$stmt->execute()) {
 				if ($stmt->errorInfo()[1] == 1062) {
