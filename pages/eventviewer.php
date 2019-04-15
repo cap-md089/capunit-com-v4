@@ -296,14 +296,14 @@
 				}
 			}
 
-//			if ($l && $a->hasMember($m)) {
-			if ($l) {
+			if ($l && ($a->hasMember($m) || $a->id="mdx89"|| $m->IsRioux )) {
+//			if ($l) {
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
 				$elist = new AsyncButton(null, "Email list", "attendanceEmailPopup");
 				$clist = new AsyncButton(null, "Cronological list", "chronoNamePopup");
 				$slist = new AsyncButton(null, "Signup list", "signupPopup");
-				if(count($attendance->EventAttendance) > 0) {
+				if( (count($attendance->EventAttendance) > 0) && ($m->hasPermission('SignUpEdit') || $event->isPOC($m)) ) {
 					$html .= $alist->getHtml('atdir'.$event->EventNumber);
 					$html .= " | ".$elist->getHtml('ateml'.$event->EventNumber);
 					$html .= " | ".$clist->getHtml('atchr'.$event->EventNumber);
@@ -311,7 +311,8 @@
 						$html .= " | ".(new AsyncButton('signupspecialxl', 'Download Signup spreadsheet', 'signupSpecialXL'))->getHtml($ev);
 						$html .= " | ".(new AsyncButton('signupspecial', 'Download Sign-up roster', 'signupSpecial'))->getHtml($ev);
 					} else {
-						$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
+//						$html .= " | ".$slist->getHtml('atsul'.$event->EventNumber);
+						$html .= " | ".(new AsyncButton('signupxl', 'Download Signup spreadsheet', 'signupXL'))->getHtml($ev);
 						$html .= " | ".(new AsyncButton('signupevent', 'Download Sign-up roster', 'signupEvent'))->getHtml($ev);
 					}
 				}
@@ -324,6 +325,11 @@
 							$form->reload = true;
 							$form->addField("comments", "Comments", "textarea", Null, ['value' => $data['Comments']], $data['Comments']);
 							$form->addField("plantouse", "Plan to use CAP transportation", "checkbox", Null, Null, $data['PlanToUseCAPTransportation']);
+
+							if($event->isPOC($m) || $m->hasPermission('SignUpEdit')) {
+								$form->addField('confirmed', 'Confirmed', 'checkbox', Null, Null, $data['Confirmed']);
+							}
+
 							$form->addField("status", "Status", "radio", Null, [
 								'Committed/Attended',
 								'Rescinded commitment to attend',
@@ -336,8 +342,12 @@
 							$form->addHiddenField('eid', $ev);
 							$form->addHiddenField('func', 'signupedit');
 							if ($event->IsSpecial) {
+								$idfront = new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront');
+								$idback = new AsyncButton('idcardback', 'Download ID Card Back', 'idBack');
 								$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
 								$form->addField('duty', 'What are your top 3 desired duty/training positions?', 'text', Null, Null, $data['DutyPreference']);
+								$form->addField('idfront', $idfront->getHtml($capid), 'textread');
+								$form->addField('idback', $idback->getHtml($capid), 'textread');
 							}
 							$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
 							$ab->data = 'atdel'.json_encode(array(
@@ -348,6 +358,8 @@
 								$memberinfo = "<font color=\"red\">$capid: $member->memberRank $member->memberName</font>";
 							} else if($data['Status'] == 'Rescinded commitment to attend') {
 								$memberinfo = "<font color=\"#FFA500\">$capid: $member->memberRank $member->memberName</font>";
+							} else if($data['Confirmed'] == 1) {
+								$memberinfo = "<font color=\"green\">$capid: $member->memberRank $member->memberName</font>";
 							} else {
 								$memberinfo = "$capid: $member->memberRank $member->memberName";
 							}
@@ -382,12 +394,21 @@
 
 							$memberinfo .= (($event->isPOC($m) || $m->hasPermission("EditEvent")?$contactString: ""));
 							if ($member) $dlist->addElement($memberinfo, $form->getHtml(), $ab);
-						} else {
+						} else if (!$event->PrivateAttendance) {
 							$color = ($data['Status'] == 'Committed/Attended' ? 'color:green' :
-								($data['Status'] == 'Rescinded commitment to attend' ? 'color:yellow' :
+								($data['Status'] == 'Rescinded commitment to attend' ? 'color:orange' :
 									($data['Status'] == 'No show' ? 'color:red' : '')));
-							$dlist->addElement("$capid: $member->memberRank $member->memberName", "Comments: {$data['Comments']}<br />Status: <span style=\"$color\">{$data['Status']}</span><br />
-							Plan to use CAP transportation: ".($data['PlanToUseCAPTransportation']?'Yes':'No')."<br />");
+							if($data['Confirmed'] == 1) {
+								$memberinfo = "<font color=\"green\">$capid: $member->memberRank $member->memberName</font>";
+								$confirmedStatus = " -- Attendance slot is confirmed";
+							} else {
+								$memberinfo = "$capid: $member->memberRank $member->memberName";
+								$confirmedStatus = "";
+							}
+							$elementString = "Comments: {$data['Comments']}<br />Status: <span style=\"$color\">{$data['Status']}";
+							$elementString .= $confirmedStatus."</span><br />Plan to use CAP transportation: ";
+							$elementString .= ($data['PlanToUseCAPTransportation']?'Yes':'No')."<br />";
+							$dlist->addElement($memberinfo, $elementString);
 						}
 					}
 				}
@@ -565,7 +586,7 @@
 						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty']);
 				} else {
 					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
-						$e['form-data']['comments'], $e['form-data']['status']);
+						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['confirmed'] == 'true');
 				}
 			} else {
 				return [

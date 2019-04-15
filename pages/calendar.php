@@ -2,7 +2,7 @@
 	define ("USER_REQUIRED", false);
 	require_once (BASE_DIR."lib/logger.php");
 	require_once (BASE_DIR."lib/general.php");
-	
+
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l && !isset($c['ISRIOUX'])) {
@@ -10,7 +10,7 @@
 					'title' => 'Calendar',
 					'body' => $a->getGoogleCalendarEmbedLink()
 				];
-			} 
+			}
 
 			$months = [
 				'January',
@@ -58,7 +58,7 @@
 			$pdo = DBUtils::CreateConnection();
 			// $stmt = Null; // Initialize the variable in a higher scope so that there are no scope issues
 			// ORDERBY created to only display the first x events, based on event creation date
-			$stmt = $pdo->prepare('SELECT Created, MeetDateTime, PickupDateTime, EventNumber, EventName, Status, 
+			$stmt = $pdo->prepare('SELECT Created, MeetDateTime, PickupDateTime, EventNumber, EventName, Status,
 			Author, TeamID FROM '.DB_TABLES['EventInformation'].' WHERE ((MeetDateTime < :monthend AND
 			MeetDateTime > :monthstart) OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend))
 			AND AccountID = :aid ORDER BY Created;');
@@ -212,6 +212,14 @@
 									$stat = -1;
 								}
 							break;
+
+							case 'Private' :
+								if ($l && $a->hasMember($m)) {
+									$stat = 4;
+								} else {
+									$stat = -1;
+								}
+							break;
 						}
 
 						if ($event['TeamID'] != 0) {
@@ -219,7 +227,11 @@
 							// else $stat = -1;
 							$stat = 5 + ($stat == 4 ? 40 : 0);
 						}
-						$lh = $stat != -1 ? "<li class=\"ce$stat\">".(new Link('eventviewer', $event['EventName'], [$event['EventNumber']]))."</li>" : '';
+//						if(($event['Status'] == 'Private') && !($a->hasMember($m))) {
+/*						if(!($a->hasMember($m))) {
+							$stat = -1;
+						}
+*/						$lh = $stat != -1 ? "<li class=\"ce$stat\">".(new Link('eventviewer', $event['EventName'], [$event['EventNumber']]))."</li>" : '';
 						$TD .= $lh;
 					}
 					$TD .= "</ul></div></td>";

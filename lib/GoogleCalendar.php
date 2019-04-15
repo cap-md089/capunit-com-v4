@@ -31,7 +31,7 @@
 
         public static function updateCalendarEvent (Event $CUevent, \Account $acc = Null) {
 			$logger = new Logger("GoogleCalendarUpdate");
-            if ($CUevent->Status == 'Draft') {
+            if (($CUevent->Status == 'Draft') || ($CUevent->Status == 'Private')) {
 				$logger->Log("Draft event, deleting from Google Calendar", self::$loglevel);
                 self::removeCalendarEvent($CUevent);
                 return;
@@ -54,7 +54,7 @@
 			$logger->Log("Update Calendar Event::  optParams: ".implode($optParams), self::$loglevel);
             $results = self::$service->events->listEvents($calendarId, $optParams);
             $wingResults = self::$service->events->listEvents($wingCalendarId, $optParams);
-            
+
             $returnString = '';
 
             //remove all event items from both calendars

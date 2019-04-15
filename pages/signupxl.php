@@ -20,7 +20,7 @@
 
 			$pdo = DBUtils::CreateConnection();
 
-			$tblAtt = DB_TABLES['SpecialAttendance'];
+			$tblAtt = DB_TABLES['Attendance'];
 			$tblEvt = DB_TABLES['EventInformation'];
 
 			$sql = "SELECT $tblAtt.* FROM $tblAtt ";
@@ -33,7 +33,7 @@
 
 			$data = DBUtils::ExecutePDOStatement($stmt);
 
-			$filename = "SignupSpecialEvent-".$a->id."-".$event->EventNumber.".xlsx";
+			$filename = "SignupEvent-".$a->id."-".$event->EventNumber.".xlsx";
 			header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
 			header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
@@ -42,7 +42,7 @@
 
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
-				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"GeoLoc"=>'string',"DutyPreference"=>'string'
+				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -58,9 +58,7 @@
 					$datum['Status'],
 					$PTUCT,
 					$datum['Confirmed'],
-					$datum['Comments'],
-					$datum['GeoLoc'],
-					$datum['DutyPreference']
+					$datum['Comments']
 				);
 				$writer->writeSheetRow('Sheet1', $row);
 				++$counter;

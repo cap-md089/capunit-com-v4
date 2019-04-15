@@ -107,7 +107,7 @@
 			return true;
 		}
 
-		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null) {
+		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $confirmed=Null) {
 			global $_ACCOUNT;
 			for ($i = 0; $i < count($this->EventAttendance); $i++) {
 				if ($this->EventAttendance[$i]["CAPID"] == $member->capid) {
@@ -118,12 +118,14 @@
 			if (isset($plantouse)) $row['PlanToUseCAPTransportation'] = $plantouse;
 			if (isset($comments)) $row['Comments'] = $comments;
 			if (isset($status)) $row['Status'] = $status;
+			if (isset($confirmed)) $row['Confirmed'] = $confirmed;
 
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('UPDATE '.DB_TABLES['Attendance'].' SET
 				PlanToUseCAPTransportation=:plantouse,
 				Comments=:comments,
-				Status=:status
+				Status=:status,
+				Confirmed=:confirmed
 			WHERE
 				EventID=:eid
 			AND
@@ -133,6 +135,7 @@
 			$stmt->bindValue(':plantouse', $row['PlanToUseCAPTransportation'] ? 1 : 0);
 			$stmt->bindValue(':comments', $row['Comments']);
 			$stmt->bindValue(':status', $row['Status']);
+			$stmt->bindValue(':confirmed', $row['Confirmed']);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':capid', $row['CAPID']);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -173,7 +176,8 @@
 				'Timestamp' => $row['Timestamp'],
 				'MemberRankName' => $row['MemberRankName'],
 				'Comments' => $row['Comments'],
-				'Status' => $row['Status']
+				'Status' => $row['Status'],
+				'Confirmed' => $row['Confirmed']
 			];
 		}
 

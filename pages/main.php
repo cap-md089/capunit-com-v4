@@ -114,7 +114,7 @@ leftsection;
     <iframe style="height:600px;border:0pt none;width:99%;margin:0 0.5%;" src="/{$dir}photolibrary?ajax=true&embed=true"></iframe>
 </section>
 rightsection;
-return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//connect.facebook.net/en_US/all.js#xfbml=1&version=v2.8"></script>';   
+return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//connect.facebook.net/en_US/all.js#xfbml=1&version=v2.8"></script>';
 //return $leftsection1 . $rightsection1 . $divider . $leftsection2 . $rightsection2 . $divider . $leftsection3 . $rightsection3 . '<script id="facebook-jssdk" src="//connect.facebook.net/en_US/all.js#xfbml=1&version=v2.8"></script>';   
 }
             $finallinks = [
@@ -122,7 +122,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                     'Type' => 'link',
                     'Target' => '/teamlist',
                     'Text' => 'Team List'
-                ]              
+                ]
             ];
             if ($l) {
                 $finallinks[] = [
@@ -132,8 +132,8 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                 ];
             }
 
-            $html = ''; 
-            
+            $html = '';
+
             $leftsection1 = <<<leftsection
             <section class="halfSection" style="float:left">
                 <div>
@@ -142,13 +142,13 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                 <h4>How to become a Senior Member (Age 18+)</h4>
                 <div>
                     <p>
-                        As a CAP Senior Member, you can choose to serve in one of 25 Specialty Track Career Fields 
+                        As a CAP Senior Member, you can choose to serve in one of 25 Specialty Track Career Fields
                         ranging from Public Affairs, to Administration, Communications, IT or Cadet Programs.
                         We need your skills, and we will train you in the CAP Career Field you choose.
                     </p>
                     <p>
-                        Right now we need Aircrews, Scanner, Observers, and Pilots.  We can train you to 
-                        fly exciting Search and Rescue Missions.  Service to your Community and Country is 
+                        Right now we need Aircrews, Scanner, Observers, and Pilots.  We can train you to
+                        fly exciting Search and Rescue Missions.  Service to your Community and Country is
                         part-time, and can be an exciting second career.
                     </p>
                     <p>
@@ -161,19 +161,19 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                         The CAP Cadet Program trains tomorrow's Leaders today.
                     </p>
                     <p>
-                        The program is run by our Cadet Leaders, under the direction of trained and 
-                        screened CAP Senior Members.  Weekly meetings at our local Squadrons develop Character 
+                        The program is run by our Cadet Leaders, under the direction of trained and
+                        screened CAP Senior Members.  Weekly meetings at our local Squadrons develop Character
                         and Leadership.
                     </p>
                     <p>
                         There is NO Obligation for Military service.
                     </p>
                     <p>
-                        We offer our Cadets' summer/winter Encampments, Flying, Pilot Training, Rocketry, travel 
+                        We offer our Cadets' summer/winter Encampments, Flying, Pilot Training, Rocketry, travel
                         oppurtunities, and traing and participation in Search and Rescue operations.
                     </p>
                     <p>
-                        The application form can be downloaded from <a href="https://drive.google.com/open?id=136TeTQYn_DnOqyi_ZJl2Ho5ts1WoCJMw">this link</a>. 
+                        The application form can be downloaded from <a href="https://drive.google.com/open?id=136TeTQYn_DnOqyi_ZJl2Ho5ts1WoCJMw">this link</a>.
                         The online application (recommended) may be accessed at <a href="https://www.capnhq.gov/CAP.MembershipSystem.Web/CadetOnlineApp.aspx">this link</a>.
                     </p>
                 </div>
@@ -223,12 +223,12 @@ rightsection;
                     } else if($a->expiresIn < 32){
                         $html .= "<section><h3 style=\"text-align: center\"><font color=\"red\">";
                         $html .= "This subscription expires ";
-                        if ($a->expiresIn > 1 ) { 
+                        if ($a->expiresIn > 1 ) {
                             $html .= "in ".$a->expiresIn." days!  ";
                         } else if ($a->expiresIn > 0 ) {
                             $html .= "tomorrow!!  ";
                         } else {
-                            $html .= "today!!  "; 
+                            $html .= "today!!  ";
                         }
                         //need to add unit admin email addresses as a link here
                         $html .= "Please contact someone on your account administrative staff (";
@@ -287,7 +287,12 @@ rightsection;
 
             // $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND (ShowUpcoming = 1 OR Activity LIKE '%Recurring Meeting%') LIMIT :limit;");
             $sqlString = "SELECT EventNumber FROM ".DB_TABLES['EventInformation'];
-            $sqlString .= " WHERE PickupDateTime > :now AND Status!='Draft' AND AccountID = :aid AND ShowUpcoming = 1 ORDER BY MeetDateTime ASC LIMIT :limit;";
+//need to modify sqlstring based on member in account
+            if($l && $a->hasMember($m)) {
+                $sqlString .= " WHERE PickupDateTime > :now AND Status!='Draft' AND AccountID = :aid AND ShowUpcoming = 1 ORDER BY MeetDateTime ASC LIMIT :limit;";
+            } else {
+                $sqlString .= " WHERE PickupDateTime > :now AND Status!='Draft' AND Status!='Private' AND AccountID = :aid AND ShowUpcoming = 1 ORDER BY MeetDateTime ASC LIMIT :limit;";
+            }
             $stmt = $pdo->prepare($sqlString);
             $stmt->bindValue(':now', time());
 			$stmt->bindValue(':aid', $a->id);
@@ -355,7 +360,7 @@ EOD;
                     'Text' => $datum['name']
                 ];
             }
-            
+
             return [
                 'body' => [
                     'MainBody' => $html,

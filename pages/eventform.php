@@ -43,7 +43,7 @@
 					$nextMonth = UtilCollection::createDate($thisYear, $monthNumber+1);
 					$thisMonth = UtilCollection::createDate($thisYear, $monthNumber);
 
-					$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+					$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation'];
 					$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
 					$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
 					$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
@@ -57,10 +57,10 @@
 				} else {
 					$eventLimit = $account->paidEventLimit;
 				}
-		
+
 				//check monthevents to prevent access error when Null
 				if(count($monthevents)) {
-					//compare to event limit and allow edit if not over limit				
+					//compare to event limit and allow edit if not over limit
 					for ($i = 0; ($i < $eventLimit && $i < count($monthevents)); $i++) {
 						if ($monthevents[$i]['EventNumber'] == $event->EventNumber) { $allowed = true; }
 						$eventlist .= $event->EventNumber.', ';
@@ -93,7 +93,7 @@
 						'body' => $response
 					];
 				}
-	
+
 
 				$form = new AsyncForm ('eventform', 'Edit Event', Null, 'eventForm');
 
@@ -169,11 +169,12 @@
 						'min' => 0,
 						'max' => 50
 					])
+					->addField ('privateAttendance', 'Make Attendance List Private', 'checkbox', Null, Null, $event->PrivateAttendance)
 					->addField ('groupEventNumber', 'Group Event Number', 'radio', Null, [
 						'Not Required', 'To Be Applied For', 'Applied For', 'Other'
 					], $event->GroupEventNumber)
 					->addField ('eventStatus', 'Event Status*', 'radio', Null, [
-						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
+						'Private','Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
 					], $event->Status)
 					->addField ('entryComplete', 'Entry Complete', 'checkbox', Null, Null, $event->Complete)
 					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, $event->PublishToWingCalendar)
@@ -189,7 +190,7 @@
 
 				$form->setOption('reload', false);
 				$form->setOption('beforeSend', 'checkInputs');
-				
+
 				$form->setSubmitInfo('Submit', null, null, null, true);
 
 				return [
@@ -288,11 +289,12 @@
 						'min' => 0,
 						'max' => 50
 					])
+					->addField ('privateAttendance', 'Make Attendance List Private', 'checkbox', Null, Null, '0')
 					->addField ('groupEventNumber', 'Group Event Number', 'radio', Null, [
 						'Not Required', 'To Be Applied For', 'Applied For', 'Other'
 					], 'Not Required')
 					->addField ('eventStatus', 'Event Status*', 'radio', Null, [
-						'Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
+						'Private','Draft', 'Tentative', 'Confirmed', 'Complete', 'Cancelled', 'Information Only'
 					], 'Draft')
 					->addField ('entryComplete', 'Entry Complete', 'checkbox')
 					->addField ('publishToWing', 'Publish to Wing Calendar', 'checkbox', Null, Null, '0')
@@ -312,9 +314,9 @@
 
 				$form->setSubmitInfo('Submit', null, null, null, false);
 
-				if ( strlen($messagetext) > 0 ) { 
+				if ( strlen($messagetext) > 0 ) {
 					$messagetext = "</br><div class=\"divider\"></div>".$messagetext;
-					$messagetext .= "<div class=\"divider\"></div></br>"; 
+					$messagetext .= "<div class=\"divider\"></div></br>";
 				}
 
 				return [
@@ -356,7 +358,7 @@
 			$pdo = DBUtils::CreateConnection();
 			$monthevents = Null;
 			//query for events in this month
-			$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation']; 
+			$sqlin = 'SELECT Created, EventNumber FROM '.DB_TABLES['EventInformation'];
 			$sqlin .= ' WHERE ((MeetDateTime < :monthend AND MeetDateTime > :monthstart) ';
 			$sqlin .= 'OR (PickupDateTime > :monthstart AND PickupDateTime < :monthend)) ';
 			$sqlin .= 'AND AccountID = :aid ORDER BY Created;';
@@ -462,6 +464,7 @@
 					'AcceptSignUps' => true,
 					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
 					'SignUpDenyMessage' => '',
+					'PrivateAttendance' => $eventdata['form-data']['privateAttendance'] == 'true',
 					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
 					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
 					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],
@@ -581,8 +584,8 @@
 					'TransportationProvided' => $eventdata['form-data']['transportationProvided'] == 'true',
 					'TransportationDescription' => $eventdata['form-data']['transportationDescription'],
 					'Uniform' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['uniform'], [
-						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)', 
-						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)', 
+						'Dress Blue A', 'Dress Blue B', 'Battle Dress Uniform or Airman Battle Uniform (BDU ABU)',
+						'PT Gear', 'Polo Shirts (Senior Members)', 'Blue Utilities (Senior Members)',
 						'Civilian Attire', 'Flight Suit', 'Not Applicable'
 					]),
 					'DesiredNumParticipants' => $eventdata['form-data']['desiredParticipants'],
@@ -604,7 +607,7 @@
 					'EventWebsite' => $eventdata['form-data']['eventWebsite'],
 					'RequiredForms' => AsyncForm::ParseCheckboxOutput($eventdata['form-data']['requiredForms'], [
 						'CAP Identification Card',
-						'CAPF 31 Application For CAP Encampment Or Special Activity', 
+						'CAPF 31 Application For CAP Encampment Or Special Activity',
 						'CAPF 60-80 Civil Air Patrol Cadet Activity Permission Slip',
 						'CAPF 101 Specialty Qualification Card',
 						'CAPF 160 CAP Member Health History Form',
@@ -617,6 +620,7 @@
 					'AcceptSignUps' => true,
 					// 'SignUpDenyMessage' => $eventdata['form-data']['signUpDeny'],
 					'SignUpDenyMessage' => '',
+					'PrivateAttendance' => $eventdata['form-data']['privateAttendance'] == 'true',
 					'PublishToWingCalendar' => $eventdata['form-data']['publishToWing'] == 'true',
 					'ShowUpcoming' => $eventdata['form-data']['showUpcoming'] == 'true',
 					'GroupEventNumber' => $eventdata['form-data']['groupEventNumber'],

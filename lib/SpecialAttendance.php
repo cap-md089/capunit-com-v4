@@ -54,7 +54,7 @@
 		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='') {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['SpecialAttendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :geoloc, :duty);');
+			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['SpecialAttendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :geoloc, :duty, :confirmed);');
 			$time = time();
 			$stmt->bindValue(':plantouse', $plantouse ? 1 : 0);
 			$stmt->bindValue(':time', $time);
@@ -68,6 +68,7 @@
 			$stmt->bindValue(':sent', 0);
 			$stmt->bindValue(':geoloc', $geoloc);
 			$stmt->bindValue(':duty', $duty);
+			$stmt->bindValue(':confirmed', 0);
 			$this->EventAttendance[] = [
 				'PlanToUseCAPTransportation' => $plantouse ? 1 : 0,
 				'Timestamp' => $time,
@@ -79,7 +80,8 @@
 				'Requirements' => '',
 				'SummaryEmailSent' => 0,
 				'GeoLoc' => $geoloc,
-				'DutyPreference' => $duty
+				'DutyPreference' => $duty,
+				'Confirmed' => 0
 			];
 			if (!$stmt->execute()) {
 				if ($stmt->errorInfo()[1] == 1062) {
@@ -109,7 +111,7 @@
 			return true;
 		}
 
-		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null, $duty=Null) {
+		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null, $duty=Null, $confirmed=Null) {
 			global $_ACCOUNT;
 			$found = false;
 			for ($i = 0; $i < count($this->EventAttendance); $i++) {
@@ -127,6 +129,7 @@
 			if (isset($status)) $row['Status'] = $status;
 			if (isset($geoloc)) $row['GeoLoc'] = $geoloc;
 			if (isset($duty)) $row['DutyPreference'] = $duty;
+			if (isset($confirmed)) $row['Confirmed'] = $confirmed;
 
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('UPDATE '.DB_TABLES['SpecialAttendance'].' SET
@@ -134,7 +137,8 @@
 				Comments=:comments,
 				Status=:status,
 				GeoLoc=:geoloc,
-				DutyPreference=:duty
+				DutyPreference=:duty,
+				Confirmed=:confirmed
 			WHERE
 				EventID=:eid
 			AND
@@ -146,6 +150,7 @@
 			$stmt->bindValue(':status', $row['Status']);
 			$stmt->bindValue(':geoloc', $row['GeoLoc']);
 			$stmt->bindValue(':duty', $row['DutyPreference']);
+			$stmt->bindValue(':confirmed', $row['Confirmed']);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':capid', $row['CAPID']);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -188,7 +193,8 @@
 				'Comments' => $row['Comments'],
 				'Status' => $row['Status'],
 				'GeoLoc' => $row['GeoLoc'],
-				'DutyPreference' => $row['DutyPreference']
+				'DutyPreference' => $row['DutyPreference'],
+				'Confirmed' => $row['Confirmed']
 			];
 		}
 

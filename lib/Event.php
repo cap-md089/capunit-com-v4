@@ -168,6 +168,12 @@
         public $PublishToWingCalendar = false;
 
         /**
+         * @var bool Whether or not attendance view should be displayed to all members
+         *  or only to Managers and POCs
+         */
+        public $PrivateAttendance = false;
+
+        /**
          * @var bool Whether or not to show this event on the home page in the upcoming events section
          */
         public $showUpcoming = true;
@@ -378,7 +384,7 @@
                     CAPPOC1ID, CAPPOC1Name, CAPPOC1Phone, CAPPOC1Email, CAPPOC1ReceiveEventUpdates, CAPPOC1ReceiveSignUpUpdates, 
                     CAPPOC2ID, CAPPOC2Name, CAPPOC2Phone, CAPPOC2Email, CAPPOC2ReceiveEventUpdates, CAPPOC2ReceiveSignUpUpdates, 
                     AdditionalEmailAddresses, ExtPOCName, ExtPOCPhone, ExtPOCEmail, ExtPOCReceiveEventUpdates, Author, PartTime, TeamID,
-                    SourceEventNumber, SourceAccountID, IsSpecial
+                    SourceEventNumber, SourceAccountID, IsSpecial, PrivateAttendance
 				) VALUES (
                     :created, :accountid, :eventnumber, :eventName, :meetDate, :meetLocation, :startDate, :eventLocation, 
                     :endDate, :pickupLocation, :pickupDate, :transportationProvided, :transportationDescription, 
@@ -389,7 +395,7 @@
                     :CAPPOC1ID, :CAPPOC1Name, :CAPPOC1Phone, :CAPPOC1Email, :CAPPOC1REU, :CAPPOC1RSU, 
                     :CAPPOC2ID, :CAPPOC2Name, :CAPPOC2Phone, :CAPPOC2Email, :CAPPOC2REU, :CAPPOC2RSU, 
                     :additionalEmailAddresses, :ExtPOCName, :ExtPOCPhone, :ExtPOCEmail, :ExtPOCREU, :author, :parttime, :teamid,
-                    :sourceEventNumber, :sourceAccountID, :isSpecial
+                    :sourceEventNumber, :sourceAccountID, :isSpecial, :privateAttendance
 				);");
 
             $stmt->bindValue(':created', time());
@@ -422,6 +428,7 @@
             $stmt->bindValue(':acceptSignups', $event->AcceptSignUps);
             $stmt->bindValue(':signUpDeny', $event->SignUpDenyMessage);
             $stmt->bindValue(':publishToWing', $event->PublishToWingCalendar ? 1 : 0);
+            $stmt->bindValue(':privateAttendance', $event->PrivateAttendance ? 1 : 0);
 			$stmt->bindValue(':showUpcoming', $event->showUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $event->GroupEventNumber);
             $stmt->bindValue(':entryComplete', $event->Complete ? 1 : 0);
@@ -486,6 +493,7 @@
                 "TransportationProvided",
                 "AcceptSignUps",
                 "PublishToWingCalendar",
+                "PrivateAttendance",
                 "Complete",
                 "PartTime",
                 "CAPPOC1ReceiveEventUpdates",
@@ -551,7 +559,7 @@
                 HighAdventureDescription = :highAdventureDescription, RequiredEquipment = :requiredEquipment,
                 EventWebsite = :eventWebsite, RequiredForms = :requiredForms, Comments = :comments,
                 AcceptSignUps = :acceptSignups, SignUpDenyMessage = :signUpDeny, ShowUpcoming =:showUpcoming,
-                PublishToWingCalendar = :publishToWing, GroupEventNumber = :groupEventNumber,
+                PublishToWingCalendar = :publishToWing, GroupEventNumber = :groupEventNumber, PrivateAttendance = :privateAttendance,
                 Complete = :entryComplete, Administration = :adminComments, Status = :eventStatus,
                 Debrief = :debrief, CAPPOC1ID = :CAPPOC1ID, CAPPOC1Name = :CAPPOC1Name, CAPPOC1Phone = :CAPPOC1Phone, CAPPOC1Email = :CAPPOC1Email,
                 CAPPOC2ID = :CAPPOC2ID, CAPPOC2Name = :CAPPOC2Name, CAPPOC2Phone = :CAPPOC2Phone, CAPPOC2Email = :CAPPOC2Email, 
@@ -588,6 +596,7 @@
             $stmt->bindValue(':comments', $this->Comments);
             $stmt->bindValue(':acceptSignups', $this->AcceptSignUps);
             $stmt->bindValue(':signUpDeny', $this->SignUpDenyMessage);
+            $stmt->bindValue(':privateAttendance', $this->PrivateAttendance ? 1 : 0);
             $stmt->bindValue(':publishToWing', $this->PublishToWingCalendar ? 1 : 0);
             $stmt->bindValue(':showUpcoming', $this->showUpcoming ? 1 : 0);
             $stmt->bindValue(':groupEventNumber', $this->GroupEventNumber);
@@ -683,6 +692,7 @@
                 "TransportationProvided",
                 "AcceptSignUps",
                 "PublishToWingCalendar",
+                "PrivateAttendance",
                 "Complete",
                 "PartTime",
                 "CAPPOC1ReceiveEventUpdates",
