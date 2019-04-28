@@ -14,8 +14,10 @@
 			for ($i = 0; $i < count($funcs); $i++) {
 				$func = $funcs[$i];
 				if ($func == '.' || $func == '..') {continue;}
-				require_once (BASE_DIR."pluggables/".$func);
-				$func = explode(".", $func)[0];
+				$func = explode(".", $func);
+				if (count($func) > 2) {continue;}
+				$func = $func[0];
+				require_once (BASE_DIR."pluggables/".$func.".php");
 				$d = $func($e, $c, $l, $m, $a);
 				if ($d != '') {
 					$html .= "<div id=\"{$func}Section\" class=\"adminsection\">" . $d['text'] . "</div>";

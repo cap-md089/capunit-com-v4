@@ -33,12 +33,16 @@ ORDER BY Absent;");
 			$stmt->bindParam(':flight', $flight);
 			$cdata = DB_Utils::ExecutePDOStatement($stmt);
 			foreach ($cdata as $datum) {
-				$flightmembers[$datum['CAPID']]['Contact'][] = [
-					'Contact' => $datum['Contact'],
-					'Priority' => $datum['Priority'],
-					'Type' => $datum['Type'],
-					'DoNotContact' => $datum['DoNotContact'] == 1
-				];
+				echo $datum['CAPID'] . "\n";
+				if (isset($flightmembers[$datum['CAPID']])) {
+					$flightmembers[$datum['CAPID']]['Contact'][] = [
+						'Contact' => $datum['Contact'],
+						'Priority' => $datum['Priority'],
+						'Type' => $datum['Type'],
+						'Absent' => 0,
+						'DoNotContact' => $datum['DoNotContact'] == 1
+					];
+				}
 			}
 			$elist = [];
 			$dl = new DetailedListPlus();
