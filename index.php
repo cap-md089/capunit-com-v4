@@ -30,7 +30,7 @@
     header ("Cache-control: no-cache, must-revalidate");
 
 	// I put a comment here
-    
+
     $libs = scandir (BASE_DIR . "lib");
     foreach ($libs as $lib) {
         if (is_file(BASE_DIR . "lib/$lib") && explode(".", $lib)[1] == 'php') {
@@ -153,7 +153,7 @@ HTM;
         $_LOGGEDIN = $_USER['valid'];
 		$_USER = $_LOGGEDIN ? $_USER['mem'] : Null;
 	}
- 
+
     if ($_FUNC != 'gettemplates') {
         Analytics::LogBrowser($_USER);
     }
@@ -163,7 +163,7 @@ HTM;
     } else { // Not found or not to be displayed
         http_response_code (404);
         include (BASE_DIR."404.php");
-    } 
+    }
 
     /**
      *

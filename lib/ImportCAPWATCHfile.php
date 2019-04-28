@@ -449,6 +449,61 @@
 		}
 		unlink("$dir/$id-$member->capid-CadetAchvAprs.txt");
 
+		//Import CdtAchvEnum.txt file
+		flog ("Processing CdtAchvEnum");
+		$last_line=system("unzip -op $fname CdtAchvEnum.txt > $dir/$id-$member->capid-CdtAchvEnum.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("CdtAchvEnum unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "CdtAchvEnum unzip error.  Please contact helpdesk@capunit.com";
+		}
+		$achvs = explode("\n", file_get_contents("$dir/$id-$member->capid-CdtAchvEnum.txt"));
+		$titleRow = str_getcsv($achvs[0]);
+		$colIDs = array();
+		foreach ($titleRow as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CadetAchvID','CurAwdNo'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("CdtAchvEnum.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the CdtAchvEnum.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing CdtAchvEnum.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
+/*		$stmt = $pdo->prepare("DELETE FROM Data_CadetAchvAprs WHERE ORGID=:orgid;");
+		$stmt->bindValue(':orgid', $id);
+		if (!$stmt->execute()) {
+			ErrorMSG::Log("CadetAchvAprs Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+			return "CadetAchvAprs Delete ORGID error: ".$stmt->errorInfo()[2];
+		}
+*/		for ($i = 1, $m = str_getcsv($achvs[$i]); $i < count($achvs)-1; $i++, $m = str_getcsv($achvs[$i])) {
+			VN::$vals = $m;
+
+/*			$stmt = $pdo->prepare("DELETE FROM Data_CadetAchvAprs WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
+			$stmt->bindValue(':cid', $m[0]);
+			$stmt->bindValue(':orgid', $id);
+			if (!$stmt->execute()) {
+				ErrorMSG::Log("CadetAchvAprs Delete NOT ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "CadetAchvAprs Delete NOT ORGID error: ".$stmt->errorInfo()[2];
+			}
+*/
+			$stmt = $pdo->prepare("UPDATE Data_CdtAchvEnum SET CurAwdNo = :curawdno WHERE CadetAchvID = :cachvid;");
+
+			$stmt->bindValue(':cachvid', (int)VN::g('CadetAchvID'));
+			$stmt->bindValue(':curawdno', (int)VN::g('CurAwdNo'));
+
+			if (!$stmt->execute()) {
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+				return "CdtAchvEnum Insert error: ".$stmt->errorInfo()[2];
+			}
+		}
+		unlink("$dir/$id-$member->capid-CdtAchvEnum.txt");
+
 
 		//only import the organization files if the form checkbox is set
 		if($importOrgs == "true") {

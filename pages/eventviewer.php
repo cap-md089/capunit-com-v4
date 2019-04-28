@@ -296,7 +296,7 @@
 				}
 			}
 
-			if ($l && ($a->hasMember($m) || $a->id="mdx89"|| $m->IsRioux )) {
+			if ($l && ($a->hasMember($m) || $a->id="mdx89" || $m->IsRioux || $event->isPOC($m) )) {
 //			if ($l) {
 				$dlist = new DetailedListPlus("Current Attendance");
 				$alist = new AsyncButton(null, "CAPID list", "attendanceIDPopup");
@@ -328,6 +328,9 @@
 
 							if($event->isPOC($m) || $m->hasPermission('SignUpEdit')) {
 								$form->addField('confirmed', 'Confirmed', 'checkbox', Null, Null, $data['Confirmed']);
+							} else {
+								$form->addField('conftext', $data['Confirmed'] ? "Attendance Confirmed" : "Attendance Not Confirmed", 'textread');
+								$form->addHiddenField('confirmed', $data['Confirmed']);
 							}
 
 							$form->addField("status", "Status", "radio", Null, [

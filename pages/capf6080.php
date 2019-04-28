@@ -32,6 +32,7 @@
 				$event = Event::Get($e['uri'][0]);
 			} else {
 				$event = false;
+				return ['error' => 300];
 			}
 
 			$filename = "CAPF6080.pdf";

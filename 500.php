@@ -2,7 +2,7 @@
 
     require_once(BASE_DIR."lib/templates.php");
     require_once(BASE_DIR."lib/general.php");
-    
+
     class ErrOutput {
         public static function doGet ($ERROR) {
             global $_USER;

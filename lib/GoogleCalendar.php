@@ -100,7 +100,7 @@
                 $descriptionString = "--Please contact the POC listed below directly with questions or comments.\n\n";
                 $descriptionString .= "Event Information Link\n(Page includes event information and any applicable download links):\n";
                 $descriptionString .= "https://".$_ACCOUNT->id.".capunit.com/eventviewer/".$CUevent->EventNumber."/\n\n";
-                
+
                 // Second block
                 $descriptionString .= "--Meet at ".date('h:i A \o\n n/j/Y', $CUevent->MeetDateTime).' at '.$CUevent->MeetLocation."\n";
                 $descriptionString .= "--Start at ".date('h:i A \o\n n/j/Y', $CUevent->StartDateTime).' at '.$CUevent->EventLocation."\n";
@@ -120,18 +120,18 @@
                 $descriptionString .= "--Meals: ".$CUevent->Meals."\n";
                 if ($CUevent->CAPPOC1ID != 0) {
                     $descriptionString .= "--CAP Point of Contact: ".$CUevent->CAPPOC1Name."\n";
-                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->CAPPOC1Phone."\n";
-                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->CAPPOC1Email."\n";
+//                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->CAPPOC1Phone."\n";
+//                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->CAPPOC1Email."\n";
                 }
                 if ($CUevent->CAPPOC2ID != 0) {
                     $descriptionString .= "--CAP Point of Contact: ".$CUevent->CAPPOC2Name."\n";
-                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->CAPPOC2Phone."\n";
-                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->CAPPOC2Email."\n";
+//                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->CAPPOC2Phone."\n";
+//                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->CAPPOC2Email."\n";
                 }
                 if ($CUevent->ExtPOCName != '') {
                     $descriptionString .= "--CAP Point of Contact: ".$CUevent->ExtPOCName."\n";
-                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->ExtPOCPhone."\n";
-                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->ExtPOCEmail."\n";
+//                    $descriptionString .= "--CAP Point of Contact phone: ".$CUevent->ExtPOCPhone."\n";
+//                    $descriptionString .= "--CAP Point of Contact email: ".$CUevent->ExtPOCEmail."\n";
                 }
                 $descriptionString .= "--Desired number of Participants: ".$CUevent->DesiredNumParticipants."\n";
                 $descriptionString .= "--Event status: ".$CUevent->Status;
