@@ -52,7 +52,7 @@
 		public static function doPost ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
 			if (!$m->hasPermission('PermissionsManagement')) return ['error' => 401];
-			
+
 			$pdo = DBUtils::CreateConnection();
 
 			foreach ($e['form-data']['capids'] as $capid) {

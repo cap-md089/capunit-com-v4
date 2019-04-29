@@ -33,7 +33,6 @@ ORDER BY Absent;");
 			$stmt->bindParam(':flight', $flight);
 			$cdata = DB_Utils::ExecutePDOStatement($stmt);
 			foreach ($cdata as $datum) {
-				echo $datum['CAPID'] . "\n";
 				if (isset($flightmembers[$datum['CAPID']])) {
 					$flightmembers[$datum['CAPID']]['Contact'][] = [
 						'Contact' => $datum['Contact'],
