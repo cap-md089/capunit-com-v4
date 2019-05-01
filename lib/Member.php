@@ -171,9 +171,9 @@
                 "__EVENTARGUMENT" => "",
                 "__EVENTVALIDATION" => _g($_, "__EVENTVALIDATION"),
                 "__VIEWSTATEGENERATOR" => _g($_, "__VIEWSTATEGENERATOR"),
-                'Login1$UserName' => $uname,
-                'Login1$Password' => $upass,
-                'Login1$LoginButton' => 'Sign+in'
+                'Login$UserName' => $uname,
+                'Login$Password' => $upass,
+                'Login$LoginButton' => 'Sign+in'
             );
 
             $fields_string = ''; // Convert an associative array to a query string
@@ -353,10 +353,10 @@
                     error_reporting(E_ALL ^ E_WARNING); // NHQ has some nasty html
                     $h = $m->goToPage("/CAP.eServices.Web/MyAccount/ContactInfo.aspx");
                     $m->rawContact = $h['body'];
-                    $logger->Log("gvContactInformation: ".$h['body'], 8);
+                    $logger->Log("gvContacts: ".$h['body'], 8);
                     $h = Util_Collection::ParseHTML($h['body']);
                     error_reporting(E_ALL);
-                    $table = $h->getElementById("gvContactInformation");
+                    $table = $h->getElementById("gvContacts");
                     $m->contact = array (
                         "ALPHAPAGER" => [],
                         "ASSISTANT" => [],
@@ -408,7 +408,7 @@
 
                 if ((int)$m->uname === 0 || !$ins) { // $m->uname is a string name, not a six digit CAPID (XXXXXX)
                     error_reporting(E_ALL ^ E_WARNING); // NHQ has some nasty html
-                    $h = Util_Collection::ParseHtml($m->goToPage("/preview/GatherEmails.aspx?t=a")['body']);
+                    $h = Util_Collection::ParseHtml($m->goToPage("/CAP.eServices.Web/GatherEmails.aspx?t=a")['body']);
                     error_reporting(E_ALL);
                     $trs = $h->getElementById("gvEmails")->getElementsByTagName("tr");
                     $l = $trs->length;
