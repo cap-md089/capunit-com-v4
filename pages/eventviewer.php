@@ -38,7 +38,7 @@
 				$html .= " | ".(new AsyncButton('rostersenior', 'Download Senior Member roster', 'rosterSenior'))->getHtml($ev);
 				if ($m->hasPermission("SignUpEdit")) {
 					$html .= "<br />".new Link ("multiadd", "Add attendees", [$ev]);
-//					$html .= " | ".new Link ("scanadd", "Scan attendee CAPID", [$ev]);
+					$html .= " | ".new Link ("scanadd", "Scan attendee CAPID", [$ev]);
 //					$html .= " | ".(new AsyncButton(Null, 'Send attendance summary','sendAttendance'))->getHtml('sende'.$ev);
 				}
 				if ($event->SourceEventNumber > 0) {

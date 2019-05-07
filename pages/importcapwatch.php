@@ -1,6 +1,6 @@
 <?php
 	define ("USER_REQUIRED", true);
-	
+
 	function mdate ($time) {
 		return date('Y-m-d\TH:i:s', $time);
 	}
@@ -39,6 +39,8 @@
 			}
 			foreach ($organizations['data'] as $org => $name) {
 				$form->addField("orgs".$i."[]", $name, 'checkbox');
+				//make database pull here for last update
+//				$form->addField('','The download and import process takes several minutes.  Results will be displayed when the process is complete.','textRead');
 				$form->addHiddenField("orgids[]", $org);
 				$form->addHiddenField("orgnam[]", $name);
 				$form->addHiddenField("orgnum[]", $i);
@@ -57,7 +59,7 @@
 			// }
 
 			$form->reload = false;
-			$html = $form.'';	
+			$html = $form.'';
 			}
 
 			return [
@@ -85,7 +87,7 @@
 		public static function doPost ($e, $c, $l, $m, $a) {
 			if (!$l) return false;
 			if (!$m->hasPermission("AddEvent")) {return ['error' => 402];}
-			
+
 			$orgs = [];
 
 			foreach ($e['form-data']['orgnum'] as $num) {
@@ -111,7 +113,7 @@
 			if ($errors == 0) {
 				return "CAPWATCH files for all selected units processed successfully!<br>";
 			} else {
-				$retval = "Processing outcome for selected units is as follows:<br>"; 
+				$retval = "Processing outcome for selected units is as follows:<br>";
 				$counter=0;
 				foreach ($ids as $id) {
 					$retval.=$names[$counter];
@@ -121,10 +123,10 @@
 						$retval.=" CAPWATCH file processed successfully.<br>";
 					}
 				} //end for
-					
+
 				return $retval;
 			} // end else errors
 
 		} //end doPost function
-	
+
 	} //end class Output

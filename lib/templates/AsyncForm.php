@@ -324,7 +324,7 @@
 
 				default :
 					$rowid = isset($rowid) ? $rowid : '';
-					$html = "<input ".(isset($default)?"value=\"$default\" ":"")."type=\"$type\" name=\"$name\" $rowid class=\"$class\"";
+					$html = "<input ".(isset($default)?"value=\"$default\" ":"")."type=\"$type\" name=\"$name\" class=\"$class\"";
 					if ($data != [] && isset($data)) {
 						foreach ($data as $k => $v) {
 							$html .= " $k=\"$v\"";

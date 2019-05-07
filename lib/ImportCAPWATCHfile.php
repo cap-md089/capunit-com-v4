@@ -28,6 +28,19 @@
 
 		$pdo = DB_Utils::CreateConnection();
 
+		$sqlstmt = "INSERT INTO CAPWATCH_Download_Log (ORGID, Timestamp, CAPID, RankName) ";
+		$sqlstmt .= "VALUES (ORGID=:oid, Timestamp=:ts, CAPID=:cid, RankName=:rn) ";
+		$sqlstmt .= "ON DUPLICATE KEY UPDATE Timestamp=:ts, CAPID=:cid, RankName=:rn;";
+		$stmt = $pdo->prepare($sqlstmt);
+		$stmt->bindValue(':oid', $id);
+		$stmt->bindValue(':ts', time());
+		$stmt->bindValue(':cid', $member->capid);
+		$stmt->bindValue(':rn', $member->RankName);
+		if (!$stmt->execute()) {
+			ErrorMSG::Log("CAPWATCH Download Log ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+			return "CAPWATCH Download Log error: ".$stmt->errorInfo()[2];
+		}
+
 		//Import Member.txt file
 		flog ("Processing Member");
 		$last_line=system("unzip -op $fname Member.txt > $dir/$id-$member->capid-Member.txt",$retval);
