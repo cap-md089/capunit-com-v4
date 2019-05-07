@@ -1,5 +1,5 @@
 <?php
-        require_once (BASE_DIR . "lib/logger.php");
+//        require_once (BASE_DIR . "lib/logger.php");
 
 
 	class Output {
@@ -119,7 +119,7 @@
 		}
 
 		public static function doPost ($e, $c, $l, $m, $a) {
-			$logger = New Logger ("ScanAdd");
+//			$logger = New Logger ("ScanAdd");
 
 			$browsercookies = json_decode(isset($c['LOGIN_DETAILS']) ? urldecode($c['LOGIN_DETAILS']) : '{}', true);
 
@@ -135,10 +135,8 @@
 				$data = $data[0];
 				$ev = $data['EventNumber'];
 				$event = Event::Get($ev);
-				$logger->Log("data: ".implode($data), 8);
+//				$logger->Log("data: ".implode($data), 8);
 			} else {
-				$logger->Log("localstore: ".$browsercookies['sid'], 8);
-				$logger->Log("count data: ".count($data), 8);
 				return ['error' => 302];
 			}
 
