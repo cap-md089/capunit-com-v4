@@ -1,4 +1,5 @@
 <?php
+require_once (BASE_DIR . "lib/logger.php");
 	class VN {
 		static $vals = [];
 		static $header = [];
@@ -11,6 +12,8 @@
 	}
 
 	function ImportCAPWATCH ($member, $id, $importOrgs) {
+$logger = New Logger ("ImportCAPWATCH");
+
 		if (!function_exists("flog")) {
 			function flog ($a) {}
 		}
@@ -28,14 +31,19 @@
 
 		$pdo = DB_Utils::CreateConnection();
 
+		$mytime = time();
+		$myid = $member->capid;
+		$myrn = $member->RankName;
+//$logger->Log("id: ".$id, 8);
+
 		$sqlstmt = "INSERT INTO CAPWATCH_Download_Log (ORGID, Timestamp, CAPID, RankName) ";
-		$sqlstmt .= "VALUES (ORGID=:oid, Timestamp=:ts, CAPID=:cid, RankName=:rn) ";
+		$sqlstmt .= "VALUES (:oid, :ts, :cid, :rn) ";
 		$sqlstmt .= "ON DUPLICATE KEY UPDATE Timestamp=:ts, CAPID=:cid, RankName=:rn;";
 		$stmt = $pdo->prepare($sqlstmt);
 		$stmt->bindValue(':oid', $id);
-		$stmt->bindValue(':ts', time());
-		$stmt->bindValue(':cid', $member->capid);
-		$stmt->bindValue(':rn', $member->RankName);
+		$stmt->bindValue(':ts', $mytime);
+		$stmt->bindValue(':cid', $myid);
+		$stmt->bindValue(':rn', $myrn);
 		if (!$stmt->execute()) {
 			ErrorMSG::Log("CAPWATCH Download Log ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
 			return "CAPWATCH Download Log error: ".$stmt->errorInfo()[2];

@@ -10,8 +10,7 @@
 			if (!$loggedin) {
 				return ['error' => 411];
 			}
-			//need to adjust permission query to appropriate for CAPWATCH import
-			if (!$member->hasPermission("AddEvent")) {return ['error' => 402];}
+			if (!$member->hasPermission("DownloadCAPWATCH")) {return ['error' => 402];}
 
 			$organizations = $member->getCAPWATCHList();
 			$data = $organizations;
@@ -29,6 +28,9 @@
 				}
 			} else {
 
+			$pdo = DB_Utils::CreateConnection();
+
+
 			$form = new AsyncForm ();
 			$i = 0;
 			$form->addField('','The download and import process takes several minutes.  Results will be displayed when the process is complete.','textRead');
@@ -40,6 +42,15 @@
 			foreach ($organizations['data'] as $org => $name) {
 				$form->addField("orgs".$i."[]", $name, 'checkbox');
 				//make database pull here for last update
+                                $sqlstring = "SELECT * FROM CAPWATCH_Download_Log WHERE ORGID=:oid;";
+                                $stmt = $pdo->prepare($sqlstring);
+                                $stmt->bindValue(":oid", $org);
+                                $data = DB_Utils::ExecutePDOStatement($stmt);
+				if(count($data)==1) {
+					$message = 'Last downloaded at '.date('h:i A \o\n n/j/Y', $data[0]['Timestamp'])." by ".$data[0]['RankName'];
+					$form->addField('lastdownload', $message, 'textread');
+				}
+
 //				$form->addField('','The download and import process takes several minutes.  Results will be displayed when the process is complete.','textRead');
 				$form->addHiddenField("orgids[]", $org);
 				$form->addHiddenField("orgnam[]", $name);
