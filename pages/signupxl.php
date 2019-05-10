@@ -1,5 +1,4 @@
 <?php
-	require_once(BASE_DIR."lib/xlsxwriter.class.php");
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) {
