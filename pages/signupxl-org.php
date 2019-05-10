@@ -1,4 +1,4 @@
-<?php
+php
 	require_once(BASE_DIR."lib/xlsxwriter.class.php");
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
@@ -11,7 +11,6 @@
 			} else {
 				$event = false;
 			}
-//			if (!$a->paid) {return ['error' => 501];}
 
 			$pdo = DBUtils::CreateConnection();
 
@@ -37,32 +36,29 @@
 
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
-				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"OrgData"=>'string',"OrgEmail"=>'string'
+				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"OrgData"=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
 
 			foreach($data as $datum) {
 //				$eventID=$datum['AccountID']."-".$datum['EventID'];
-                                $member = Member::Estimate($datum['CAPID']);
-                                $morg = UtilCollection::GetOrgIDFromUnit($member->Squadron);
+				$member = Member::Estimate($datum['CAPID']);
+				$morg = UtilCollection::GetOrgIDFromUnit($member->Squadron);
 
-                                $sql = "SELECT * FROM Data_OrgContact WHERE ORGID=:oid;";
-                                $stmt = $pdo->prepare($sql);
-                                $stmt->bindValue(':oid', $morg);
-                                $orgquery = DBUtils::ExecutePDOStatement($stmt);
-                                $orgdata = ""; $orgemail = "";
-                                if(count($orgquery)>0) {
-                                        foreach($orgquery as $contactline) {
-                                                $orgdata .= implode($contactline);
-						if($contactline['Type'] == "EMAIL") {
-							$orgemail .= $contactline['Contact'].", ";
-						}
-                                        }
-                                } else {
-                                        $orgdata = ""; $orgemail = "";
-                                }
-				if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
+				$sql = "SELECT * FROM Data_OrgContact WHERE ORGID=:oid;";
+				$stmt = $pdo->prepare($sql);
+				$stmt->bindValue(':oid', $morg);
+				$orgquery = DBUtils::ExecutePDOStatement($stmt);
+				$orgdata = "";
+				if(count($orgquery)>0) {
+					foreach($orgquery as $contactline) {
+						$orgdata .= implode($contactline);
+					}
+				} else {
+					$orgdata = "";
+				}
+
 				if(!$datum['PlanToUseCAPTransportation']) {$PTUCT='No';} else {$PTUCT='Yes';}
 				$timestamp=date('d M Y, H:i',$datum['Timestamp']);
 				$row = array(
@@ -73,8 +69,7 @@
 					$PTUCT,
 					$datum['Confirmed'],
 					$datum['Comments'],
-					$orgdata,
-					$orgemail
+					$orgdata
 				);
 				$writer->writeSheetRow('Sheet1', $row);
 				++$counter;

@@ -103,7 +103,7 @@
 				}
 				if (($a->hasMember($m) || $perm) && $eventLinked) { $html .= $moreHtml; }
 				if ($perm && !$a->hasMember($m) && !$eventLinked) {
-					$html .= "<br />".(new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
+//					$html .= "<br />".(new AsyncButton(Null, 'Link to this event in the '.$m->Squadron.' calendar','linkEventSet'))->getHtml('links'.$ev);
 //				} else if ($perm && $notInAcct) {
 //					$html .= new Link ("linkeventunset", "Unlink from this event in the ".$m->Squadron." calendar", [$ev]);
 					//need to implement unlink in own event view page, not just in remote account event
