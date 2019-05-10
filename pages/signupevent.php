@@ -60,13 +60,14 @@
 //			$mergeData = DBUtils::ExecutePDOStatement($stmtSignin);
 
 			$filename = "SignUpRoster.pdf";
-			header('Content-disposition: attachment; filename="'.$filename.'"');
+			header('Content-disposition: attachment; filename="SignUpRoster.pdf"');
+//			header('Content-disposition: attachment; filename="'.$filename.'"');
 			header("Content-Type: application/pdf");
 			$counter=0;
 
 			$pdf = new PDF('P','in',array(8.5,11));
 			$pdf->AliasNbPages();
-			$pdf->SetTitle("Sign-Up Roster");
+			$pdf->SetTitle('Sign-Up Roster');
 			$pdf->AddPage();
 			$pdf->SetMargins(0.25,0.35,0.25);
 			$pdf->SetAutoPageBreak('true',0.5);

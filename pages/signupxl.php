@@ -1,9 +1,15 @@
 <?php
+	require_once(BASE_DIR."lib/xlsxwriter.class.php");
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) {
 				return ['error' => 411];
 			}
+			//
+			// USE THIS CAPID FOR GETTING ATTENDANCE RECORDS
+			// This allows for admins to view other users attendance
+			//
+//			$cid = $m->capid;
 			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
 			if ($ev && $m->hasPermission("EditEvent")) {
 				$event = Event::Get($ev);
@@ -36,14 +42,17 @@
 
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
-				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"OrgEmail"=>'string'
+				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',
+				'Email'=>'string','Phone'=>'string','Uniform'=>'string','OrgEmail'=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
 
 			foreach($data as $datum) {
 //				$eventID=$datum['AccountID']."-".$datum['EventID'];
-                                $member = Member::Estimate($datum['CAPID']);
+				if(!$datum['PlanToUseCAPTransportation']) {$PTUCT='No';} else {$PTUCT='Yes';}
+				$timestamp=date('d M Y, H:i',$datum['Timestamp']);
+				$member = Member::Estimate($datum['CAPID']);
                                 $morg = UtilCollection::GetOrgIDFromUnit($member->Squadron);
 
                                 $sql = "SELECT * FROM Data_OrgContact WHERE ORGID=:oid;";
@@ -53,17 +62,16 @@
                                 $orgdata = ""; $orgemail = "";
                                 if(count($orgquery)>0) {
                                         foreach($orgquery as $contactline) {
-                                                $orgdata .= implode($contactline);
-						if($contactline['Type'] == "EMAIL") {
-							$orgemail .= $contactline['Contact'].", ";
-						}
+                                                if($contactline['Type'] == "EMAIL") {
+                                                        $orgemail .= $contactline['Contact'].", ";
+                                                }
                                         }
                                 } else {
-                                        $orgdata = ""; $orgemail = "";
+                                        $orgemail = "";
                                 }
-				if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
-				if(!$datum['PlanToUseCAPTransportation']) {$PTUCT='No';} else {$PTUCT='Yes';}
-				$timestamp=date('d M Y, H:i',$datum['Timestamp']);
+                                if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
+
+
 				$row = array(
 					$timestamp,
 					$datum['CAPID'],
@@ -72,7 +80,6 @@
 					$PTUCT,
 					$datum['Confirmed'],
 					$datum['Comments'],
-//					$orgdata,
 					$orgemail
 				);
 				$writer->writeSheetRow('Sheet1', $row);
