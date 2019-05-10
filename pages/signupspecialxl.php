@@ -64,13 +64,12 @@
                                 $orgdata = ""; $orgemail = "";
                                 if(count($orgquery)>0) {
                                         foreach($orgquery as $contactline) {
-                                                $orgdata .= implode($contactline);
                                                 if($contactline['Type'] == "EMAIL") {
                                                         $orgemail .= $contactline['Contact'].", ";
                                                 }
                                         }
                                 } else {
-                                        $orgdata = ""; $orgemail = "";
+                                        $orgemail = "";
                                 }
                                 if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
 
