@@ -155,15 +155,16 @@
 				$pdf->SetFont('Arial','B',$textFontSize);
 				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
 				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.9;  $wEmail = 1.5;
-				$wGeo = 0.9;  $wDuty = 1.4;
+				$wGeo = 0.9;  $wDuty = 1.0;  $wUniform = 0.8;
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
-				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
-				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"Phone",$border,0,"L",$fillState);
+				$pdf->Cell($wEmail,$cellHeight,"Email",$border,0,"L",$fillState);
+				$pdf->Cell($wUniform,$cellHeight,"Uniform",$border,1,"L",$fillState);
 
 				$pdf->SetFont('Arial','',$textFontSize);
 				$pdf->SetFillColor(210);
@@ -171,6 +172,8 @@
 				$alternator=0;
 				foreach($memberData as $datum) {
 					$member = Member::Estimate($datum['CAPID']);
+					if($datum['EmailAddress'] == '') {$em = $member->getBestEmail();} else {$em = $datum['EmailAddress'];}
+					if($datum['PhoneNumber'] == '') {$ep = $member->getBestPhone();} else {$ep = $datum['PhoneNumber'];}
 					if($member->seniorMember) {
 						if(!$alternator) {
 							$fillState = false;
@@ -191,11 +194,12 @@
 						$pdf->SetFont('Arial','',$textFontSize);
 						$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
 						$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
-						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
+						$pdf->Cell($wCell,$cellHeight,$ep,$border,0,"L",$fillState);
+						if($pdf->getStringWidth($em)>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
+						if($pdf->getStringWidth($em)>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
+						$pdf->Cell($wEmail,$cellHeight,$em,$border,0,"L",$fillState);
 						$pdf->SetFont('Arial','',$textFontSize);
+						$pdf->Cell($wUniform,$cellHeight,$datum['Uniform'],$border,1,"L",$fillState);
 					}
 				}
 
@@ -211,21 +215,24 @@
 				$pdf->SetFont('Arial','B',$textFontSize);
 				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
 				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.9;  $wEmail = 1.5;
-				$wGeo = 0.9;  $wDuty = 1.4;
+				$wGeo = 0.9;  $wDuty = 1.0;  $wUniform = 0.8;
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
 				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
 				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
 				$pdf->Cell($wGeo,$cellHeight,"Location",$border,0,"L",$fillState);
 				$pdf->Cell($wDuty,$cellHeight,"Duty Pref",$border,0,"L",$fillState);
-				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
-				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"Phone",$border,0,"L",$fillState);
+				$pdf->Cell($wEmail,$cellHeight,"Email",$border,0,"L",$fillState);
+				$pdf->Cell($wUniform,$cellHeight,"Uniform",$border,1,"L",$fillState);
 
 				$pdf->SetFont('Arial','',$textFontSize);
 				$pdf->SetFillColor(210);
 				$cellHeight = 0.18;  $border = 0;  $fillState = false;
 				$alternator=0;
 				foreach($memberData as $datum) {
+					if($datum['EmailAddress'] == '') {$em = $member->getBestEmail();} else {$em = $datum['EmailAddress'];}
+					if($datum['PhoneNumber'] == '') {$ep = $member->getBestPhone();} else {$ep = $datum['PhoneNumber'];}
 					$member = Member::Estimate($datum['CAPID']);
 					if(!$member->seniorMember) {
 						if(!$alternator) {
@@ -247,11 +254,12 @@
 						$pdf->SetFont('Arial','',9);
 						$pdf->Cell($wGeo,$cellHeight,$datum['GeoLoc'],$border,0,"L",$fillState);
 						$pdf->Cell($wDuty,$cellHeight,$datum['DutyPreference'],$border,0,"L",$fillState);
-						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
-						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
-						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
+						$pdf->Cell($wCell,$cellHeight,$ep,$border,0,"L",$fillState);
+						if($pdf->getStringWidth($em)>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
+						if($pdf->getStringWidth($em)>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
+						$pdf->Cell($wEmail,$cellHeight,$em,$border,0,"L",$fillState);
 						$pdf->SetFont('Arial','',$textFontSize);
+						$pdf->Cell($wUniform,$cellHeight,$datum['Uniform'],$border,1,"L",$fillState);
 					}
 				}
 

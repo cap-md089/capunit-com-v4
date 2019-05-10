@@ -51,10 +51,13 @@
 			return false;
 		}
 
-		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='') {
+		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='', $email='', $phone='', $uniform='') {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
-			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['SpecialAttendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :geoloc, :duty, :confirmed);');
+			$sqlstmt = 'INSERT INTO '.DB_TABLES['SpecialAttendance'];
+			$sqlstmt .= ' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, ';
+			$sqlstmt .= ':accountid, :reqs, :sent, :geoloc, :duty, :confirmed, :email, :phone, :uniform);';
+			$stmt = $pdo->prepare($sqlstmt);
 			$time = time();
 			$stmt->bindValue(':plantouse', $plantouse ? 1 : 0);
 			$stmt->bindValue(':time', $time);
@@ -69,6 +72,9 @@
 			$stmt->bindValue(':geoloc', $geoloc);
 			$stmt->bindValue(':duty', $duty);
 			$stmt->bindValue(':confirmed', 0);
+			$stmt->bindValue(':email', $email);
+			$stmt->bindValue(':phone', $phone);
+			$stmt->bindValue(':uniform', $uniform);
 			$this->EventAttendance[] = [
 				'PlanToUseCAPTransportation' => $plantouse ? 1 : 0,
 				'Timestamp' => $time,
@@ -81,7 +87,10 @@
 				'SummaryEmailSent' => 0,
 				'GeoLoc' => $geoloc,
 				'DutyPreference' => $duty,
-				'Confirmed' => 0
+				'Confirmed' => 0,
+				'EmailAddress' => $email,
+				'PhoneNumber' => $phone,
+				'Uniform' => $uniform
 			];
 			if (!$stmt->execute()) {
 				if ($stmt->errorInfo()[1] == 1062) {
@@ -111,7 +120,7 @@
 			return true;
 		}
 
-		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null, $duty=Null, $confirmed=Null) {
+		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $geoloc=Null, $duty=Null, $confirmed=Null, $email=Null, $phone=Null, $uniform=Null) {
 			global $_ACCOUNT;
 			$found = false;
 			for ($i = 0; $i < count($this->EventAttendance); $i++) {
@@ -130,6 +139,9 @@
 			if (isset($geoloc)) $row['GeoLoc'] = $geoloc;
 			if (isset($duty)) $row['DutyPreference'] = $duty;
 			if (isset($confirmed)) $row['Confirmed'] = $confirmed;
+			if (isset($email)) $row['EmailAddress'] = $email;
+			if (isset($phone)) $row['PhoneNumber'] = $phone;
+			if (isset($uniform)) $row['Uniform'] = $uniform;
 
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('UPDATE '.DB_TABLES['SpecialAttendance'].' SET
@@ -138,7 +150,10 @@
 				Status=:status,
 				GeoLoc=:geoloc,
 				DutyPreference=:duty,
-				Confirmed=:confirmed
+				Confirmed=:confirmed,
+				EmailAddress=:email,
+				PhoneNumber=:phone,
+				Uniform=:uniform
 			WHERE
 				EventID=:eid
 			AND
@@ -151,6 +166,9 @@
 			$stmt->bindValue(':geoloc', $row['GeoLoc']);
 			$stmt->bindValue(':duty', $row['DutyPreference']);
 			$stmt->bindValue(':confirmed', $row['Confirmed']);
+			$stmt->bindValue(':email', $row['EmailAddress']);
+			$stmt->bindValue(':phone', $row['PhoneNumber']);
+			$stmt->bindValue(':uniform', $row['Uniform']);
 			$stmt->bindValue(':eid', $this->EventNumber);
 			$stmt->bindValue(':capid', $row['CAPID']);
 			$stmt->bindValue(':aid', $_ACCOUNT->id);
@@ -194,7 +212,10 @@
 				'Status' => $row['Status'],
 				'GeoLoc' => $row['GeoLoc'],
 				'DutyPreference' => $row['DutyPreference'],
-				'Confirmed' => $row['Confirmed']
+				'Confirmed' => $row['Confirmed'],
+				'EmailAddress' => $row['EmailAddress'],
+				'PhoneNumber' => $row['PhoneNumber'],
+				'Uniform' => $row['Uniform']
 			];
 		}
 

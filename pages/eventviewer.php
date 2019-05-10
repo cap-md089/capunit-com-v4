@@ -287,7 +287,10 @@
 						if ($event->IsSpecial) {
 							$form
 								->addField('geoloc', 'What is your geographic location?', 'text')
-								->addField('duty', 'What are your top three desired duty/training positions?', 'text');
+								->addField('duty', 'What are your top three desired duty/training positions?', 'text')
+								->addField('email', 'What is your email address?', 'text', Null, Null, $m->getBestEmail())
+								->addField('phone', 'What is your phone?', 'text', Null, Null, $m->getBestPhone())
+								->addField('uniform', 'What uniform are you planning to wear?', 'text');
 						}
 						$form->reload = true;
 						$html .= $form;
@@ -349,6 +352,9 @@
 								$idback = new AsyncButton('idcardback', 'Download ID Card Back', 'idBack');
 								$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
 								$form->addField('duty', 'What are your top 3 desired duty/training positions?', 'text', Null, Null, $data['DutyPreference']);
+								$form->addField('email', 'What is your email address?', 'text', Null, Null, $data['EmailAddress']);
+								$form->addField('phone', 'What is your cell phone number?', 'text', Null, Null, $data['PhoneNumber']);
+								$form->addField('uniform', 'What uniform are you planning to wear?', 'text', Null, Null, $data['Uniform']);
 								$form->addField('idfront', $idfront->getHtml($capid), 'textread');
 								$form->addField('idback', $idback->getHtml($capid), 'textread');
 							}
@@ -560,11 +566,16 @@
 				View more information <a href="'.(new Link('eventviewer', 'here', [$e['form-data']['eid']]))->getURL(false).'">here</a>',
 				'Event signup: Event '.$ev->EventNumber);
 				if($ev->IsSpecial) {
+					if($e['form-data']['email'] == '') {$em = $m->getBestEmail();} else {$em = $e['form-data']['email'];}
+					if($e['form-data']['phone'] == '') {$ep = $m->getBestPhone();} else {$ep = $e['form-data']['phone'];}
 					return $attendance->add($m,
 						$e['form-data']['capTransport'] == 'true',
 						$e['form-data']['comments'],
 						$e['form-data']['geoloc'],
-						$e['form-data']['duty']) ?
+						$e['form-data']['duty'],
+						$em,
+						$ep,
+						$e['form-data']['uniform']) ?
 							"You're signed up!" : "Something went wrong!";
 				} else {
 					return $attendance->add($m,
@@ -585,8 +596,11 @@
 					$member = $m;
 				}
 				if($event->IsSpecial) {
+					if($e['form-data']['email'] == '') {$em = $m->getBestEmail();} else {$em = $e['form-data']['email'];}
+					if($e['form-data']['phone'] == '') {$ep = $m->getBestPhone();} else {$ep = $e['form-data']['phone'];}
 					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
-						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty']);
+						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty'], 
+						$em, $ep, $e['form-data']['uniform']);
 				} else {
 					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
 						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['confirmed'] == 'true');
@@ -907,6 +921,8 @@
 						$html .= $myRecord['MemberRankName'].": ".$myRecord['Comments'];
 						if($event->IsSpecial) {
 							$html .= ": ".$myRecord['GeoLoc'].": ".$myRecord['DutyPreference'];
+							$html .= ": ".$myRecord['EmailAddress'].": ".$myRecord['PhoneNumber'];
+							$html .= ": ".$myRecord['Uniform'];
 						}
 						$html .= '<br />';
 					}

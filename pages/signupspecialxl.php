@@ -42,7 +42,8 @@
 
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
-				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"GeoLoc"=>'string',"DutyPreference"=>'string'
+				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"GeoLoc"=>'string',"DutyPreference"=>'string',
+				'Email'=>'string','Phone'=>'string','Uniform'=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -51,6 +52,10 @@
 //				$eventID=$datum['AccountID']."-".$datum['EventID'];
 				if(!$datum['PlanToUseCAPTransportation']) {$PTUCT='No';} else {$PTUCT='Yes';}
 				$timestamp=date('d M Y, H:i',$datum['Timestamp']);
+				$member = Member::Estimate($datum['CAPID']);
+				if($datum['EmailAddress'] == '') {$em = $member->getBestEmail();} else {$em = $datum['EmailAddress'];}
+				if($datum['PhoneNumber'] == '') {$ep = $member->getBestPhone();} else {$ep = $datum['PhoneNumber'];}
+
 				$row = array(
 					$timestamp,
 					$datum['CAPID'],
@@ -60,7 +65,10 @@
 					$datum['Confirmed'],
 					$datum['Comments'],
 					$datum['GeoLoc'],
-					$datum['DutyPreference']
+					$datum['DutyPreference'],
+					$em,
+					$ep,
+					$datum['Uniform']
 				);
 				$writer->writeSheetRow('Sheet1', $row);
 				++$counter;
