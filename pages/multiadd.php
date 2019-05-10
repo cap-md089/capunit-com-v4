@@ -94,7 +94,12 @@
 				foreach ($nc as $n) {
 					$mem = Member::Estimate($n);
 					if ($mem && $mem->uname != 0) {
-						$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+						if($event->IsSpecial) {
+							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
+								'', '', $mem->getBestEmail(), $mem->getBestPhone(), '');
+						} else {
+							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+						}
 						$added = true;
 					}
 				}
@@ -102,7 +107,12 @@
 			} else if ($e['raw']['func'] == 'addCAPID') {
 				$mem = Member::Estimate(trim($e['form-data']['capid']));
 				if ($mem && $mem->uname != 0) {
-					$attend->add($mem, false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+					if($event->IsSpecial) {
+						$attend->add($mem, false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
+							'', '', $mem->getBestEmail(), $mem->getBestPhone(), '');
+					} else {
+						$attend->add($mem, false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+					}
 					$added = true;
 				}
 			}

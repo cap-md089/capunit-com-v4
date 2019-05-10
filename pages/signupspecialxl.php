@@ -43,7 +43,7 @@
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
 				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"GeoLoc"=>'string',"DutyPreference"=>'string',
-				'Email'=>'string','Phone'=>'string','Uniform'=>'string'
+				'Email'=>'string','Phone'=>'string','Uniform'=>'string','OrgEmail'=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -55,6 +55,25 @@
 				$member = Member::Estimate($datum['CAPID']);
 				if($datum['EmailAddress'] == '') {$em = $member->getBestEmail();} else {$em = $datum['EmailAddress'];}
 				if($datum['PhoneNumber'] == '') {$ep = $member->getBestPhone();} else {$ep = $datum['PhoneNumber'];}
+                                $morg = UtilCollection::GetOrgIDFromUnit($member->Squadron);
+
+                                $sql = "SELECT * FROM Data_OrgContact WHERE ORGID=:oid;";
+                                $stmt = $pdo->prepare($sql);
+                                $stmt->bindValue(':oid', $morg);
+                                $orgquery = DBUtils::ExecutePDOStatement($stmt);
+                                $orgdata = ""; $orgemail = "";
+                                if(count($orgquery)>0) {
+                                        foreach($orgquery as $contactline) {
+                                                $orgdata .= implode($contactline);
+                                                if($contactline['Type'] == "EMAIL") {
+                                                        $orgemail .= $contactline['Contact'].", ";
+                                                }
+                                        }
+                                } else {
+                                        $orgdata = ""; $orgemail = "";
+                                }
+                                if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
+
 
 				$row = array(
 					$timestamp,
@@ -68,7 +87,8 @@
 					$datum['DutyPreference'],
 					$em,
 					$ep,
-					$datum['Uniform']
+					$datum['Uniform'],
+					$orgemail
 				);
 				$writer->writeSheetRow('Sheet1', $row);
 				++$counter;

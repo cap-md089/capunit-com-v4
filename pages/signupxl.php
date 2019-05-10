@@ -37,7 +37,7 @@
 
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
-				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"OrgData"=>'string',"OrgEmail"=>'string'
+				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"OrgEmail"=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -73,7 +73,7 @@
 					$PTUCT,
 					$datum['Confirmed'],
 					$datum['Comments'],
-					$orgdata,
+//					$orgdata,
 					$orgemail
 				);
 				$writer->writeSheetRow('Sheet1', $row);
