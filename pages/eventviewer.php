@@ -362,8 +362,10 @@
 							$form->addHiddenField('eid', $ev);
 							$form->addHiddenField('func', 'signupedit');
 							if ($event->IsSpecial) {
-								$idfront = new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront');
-								$idback = new AsyncButton('idcardback', 'Download ID Card Back', 'idBack');
+								if ($event->isPOC($m) || ($a->hasMember($m) && $m->hasPermission('SignUpEdit')) || $m->IsRioux)
+									$idfront = new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront');
+									$idback = new AsyncButton('idcardback', 'Download ID Card Back', 'idBack');
+								}
 								$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
 								$form->addField('duty', 'What are your top 3 desired duty/training positions?', 'text', Null, Null, $data['DutyPreference']);
 								$form->addField('email', 'What is your email address?', 'text', Null, Null, $data['EmailAddress']);
