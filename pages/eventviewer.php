@@ -118,6 +118,20 @@
 				$html .= '<span class="warning">WARNING: As this event is only a draft, dates, times and other details may change</span><br /><br />';
 			}
 
+			// Title block
+			if($l) {
+				$myORGID = UtilCollection::GetOrgidFromUnit($m->Squadron);
+				$pdo = DB_Utils::CreateConnection();
+				$stmt = $pdo->prepare('SELECT AccountID FROM '.DB_TABLES['Accounts'].' WHERE UnitID = :oid;');
+				$stmt->bindValue(':oid', $myORGID);
+				$data = DB_Utils::ExecutePDOStatement($stmt);
+				if (count($data) == 0) {
+					$html .= "<br /><h4>Your unit (".$m->Squadron.") does not yet have a CAPUnit.com account.  ";
+					$html .= "<a href=\"mailto:sales@capunit.com\">Contact us</a> to sign up your unit for a free ";
+					$html .= "CAPUnit.com account and you can track signups and attendance with ease!</h4><br />";
+				}
+			}
+
 			// First block
 			$html .= "<b>Event:</b> ".$event->EventName.'<br />';
 			$html .= "<b>Event ID Number:</b> $a-$ev<br />";
