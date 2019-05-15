@@ -387,7 +387,7 @@ window.loaded.push(function() {
             if (cookies.reset) {
                 customDialog("Password Reset", "Your password needs to be reset on <a href=\"https://www.capnhq.gov/\">CAP NHQ</a>");
             } else if (cookies.down) {
-                customDialog("CAPNHQ Down", "CAP National Headquarters is not online at the moment, or we cannot connect to NHQ. We are sorry for the inconvenience.");
+                customDialog("CAPNHQ Down", "CAP National Headquarters is not online at the moment, or we cannot connect to NHQ. We are sorry for the inconvenience.  Please try again later.");
             } else {
                 customDialog("Invalid login", "Login credentials could not be verified");
             }
