@@ -43,7 +43,7 @@
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
 				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"GeoLoc"=>'string',"DutyPreference"=>'string',
-				'Email'=>'string','Phone'=>'string','Uniform'=>'string','OrgEmail'=>'string'
+				'Email'=>'string','Phone'=>'string','Uniform'=>'string','OrgEmail'=>'string','CommanderName'=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -73,6 +73,14 @@
                                 }
                                 if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
 
+                                $sqlcdr = "SELECT * FROM Data_Commanders WHERE ORGID=:oid;";
+                                $stmtcdr = $pdo->prepare($sqlcdr);
+                                $stmtcdr->bindValue(':oid', $morg);
+                                $cdrquery = DBUtils::ExecutePDOStatement($stmtcdr);
+                                $cdrname = "";
+                                if(count($cdrquery) == 1) {
+					$cdrname = $cdrquery[0]['CAPID']." ".$cdrquery[0]['Rank']." ".$cdrquery[0]['NameFirst']." ".$cdrquery[0]['NameLast']." ".$cdrquery[0]['NameSuffix'];
+                                }
 
 				$row = array(
 					$timestamp,
@@ -87,7 +95,8 @@
 					$em,
 					$ep,
 					$datum['Uniform'],
-					$orgemail
+					$orgemail,
+					$cdrname
 				);
 				$writer->writeSheetRow('Sheet1', $row);
 				++$counter;
