@@ -701,6 +701,65 @@ $logger = New Logger ("ImportCAPWATCH");
 				}
 			}
 			unlink("$dir/$id-$member->capid-OrgContact.txt");
+
+			//Import Commanders.txt file
+			flog ("Processing Organization Commanders");
+			$last_line=system("unzip -op $fname Commanders.txt > $dir/$id-$member->capid-Commanders.txt",$retval);
+			if($retval > 0) {
+				ErrorMSG::Log("Commanders unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+				return "Commanders unzip error.  Please contact helpdesk@capunit.com";
+			}
+			$members = explode("\n", file_get_contents("$dir/$id-$member->capid-Commanders.txt"));
+			$titleRow = str_getcsv($members[0]);
+			$colIDs = array();
+			foreach ($titleRow as $k => $v) {
+				$colIDs[$v] = $k;
+			}
+			foreach (['ORGID','NameLast','NameFirst','NameMiddle','NameSuffix','Rank'] as $value) {
+				if (!isset($colIDs[$value])) {
+					ErrorMSG::Log("Commanders.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+					$message = "A required column identifier, ".$value.", was not identified as present ";
+					$message .= "in the Commanders.txt file.  The CAPWATCH import cannot continue and will halt.";
+					errorMailer($member, $message);
+					return "Error parsing Commanders.txt.  Please contact helpdesk@capunit.com";
+				}
+			}
+			VN::$header = $colIDs;
+			$stmt = $pdo->prepare("DELETE FROM Data_Commanders WHERE ORGID<9000;");
+			if (!$stmt->execute()) {
+				ErrorMSG::Log("Commanders Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "Commanders Delete ORGID error: ".$stmt->errorInfo()[2];
+			}
+			for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+				VN::$vals = $m;
+
+				$stmt = $pdo->prepare("INSERT INTO Data_Commanders VALUES (:orgid, :region, :wing, :unit, 
+				:cid, :assigndte, :usrid, :moddte, :namelast, :namefirst, :namemiddle, :namesuffix, :rank);");
+
+				$stmt->bindValue(':orgid', VN::g('ORGID'));
+				$stmt->bindValue(':region', VN::g('Region'));
+				$stmt->bindValue(':wing', VN::g('Wing'));
+				$stmt->bindValue(':unit', VN::g('Unit'));
+				$stmt->bindValue(':cid', VN::g('CAPID'));
+				$stmt->bindValue(':assigndte', UtilCollection::GetTimestamp(VN::g('DateAsg')));
+				$stmt->bindValue(':usrid', VN::g('UsrID'));
+				$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+				$stmt->bindValue(':namelast', VN::g('NameLast'));
+				$stmt->bindValue(':namefirst', VN::g('NameFirst'));
+				$stmt->bindValue(':namemiddle', VN::g('NameMiddle'));
+				$stmt->bindValue(':namesuffix', VN::g('NameSuffix'));
+				$stmt->bindValue(':rank', VN::g('Rank'));
+
+				if (!$stmt->execute()) {
+					$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+					$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+					$message .= VN::g('CAPID')." row: ".$i;
+					ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+					return "Commanders Insert error: ".$stmt->errorInfo()[2];
+				}
+
+			}
+			unlink("$dir/$id-$member->capid-Commanders.txt");
 		}
 
 		//Run member update procedure
