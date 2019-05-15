@@ -220,7 +220,12 @@
                         "reset" => true,
                         'down' => false
                     );
-                }
+				}
+				if ($result['headers']['Location'] == '/CAP.eServices.Web/Error.aspx?aspxerrorpath=/CAP.eServices.Web/default.aspx') {
+					return array (
+						'down' => true
+					);
+				}
                 return array (
                     "success" => true,
                     "cookieData" => $result["headers"]["Set-Cookie"]
