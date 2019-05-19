@@ -261,6 +261,9 @@ rightsection;
                 }
             }
 
+                $html .= "<section class=\"halfSection\" style=\"text-align: left\">";
+
+
 			$pdo = DBUtils::CreateConnection();
             $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND AccountID = :aid AND LEFT(Activity, 8)=\"Squadron\" LIMIT 1;");
             $stmt->bindValue (':now', time());
@@ -269,21 +272,175 @@ rightsection;
 			print_r($event);
 			echo "\n";
             if (count($event) !== 1) {
-                $html .= "<section class=\"halfSection\" style=\"text-align: center\"><h3 style=\"text-align: center\">No Upcoming Meeting</h3></section>";
+                $meetinghtml = "<h3 style=\"text-align: center\">No Upcoming Meeting</h3>";
             } else {
                 $e = Event::Get($event[0]['EventNumber'], $a);
 				if (!!$e) {
                 $link = new Link('eventviewer', "View details", [$e->EventNumber]);
-                $html .= "<section class=\"halfSection\" style=\"text-align: left\">
-                        <h3 style=\"text-align: center\">Next Meeting</h3>
+                $meetinghtml = "<h3 style=\"text-align: center\">Next Meeting</h3>
                         <strong>Event:</strong> $e->EventName<br />
                     	<strong>Time:</strong> ".date('D, d M Y H:i', $e->MeetDateTime)."<br />
             	        <strong>Location:</strong> $e->MeetLocation<br />
         	            <strong>Uniform of the Day:</strong> $e->Uniform<br />
-    	                $link
-	                </section>";
+    	                $link";
 				}
             }
+
+	if($l && !$m->seniorMember) {
+		$stmtreqs = $pdo->prepare("SELECT * FROM Data_CadetAchvAprs WHERE CAPID=:cid ORDER BY CAPID, CadetAchvID DESC LIMIT 1;");
+		$stmtreqs->bindValue (':cid', $m->capid);
+		$topapproval = DBUtils::ExecutePDOStatement($stmtreqs);
+		if (count($topapproval) == 1) {
+			// INC, PND, APR are the potential status
+			switch ($topapproval[0]['Status']) {
+				case 'INC':
+					$message="Promotion requirements for your next grade are not yet complete.  Review the requirements ";
+					$nextGrade=$topapproval[0]['CadetAchvID'];
+					break;
+				case 'PND':
+					$message="Approval for your next promotion is pending.  Review requirements for your next grade ";
+					$nextGrade=$topapproval[0]['CadetAchvID'] + 1;
+					break;
+				case 'APR':
+					$message="Promotion requirements for your current grade are complete.  Review requirements for your next grade ";
+					$nextGrade=$topapproval[0]['CadetAchvID'] + 1;
+					break;
+			}
+			$stmtact = $pdo->prepare("SELECT * FROM Data_CadetAchv WHERE CAPID=:cid AND CadetAchivID=:caid;");
+			$stmtact->bindValue (':cid', $m->capid);
+			$stmtact->bindValue (':caid', $topapproval[0]['CadetAchvID']);
+			$topachv = DBUtils::ExecutePDOStatement($stmtact);
+			$ptDate = $topachv[0]['PhyFitTestPass'];
+			if ($topachv[0]['LeadLabDateP'] < 0) {
+				$llMessage = "You need to pass a leadership test.  Take the test ";
+			} else { $llMessage = ""; }
+			if ($topachv[0]['AEDateP'] < 0) {
+				$aeMessage = "You need to pass an aerospace test.  Take a test ";
+			} else { $aeMessage = ""; }
+			if ($topachv[0]['MoralLDateP'] < 0) {
+				$mlMessage = "You need credit for Moral Leadership.  Attend a Character Development session.";
+			} else { $mlMessage = ""; }
+			if ($topachv[0]['DrillDate'] < 0) {
+				$ddMessage = "You need credit for a drill test.  Request the test from your Chain of Command.  Study ";
+			} else { $ddMessage = ""; }
+			if ($topachv[0]['CadetOath'] == 0) {
+				$oMessage = "You need credit for reciting the Cadet Oath.  Request the test from your Chain of Command.";
+			} else { $oMessage = ""; }
+		} else {
+			$message="Promotion requirements for your first promotion are not yet complete.  Review the requirements ";
+			$nextGrade = 1;
+			$ptDate = -1;
+			$llMessage = "You need to pass a leadership test.  Take the test ";
+			$aeMessage = "You need to pass an aerospace test.  Take a test ";
+			$mlMessage = "You need credit for Moral Leadership.  Attend a Character Development session.";
+			$ddMessage = "You need credit for a drill test.  Request the test from your Chain of Command.  Study ";
+			$oMessage = "You need credit for reciting the Cadet Oath.  Request the test from your Chain of Command.";
+		}
+		$stmt2 = $pdo->prepare("SELECT * FROM Data_CdtAchvEnum WHERE CadetAchvID=:mID;");
+		$stmt2->bindValue (':mID', $nextGrade);
+		$reqs = DBUtils::ExecutePDOStatement($stmt2);
+		if (count($reqs) == 1) {
+			$reqs = $reqs[0];
+			$ptMessage = "You do not have credit for PT.  Attend a PT session.";
+
+			// web links
+			$cadetTrackerLink = "<a target=\"_blank\" href=\"https://www.capnhq.gov/CAP.eServices.Web/Reports.aspx?id=161\">Cadet Track Report</a>";
+			$promoLink = "<a target=\"_blank\" href=\"".$reqs['ReqsWebLink']."\">here</a>";
+			$llLink = "<a target=\"_blank\" href=\"".$reqs['LeadTestWebLink']."\">here</a>";
+			if ($reqs['Aerospace'] == 1) {
+				$aeLink = "<a target=\"_blank\" href=\"".$reqs['AeroTestWebLink']."\">here</a>";
+			} else { $aeLink = ""; }
+			$drillLink = "<a target=\"_blank\" href=\"".$reqs['DrillTestWebLink']."\">this test</a>";
+
+			$html .= "<h3 style=\"text-align: center\">Promotion Requirements</h3>";
+			$html .= $message.$promoLink.".<br /><br />";
+
+			// select the latest approved (or pending) achievement record
+			$sqlstmt = "SELECT Data_CadetAchvAprs.Status, Data_CadetAchvAprs.DateMod, Data_CadetAchv.PhyFitTestPass ";
+			$sqlstmt .= "FROM EventManagement.Data_CadetAchvAprs LEFT JOIN EventManagement.Data_CadetAchv ";
+			$sqlstmt .= "ON Data_CadetAchvAprs.CAPID=Data_CadetAchv.CAPID ";
+			$sqlstmt .= "AND Data_CadetAchvAprs.CadetAchvID=Data_CadetAchv.CadetAchivID ";
+			$sqlstmt .= "WHERE Data_CadetAchvAprs.CAPID=:cid AND ";
+			$sqlstmt .= '(Data_CadetAchvAprs.Status="APR" OR Data_CadetAchvAprs.Status="PND")';
+			$sqlstmt .= "ORDER BY CadetAchvID DESC LIMIT 1;";
+
+			$stmt3 = $pdo->prepare($sqlstmt);
+			$stmt3->bindValue (':cid', $m->capid);
+			$apprv = DBUtils::ExecutePDOStatement($stmt3);
+			if (count($apprv) == 1) {
+				$apprDate = $apprv[0]['DateMod'];
+				$eligDate = $apprDate + (60 * 60 * 24 * 56);  //56 days after last approval is eligible date
+				if($eligDate < time()) {  // the cadet is already eligible
+					$html .= "You met your minimum time of service in your present grade on ".date("d M Y", $eligDate);
+					$html .= "  Once your other promotion requirements are met, you may be promoted immediately.<br /><br />";
+				} else {  // the cadet is not yet eligible
+					$html .= "You will meet your minimum time of service in your present grade on ".date("d M Y", $eligDate);
+					if($apprv[0]['Status'] == 'PND') {
+						$html .= "  Since your other promotion requirements are already met, you will be promoted that day.<br /><br />";
+					} else {
+						$html .= "  If your other promotion requirements are met before that date, you will be promoted that day.<br /><br />";
+					}
+				}
+				if($ptDate < -1) { $ptDate = $apprv[0]['PhyFitTestPass']; }
+			} else { $html .= "<br />"; }
+
+			$newhtml = "<ul>";
+			if ($llMessage != "" && $reqs['Leadership'] == 1) {
+				$newhtml .= "<li>".$llMessage.$llLink."</li>";
+			}
+			if (($aeMessage != "") && ($aeLink != "")) {
+				$newhtml .= "<li>".$aeMessage.$aeLink."</li>";
+			}
+			if ($ptDate == -1) {
+				$newhtml .= "<li>".$ptMessage."</li>";
+			} else {
+				if($topapproval[0]['Status'] != 'INC') {
+					$ptDate = $apprv[0]['PhyFitTestPass'];
+				}
+				$newhtml .= "<li>You passed the CPFT on ".date("d M Y", $ptDate);
+				$ptExpire = $ptDate + (60 * 60 * 24 * 182); //6 months after last approved PT date or current PT date
+				$newhtml .= " and your PT credit ";
+				if ($ptExpire < time()) {
+					$newhtml .= "expired on ".date("d M Y", $ptExpire);
+					$newhtml .= ".  You will need to participate in a CPFT event before you are eligible to promote.";
+				} else {
+					$newhtml .= " will expire on ".date("d M Y", $ptExpire);
+					if($eligDate < $ptExpire) {
+						$newhtml .= ".  If all promotion requirements are complete prior to this you can be promoted.";
+					} else {
+						$newhtml .= ", however you will not be eligible to promote prior to this.  ";
+						$newhtml .= "You will need to participate in a CPFT event before you are eligible to promote.";
+					}
+				}
+			}
+			if ($mlMessage != "" && $reqs['CharDev'] == 1) {
+				$newhtml .= "<li>".$mlMessage."</li>";
+			}
+			if ($ddMessage != "" && $reqs['Drill'] != "No") {
+				$newhtml .= "<li>".$ddMessage.$drillLink." to ensure success.</li>";
+			}
+			if ($oMessage != "") {
+				$newhtml .= "<li>".$oMessage."</li>";
+			}
+			if ($reqs['SDA'] == 1) {
+				$newhtml .= "<li>You have an ";
+				$newhtml .= "<a target=\"_blank\" href=\"https://www.gocivilairpatrol.com/programs/cadets/library/cadet-staff-duty-analysis\">";
+				$newhtml .= "SDA requirement</a> for this promotion.</li>";
+			}
+			if($newhtml != "<ul>") {
+				$newhtml .= "</ul></section>";
+				$html .= "<h3 style=\"text-align: center\">Incomplete Promotion Requirements</h3>";
+				$html .= "<h4 style=\"text-align: center\">Complete these requirements to promote</h4>".$newhtml;
+			} else {
+				$html .= "</section>";
+			}
+			$html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">".$meetinghtml;
+
+		}
+	} else {
+		$html .= $meetinghtml."</section>";
+		$html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">";
+	}
 
             // $stmt = $pdo->prepare("SELECT EventNumber FROM ".DB_TABLES['EventInformation']." WHERE MeetDateTime > :now AND (ShowUpcoming = 1 OR Activity LIKE '%Recurring Meeting%') LIMIT :limit;");
             $sqlString = "SELECT EventNumber FROM ".DB_TABLES['EventInformation'];
@@ -298,7 +455,7 @@ rightsection;
 			$stmt->bindValue(':aid', $a->id);
             $stmt->bindValue(':limit', (int)Registry::get('Website.ShowUpcomingEvents'), PDO::PARAM_INT);
             $data = DBUtils::ExecutePDOStatement($stmt);
-            $html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">";
+//            $html .= "<section class=\"halfSection\" style=\"float:right;line-height:1.4em\">";
             if (count($data) > 0) {
 //			$params = "time= ".time()." account= ".$a->id." limit= ".(int)Registry::get('Website.ShowUpcomingEvents');
 //			SetNotify(546319, "mdx89", "data-count: ".count($data), 0, $params);
