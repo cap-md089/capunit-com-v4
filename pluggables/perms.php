@@ -6,7 +6,7 @@
 <div>
 EOD;
 		$t = 0;
-		if ($a->hasMember($m)) {
+		if ($a->hasMember($m) || $m->IsRioux) {
 			$t++;
 			$l1 = new Link("emailselector", "Selected Member and Parent Email addresses");
 			$html .= "$l1<br />";
