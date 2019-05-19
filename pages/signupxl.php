@@ -5,18 +5,12 @@
 			if (!$l) {
 				return ['error' => 411];
 			}
-			//
-			// USE THIS CAPID FOR GETTING ATTENDANCE RECORDS
-			// This allows for admins to view other users attendance
-			//
-//			$cid = $m->capid;
 			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
 			if ($ev && $m->hasPermission("EditEvent")) {
 				$event = Event::Get($ev);
 			} else {
 				$event = false;
 			}
-//			if (!$a->paid) {return ['error' => 501];}
 
 			$pdo = DBUtils::CreateConnection();
 
@@ -43,7 +37,7 @@
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
 				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',
-				'Email'=>'string','Phone'=>'string','Uniform'=>'string','OrgEmail'=>'string'
+				'OrgEmail'=>'string','Unit Commander'=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -71,6 +65,15 @@
                                 }
                                 if(strlen($orgemail)>2) {$orgemail = substr($orgemail, 0, strlen($orgemail)-2);}
 
+                                $sqlcdr = "SELECT * FROM Data_Commanders WHERE ORGID=:oid;";
+                                $stmtcdr = $pdo->prepare($sqlcdr);
+                                $stmtcdr->bindValue(':oid', $morg);
+                                $cdrquery = DBUtils::ExecutePDOStatement($stmtcdr);
+                                $cdrname = "";
+                                if(count($cdrquery) == 1) {
+					$cdrname = $cdrquery[0]['CAPID']." ".$cdrquery[0]['Rank']." ".$cdrquery[0]['NameFirst']." ";
+					$cdrname .= $cdrquery[0]['NameLast']." ".$cdrquery[0]['NameSuffix'];
+                                }
 
 				$row = array(
 					$timestamp,
@@ -80,7 +83,8 @@
 					$PTUCT,
 					$datum['Confirmed'],
 					$datum['Comments'],
-					$orgemail
+					$orgemail,
+					$cdrname
 				);
 				$writer->writeSheetRow('Sheet1', $row);
 				++$counter;

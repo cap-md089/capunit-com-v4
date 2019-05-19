@@ -5,18 +5,12 @@
 			if (!$l) {
 				return ['error' => 411];
 			}
-			//
-			// USE THIS CAPID FOR GETTING ATTENDANCE RECORDS
-			// This allows for admins to view other users attendance
-			//
-//			$cid = $m->capid;
 			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
 			if ($ev && $m->hasPermission("EditEvent")) {
 				$event = Event::Get($ev);
 			} else {
 				$event = false;
 			}
-//			if (!$a->paid) {return ['error' => 501];}
 
 			$pdo = DBUtils::CreateConnection();
 
