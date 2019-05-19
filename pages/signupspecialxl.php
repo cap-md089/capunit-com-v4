@@ -73,7 +73,8 @@
                                 $cdrquery = DBUtils::ExecutePDOStatement($stmtcdr);
                                 $cdrname = "";
                                 if(count($cdrquery) == 1) {
-					$cdrname = $cdrquery[0]['CAPID']." ".$cdrquery[0]['Rank']." ".$cdrquery[0]['NameFirst']." ".$cdrquery[0]['NameLast']." ".$cdrquery[0]['NameSuffix'];
+					$cdrname = $cdrquery[0]['CAPID']." ".$cdrquery[0]['Rank']." ".$cdrquery[0]['NameFirst']." ";
+					$cdrname .= $cdrquery[0]['NameLast']." ".$cdrquery[0]['NameSuffix'];
                                 }
 
 				$row = array(
