@@ -287,6 +287,14 @@ rightsection;
             }
 
 	if($l && !$m->seniorMember) {
+		//find member orgid
+		$myorgid = Util_Collection::getOrgIDFromUnit($m->Squadron);
+		//check last download date
+		$sqlCWD = "SELECT Timestamp FROM CAPWATCH_Download_Log WHERE ORGID=:oid;";
+		$stmtCWD = $pdo->prepare($sqlCWD);
+		$stmtCWD->bindValue(':oid', $myorgid);
+		$CWD = DBUtils::ExecutePDOStatement($stmtCWD);
+
 		$stmtreqs = $pdo->prepare("SELECT * FROM Data_CadetAchvAprs WHERE CAPID=:cid ORDER BY CAPID, CadetAchvID DESC LIMIT 1;");
 		$stmtreqs->bindValue (':cid', $m->capid);
 		$topapproval = DBUtils::ExecutePDOStatement($stmtreqs);
@@ -428,9 +436,16 @@ rightsection;
 				$newhtml .= "SDA requirement</a> for this promotion.</li>";
 			}
 			if($newhtml != "<ul>") {
-				$newhtml .= "</ul></section>";
-				$html .= "<h3 style=\"text-align: center\">Incomplete Promotion Requirements</h3>";
-				$html .= "<h4 style=\"text-align: center\">Complete these requirements to promote</h4>".$newhtml;
+				if(count($CWD) == 1) {
+					//if last download date, display with 'incomplete reqs'
+					$newhtml .= "</ul></section>";
+					$CWDdate = date("d M Y", $CWD[0]['Timestamp']);
+					$html .= "<h3 style=\"text-align: center\">Incomplete Promotion Requirements as of ".$CWDdate."</h3>";
+					$html .= "<h4 style=\"text-align: center\">Complete these requirements to promote</h4>".$newhtml;
+				} else {
+					//if no last download date, no 'incomplete reqs' display
+					$html .= "</section>";
+				}
 			} else {
 				$html .= "</section>";
 			}
