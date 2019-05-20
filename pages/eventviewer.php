@@ -616,7 +616,7 @@
 					if($e['form-data']['phone'] == '') {$ep = $m->getBestPhone();} else {$ep = $e['form-data']['phone'];}
 					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
 						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty'], 
-						$em, $ep, $e['form-data']['uniform']);
+						$e['form-data']['confirmed'] == 'true', $em, $ep, $e['form-data']['uniform']);
 				} else {
 					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
 						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['confirmed'] == 'true');
