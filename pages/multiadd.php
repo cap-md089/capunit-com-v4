@@ -60,13 +60,13 @@
 
 		public static function doPost ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
-			if (!$a->paid) {return ['error' => 501];}
+//			if (!$a->paid) {return ['error' => 501];}
 
-			if (!($m->hasPermission('SignUpEdit') || $event->isPOC($m))) return ['error' => 401];
+			if (!($m->hasPermission('SignUpEdit') || $event->isPOC($m) || $m->IsRioux)) return ['error' => 401];
 
 			$pdo = DB_Utils::CreateConnection();
 
-			$ev = $e['raw']['ev'];
+			$ev = trim($e['raw']['ev']);
 			$event = Event::Get($ev);
 
 			$attend = $event->getAttendance();

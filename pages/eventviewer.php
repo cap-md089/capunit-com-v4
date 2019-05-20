@@ -362,17 +362,17 @@
 							$form->addHiddenField('eid', $ev);
 							$form->addHiddenField('func', 'signupedit');
 							if ($event->IsSpecial) {
-							/*	if ($event->isPOC($m) || ($a->hasMember($m) && $m->hasPermission('SignUpEdit')) || $m->IsRioux)
-									$idfront = new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront');
-									$idback = new AsyncButton('idcardback', 'Download ID Card Back', 'idBack');
-								}
-							*/	$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
+								$idfront = new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront');
+								$idback = new AsyncButton('idcardback', 'Download ID Card Back', 'idBack');
+								$form->addField('geoloc', 'What is your geographic location?', 'text', Null, Null, $data['GeoLoc']);
 								$form->addField('duty', 'What are your top 3 desired duty/training positions?', 'text', Null, Null, $data['DutyPreference']);
 								$form->addField('email', 'What is your email address?', 'text', Null, Null, $data['EmailAddress']);
 								$form->addField('phone', 'What is your cell phone number?', 'text', Null, Null, $data['PhoneNumber']);
 								$form->addField('uniform', 'What uniform are you planning to wear?', 'text', Null, Null, $data['Uniform']);
-//								$form->addField('idfront', $idfront->getHtml($capid), 'textread');
-//								$form->addField('idback', $idback->getHtml($capid), 'textread');
+								if ($event->isPOC($m) || ($a->hasMember($m) && $m->hasPermission('SignUpEdit')) || $m->IsRioux) {
+									$form->addField('idfront', $idfront->getHtml($capid), 'textread');
+									$form->addField('idback', $idback->getHtml($capid), 'textread');
+								}
 							}
 							$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
 							$ab->data = 'atdel'.json_encode(array(
@@ -612,8 +612,8 @@
 					$member = $m;
 				}
 				if($event->IsSpecial) {
-					if($e['form-data']['email'] == '') {$em = $m->getBestEmail();} else {$em = $e['form-data']['email'];}
-					if($e['form-data']['phone'] == '') {$ep = $m->getBestPhone();} else {$ep = $e['form-data']['phone'];}
+					if($e['form-data']['email'] == '') {$em = $mem->getBestEmail();} else {$em = $e['form-data']['email'];}
+					if($e['form-data']['phone'] == '') {$ep = $mem->getBestPhone();} else {$ep = $e['form-data']['phone'];}
 					$attendance->modify($member, $e['form-data']['plantouse'] == 'true', 
 						$e['form-data']['comments'], $e['form-data']['status'], $e['form-data']['geoloc'], $e['form-data']['duty'], 
 						$e['form-data']['confirmed'] == 'true', $em, $ep, $e['form-data']['uniform']);
