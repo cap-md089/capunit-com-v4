@@ -37,7 +37,7 @@
 			$header=array(
 				'Timestamp'=>'string','CAPID'=>'string',"Grade/Name"=>'string',"Status"=>'string',
 				"Plan to use CAP Transport"=>'string',"Confirmed"=>'string',"Comments"=>'string',"GeoLoc"=>'string',"DutyPreference"=>'string',
-				'Email'=>'string','Phone'=>'string','Uniform'=>'string','OrgEmail'=>'string','CommanderName'=>'string'
+				'Email'=>'string','Phone'=>'string','Uniform'=>'string','Squadron'=>'string','OrgEmail'=>'string','CommanderName'=>'string'
 			);
 			$writer->writeSheetHeader('Sheet1', $header);
 			$counter=1;
@@ -90,6 +90,7 @@
 					$em,
 					$ep,
 					$datum['Uniform'],
+					$member->Squadron,
 					$orgemail,
 					$cdrname
 				);
