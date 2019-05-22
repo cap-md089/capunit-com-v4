@@ -51,8 +51,11 @@
 			return false;
 		}
 
-		public function add (\Member $member, $plantouse=false, $comments='') {
-			global $_ACCOUNT;
+		public function add (\Member $member, $plantouse=false, $comments='', $account=Null) {
+			if (!isset($account)) {
+				global $_ACCOUNT;
+				$account = $_ACCOUNT;
+			}
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :confirmed);');
 			$time = time();
@@ -63,7 +66,7 @@
 			$stmt->bindValue(':crank', $member->memberRank . ' ' . $member->memberName);
 			$stmt->bindValue(':comments', $comments);
 			$stmt->bindValue(':status', 'Committed/Attended');
-			$stmt->bindValue(':accountid', $_ACCOUNT->id);
+			$stmt->bindValue(':accountid', $account->id);
 			$stmt->bindValue(':reqs', '');
 			$stmt->bindValue(':sent', 0);
 			$stmt->bindValue(':confirmed', 0);

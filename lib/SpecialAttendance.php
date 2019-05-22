@@ -51,8 +51,11 @@
 			return false;
 		}
 
-		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='', $email='', $phone='', $uniform='') {
-			global $_ACCOUNT;
+		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='', $email='', $phone='', $uniform='', $account=Null) {
+			if (!isset($account)) {
+				global $_ACCOUNT;
+				$acccount = $_ACCOUNT;
+			}
 			$pdo = DB_Utils::CreateConnection();
 			$sqlstmt = 'INSERT INTO '.DB_TABLES['SpecialAttendance'];
 			$sqlstmt .= ' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, ';
@@ -66,7 +69,7 @@
 			$stmt->bindValue(':crank', $member->memberRank . ' ' . $member->memberName);
 			$stmt->bindValue(':comments', $comments);
 			$stmt->bindValue(':status', 'Committed/Attended');
-			$stmt->bindValue(':accountid', $_ACCOUNT->id);
+			$stmt->bindValue(':accountid', $account->id);
 			$stmt->bindValue(':reqs', '');
 			$stmt->bindValue(':sent', 0);
 			$stmt->bindValue(':geoloc', $geoloc);

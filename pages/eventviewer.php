@@ -591,12 +591,12 @@
 						$e['form-data']['duty'],
 						$em,
 						$ep,
-						$e['form-data']['uniform']) ?
+						$e['form-data']['uniform'], $a) ?
 							"You're signed up!" : "Something went wrong!";
 				} else {
 					return $attendance->add($m,
 						$e['form-data']['capTransport'] == 'true',
-						$e['form-data']['comments']) ?
+						$e['form-data']['comments'], $a) ?
 							"You're signed up!" : "Something went wrong!";
 				}
 			} else if ($e['raw']['func'] == 'signupedit') {
