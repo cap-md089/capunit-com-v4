@@ -54,7 +54,7 @@
 		public function add (\Member $member, $plantouse=false, $comments='', $geoloc='', $duty='', $email='', $phone='', $uniform='', $account=Null) {
 			if (!isset($account)) {
 				global $_ACCOUNT;
-				$acccount = $_ACCOUNT;
+				$account = $_ACCOUNT;
 			}
 			$pdo = DB_Utils::CreateConnection();
 			$sqlstmt = 'INSERT INTO '.DB_TABLES['SpecialAttendance'];

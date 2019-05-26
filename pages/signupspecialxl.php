@@ -6,7 +6,7 @@
 				return ['error' => 411];
 			}
 			$ev = isset($e['uri'][$e['uribase-index']]) ? $e['uri'][$e['uribase-index']] : false;
-			if ($ev && $m->hasPermission("EditEvent")) {
+			if ($ev) {
 				$event = Event::Get($ev);
 			} else {
 				$event = false;
