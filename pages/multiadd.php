@@ -96,9 +96,9 @@
 					if ($mem && $mem->uname != 0) {
 						if($event->IsSpecial) {
 							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
-								'', '', $mem->getBestEmail(), $mem->getBestPhone(), '');
+								'', '', $mem->getBestEmail(), $mem->getBestPhone(), '', $a);
 						} else {
-							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), $a);
 						}
 						$added = true;
 					}
