@@ -155,7 +155,7 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                         The application form can be downloaded from <a href="https://drive.google.com/open?id=1qAh_B3XHR2AFLkRG7og2297IRLDXm_4_">this link</a>.
                     </p>
                 </div>
-                <h4>How to become a Cadet (Age 10-21)</h4>
+                <h4>How to become a Cadet (Age 12-21)*</h4>
                 <div>
                     <p>
                         The CAP Cadet Program trains tomorrow's Leaders today.
@@ -175,6 +175,10 @@ return $leftsection1 . $rightsection1 . '<script id="facebook-jssdk" src="//conn
                     <p>
                         The application form can be downloaded from <a href="https://drive.google.com/open?id=136TeTQYn_DnOqyi_ZJl2Ho5ts1WoCJMw">this link</a>.
                         The online application (recommended) may be accessed at <a href="https://www.capnhq.gov/CAP.MembershipSystem.Web/CadetOnlineApp.aspx">this link</a>.
+                    </p>
+                    <p>
+                        *Cadets may join a Middle School flight, if available, when they are enrolled in a middle school.  The 12 year minimum age
+                        restriction does not apply in that case.  Contact your local unit for more details.
                     </p>
                 </div>
             </section>

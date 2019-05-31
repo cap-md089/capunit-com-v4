@@ -40,14 +40,21 @@
 			$pdf->SetTextColor(0);
 			$pdf->SetFillColor(0);
 
-			$photo = $m->download101Image($cardData['CAPID']);
-			file_put_contents(BASE_DIR."temp/".$cardData['CAPID'].".jpg", $photo);
+			$url = "";
+			if ($cardData['hasImage']) {
+				$photo = $m->download101Image($cardData['CAPID']);
+				file_put_contents(BASE_DIR."temp/".$cardData['CAPID']."", $photo);
+				system("convert " . BASE_DIR . "temp/" . $cardData['CAPID'] . " " . BASE_DIR . "temp/" . $cardData['CAPID'] . ".jpg");
+				$url = BASE_DIR."temp/".$cardData['CAPID'].".jpg";
+			} else {
+				$url = BASE_DIR."images/NoVal.jpg";
+			}
 			if(strlen($cardData['name']<30)){
 				$imagex=0.3; $imagey=4.33; $imagew=1; $imageh=0; $spacerPhoto = 1.05;
 			} else {
 				$imagex=0.3; $imagey=4.33; $imagew=0.9; $imageh=0;  $spacerPhoto = 0.95;
 			}
-			$pdf->Image(BASE_DIR."temp/".$cardData['CAPID'].".jpg",$imagex,$imagey,$imagew,$imageh);
+			$pdf->Image($url,$imagex,$imagey,$imagew,$imageh);
 
 			$imagex=0.3; $imagey=3.25; $imagew=0.6; $imageh=0;
 			$pdf->Image(BASE_DIR."images/MDWG_Patch.jpg",$imagex,$imagey,$imagew,$imageh);
@@ -110,9 +117,10 @@
 			$pdf->Cell(1,0.05,'',0,1);  //spacer to move text below photo
 			$pdf->MultiCell($cardWidth,0.25,"MDWG 2019 SAREX",0,"C");
 
-			unlink(BASE_DIR."temp/".$cardData['CAPID'].".jpg");
 
-
+			if ($cardData['hasImage']) {
+				unlink(BASE_DIR."temp/".$cardData['CAPID']."");
+			}
 
 //			$pdf->Text(0.8, 3.2, "_");
 /*			$pdf->Text(0.8, 3.2, "Civil Air Patrol");
