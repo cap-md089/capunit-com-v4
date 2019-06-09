@@ -16,7 +16,7 @@
 				$key = $datum['RegistryKey'];
 				$value = $datum['Value'];
 				$type = $datum['Type'];
-				
+
 				$key = explode(".", $key);
 				$data = self::$_data;
 				for ($i = 0, $kv = $key[0]; $i < count($key); $i++, $kv=isset($key[$i])?$key[$i]:Null) {
@@ -33,7 +33,7 @@
 				$key = $datum['RegistryKey'];
 				$value = $datum['Value'];
 				$type = $datum['Type'];
-				
+
 				$key = explode(".", $key);
 				$data = self::$_data;
 				for ($i = 0, $kv = $key[0]; $i < count($key); $i++, $kv=isset($key[$i])?$key[$i]:Null) {
@@ -46,7 +46,7 @@
 
 		public static function get ($v) {
 			if (count(explode('.', $v)) > 0) {
-				$data = self::$_data;	
+				$data = self::$_data;
 				foreach (explode('.', $v) as $kv) {
 					$data = $data->$kv;
 				}
@@ -55,7 +55,7 @@
 				return (self::$_data)->$v;
 			}
 		}
-		
+
 		public static function set ($key, $value) {
 			global $_ACCOUNT;
 			$pdo = DBUtils::CreateConnection();

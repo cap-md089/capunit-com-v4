@@ -11,6 +11,7 @@
 				Registry::Get("Administration.FlightNames.Flight4"),
 				Registry::Get("Administration.FlightNames.Flight5"),
 				Registry::Get("Administration.FlightNames.Flight6"),
+				Registry::Get("Administration.FlightNames.Flight7"),
 			];
 /*
 			$flights = [
@@ -18,6 +19,7 @@
 				'Bravo',
 				'Charlie',
 				'Delta',
+				'Echo',
 				'Staff',
 				'XRay'
 			];
@@ -100,6 +102,7 @@
 				'Bravo',
 				'Charlie',
 				'Delta',
+				'Echo',
 				'Staff',
 				'XRay'
 			];
