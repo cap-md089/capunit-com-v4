@@ -168,7 +168,7 @@
 			"PersonnelFiles" => 1
 		];
 
-		public static function GetPermissions (\Member $mem) {
+		public static function GetPermissions ($mem) {
 			$consts = (new ReflectionClass(__CLASS__))->getConstants();
 			return $consts[$mem->AccessLevel];
 		}
