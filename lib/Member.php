@@ -33,14 +33,16 @@
 
 			if ($values[0]['CAPIDCount'] >= 1) {
 				return [
-					'success' => false
+					'success' => false,
+					'reason' => 'CAPID count'
 				];
 			}
 
 			$m = OldMember::Estimate($capid);
 			if (!$m) {
 				return [
-					'success' => false
+					'success' => false,
+					'reason' => 'Cannot find member'
 				];
 			}
 
@@ -53,7 +55,8 @@
 				(count($m->contact['EMAIL']['EMERGENCY']) > 0 && $m->contact['EMAIL']['EMERGENCY'][0] == $email)
 			)) {
 				return [
-					'success' => false
+					'success' => false,
+					'reason' => 'Email mismatch'
 				];
 			}
 
@@ -237,7 +240,11 @@
 				return false;
 			}
 
-			return new self($username, $data[0]['CAPID'], $global, $account);
+			if (OldMember::Estimate($data[0]['CAPID'], $global, $account) != false) {
+				return new self($username, $data[0]['CAPID'], $global, $account);
+			} else {
+				return false;
+			}
 		}
 
 		public static function Estimate($capid, $global=false, $account=null) {
@@ -252,7 +259,11 @@
 				return false;
 			}
 
-			return new self($data[0]['UserID'], $capid, $global, $account);
+			if (OldMember::Estimate($data[0]['CAPID'], $global, $account) != false) {
+				return new self($username, $data[0]['CAPID'], $global, $account);
+			} else {
+				return false;
+			}
 		}
 
 		public static function GetByDutyPosition ($dpts) {
