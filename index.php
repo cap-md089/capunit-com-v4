@@ -96,60 +96,12 @@ HTM;
      *
      */
 
-    $_ERROR = Null;
     $_USER = Null;
     $_LOGGEDIN = false;
 	$_COOKIE = json_decode(isset($_METHODD['cookies']) ? urldecode($_METHODD['cookies']) : '{}', true);
 
-    if ($_FUNC == "signin") {
-        echo "--COMPLEXITYPERPLEXITYSTYLIZEDWAYLAYING\nName: MainBody\n\n";
-
-        if (!(isset($_METHODD['name']) && isset($_METHODD['password']))) {
-            echo json_encode (array (
-                'valid' => false,
-                'cookie' => array ()
-            ));
-            exit(0);
-        }
-
-        $m = Member::Create ($_METHODD['name'], $_METHODD['password']);
-		Analytics::LogSignin($m->success, $_METHODD['name']);
-
-		if ($m->success) {
-			echo json_encode(array (
-				"valid" => true,
-				"cookie" => array (
-					"LOGIN_DETAILS" => $m->toObjectString()
-				)
-			));
-		} else {
-            if (isset($m->data['reset']) && $m->data['reset']) {
-                echo json_encode(array (
-                    "valid" => false,
-                    "reset" => true
-                ));
-            } else if (isset($m->data['down']) && $m->data['down']) {
-                echo json_encode(array (
-                    "valid" => false,
-                    "down" => true
-                ));
-            } else {
-                echo json_encode(array (
-                    "valid" => false,
-                    "cookie" => array ()
-                ));
-            }
-		}
-		exit(0);
-	}
-
     if (/*defined("USER_REQUIRED") && USER_REQUIRED && */isset($_COOKIE["LOGIN_DETAILS"])) {
-    	if (isset($_METHODD['su']) && false) {
-            $SecurityLogger->Log("User signing in as ".$_METHODD['su'], 4);
-            $_USER = Member::Check($_COOKIE["LOGIN_DETAILS"], $_METHODD['su']);
-        } else {
-            $_USER = Member::Check($_COOKIE["LOGIN_DETAILS"]);
-        }
+		$_USER = Member::Check($_COOKIE["LOGIN_DETAILS"]);
         $_LOGGEDIN = $_USER['valid'];
 		$_USER = $_LOGGEDIN ? $_USER['mem'] : Null;
 	}

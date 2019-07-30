@@ -356,8 +356,6 @@
 								'No show'
 							], $data['Status']);
 
-							$idf = (new AsyncButton('idcardfront', 'Download ID Card Front', 'idFront'))->getHtml($capid);
-
 							$form->addHiddenField('capid', $capid);
 							$form->addHiddenField('eid', $ev);
 							$form->addHiddenField('func', 'signupedit');
@@ -369,10 +367,10 @@
 								$form->addField('email', 'What is your email address?', 'text', Null, Null, $data['EmailAddress']);
 								$form->addField('phone', 'What is your cell phone number?', 'text', Null, Null, $data['PhoneNumber']);
 								$form->addField('uniform', 'What uniform are you planning to wear?', 'text', Null, Null, $data['Uniform']);
-								if ($event->isPOC($m) || ($a->hasMember($m) && $m->hasPermission('SignUpEdit')) || $m->IsRioux) {
-									$form->addField('idfront', $idfront->getHtml($capid), 'textread');
-									$form->addField('idback', $idback->getHtml($capid), 'textread');
-								}
+//								if ($event->isPOC($m) || ($a->hasMember($m) && $m->hasPermission('SignUpEdit')) || $m->IsRioux) {
+//									$form->addField('idfront', $idfront->getHtml($capid), 'textread');
+//									$form->addField('idback', $idback->getHtml($capid), 'textread');
+//								}
 							}
 							$ab = new AsyncButton(Null, "Delete", "deleteAttendanceRecord");
 							$ab->data = 'atdel'.json_encode(array(

@@ -5,10 +5,10 @@
 	require_once 'lib/Member.php';
 
 	$_ACCOUNT = new Account('mdx89');
-	$mem = Member::Create('542488', 'app/xPHP091101');
+	$mem = Member::Create('542488', 'app/xNODE303931');
 
 	echo json_encode($mem->get101Card(542488), JSON_PRETTY_PRINT);
-	echo json_encode($mem->get101Card(368556), JSON_PRETTY_PRINT);
+	echo json_encode($mem->get101Card(617949), JSON_PRETTY_PRINT);
 //	echo json_encode($mem->get101Card(386791), JSON_PRETTY_PRINT);
 	echo "\n";
 //	$lang = $mem->get101Card(421170);

@@ -20,6 +20,7 @@
 		<script src="/<?php echo HOST_SUB_DIR; ?>scripts/<?php echo Registry::get('Styling.Preset'); ?>/jquery.simple-dtpicker.js"></script>
 		<script src="/<?php echo HOST_SUB_DIR; ?>scripts/<?php echo Registry::get('Styling.Preset'); ?>/multirange.js"></script>
 
+		<script src="https://www.google.com/recaptcha/api.js"></script>
 		<script src="https://platform.twitter.com/widgets.js"></script>
 
 		<!-- FaceBook/Twitter Open Graph tags -->
