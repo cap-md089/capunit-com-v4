@@ -53,11 +53,11 @@
 		 */
 		public function getHtml ($data=Null) {
 			if (isset ($data)) {
-				
+
 			} else if (isset($this->data)) {
 				$data = $this->data;
 			} else {
-				
+
 			}
 			$this->html = '';
 			$this->html .= "<a href=\"$this->pid\"";

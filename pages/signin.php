@@ -1,20 +1,37 @@
 <?php
 	class Output {
 		public static function doGet($e, $c, $l, $m, $a) {
-			$form = new AsyncForm('/signin', 'Sign in');
-			$form->reload = false;
+			$html = "";
+			if (!$l) {
+				$form = new AsyncForm('/signin', 'Sign In');
+				$form->reload = false;
 
-			$message = "<div style=\"line-height: 1.6em\">Enter your eServices login information below to sign into the site. Your password is not";
-			$message .= "permanently stored.  By providing your eServices information you agree to the terms and conditions ";
-			$message .= "which may be requested via email to <a href='mailto:support@capunit.com'>support@capunit.com</a></div>";
-			$form->addField('eula',$message,'textread');
-			$form->addField('name', 'CAP ID')->addField('password', 'Password', 'password')->setSubmitInfo('Log in');
-			$form->addHiddenField('returnurl', isset($e['raw']['returnurl']) ? $e['raw']['returnurl'] : '/');
+				$message = "<div style=\"line-height: 1.6em\">Enter your CAPUnit.com login information below to sign in to the site. ";
+				$message .= "By logging into this site you agree to the terms and conditions ";
+				$message .= "located <a href='https://mdx89.capunit.com/tandc'>here</a>.  Our Privacy Policy may be accessed at <a href='https://mdx89.capunit.com/privacy'>this page</a>.";
+				$message .= "</div>";
+				$form->addField('eula',$message,'textread');
+				$form->addField('name', 'User Name')->addField('password', 'Password', 'password')->setSubmitInfo('Sign In');
+				$form->addHiddenField('returnurl', isset($e['raw']['returnurl']) ? $e['raw']['returnurl'] : '/');
+
+				$createlink = "Don't have an account yet? ";
+				$createlink .= new Link("createaccount", "Create your account here");
+				$createlink .= " and gain access to all of the great features of CAPUnit.com!";
+
+				$html = $form . $createlink;
+			} else {
+				if ($e['raw']['returnurl'][0] == 'h') {
+					$url = strpos($e['raw']['returnurl'], '?') == FALSE ? ("{$e['raw']['returnurl']}?capid=" . $m->capid) : ("{$e['raw']['returnurl']}&capid=" . $m->capid);
+					$html = "<script>document.location.href = '{$url}';</script>";
+				} else {
+					$html = "<script>getHtml('{$e['raw']['returnurl']}');</script>";
+				}
+			}
 
 			return [
 				'title' => 'Sign in',
 				'body' => [
-					'MainBody' => $form . "",
+					'MainBody' => $html,
 					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
 						[
 							'Text' => 'Home',
@@ -36,7 +53,7 @@
 				));
 			}
 
-			$m = Member::Create($e['raw']['name'], $e['raw']['password']);
+			$m = Member::Create($e['raw']['name'], $e['raw']['password'], $a);
 
 			$cookies = null;
 
@@ -68,6 +85,13 @@
 
 			$returnurl = $e['raw']['returnurl'];
 
-			return JSSnippet::PrepareJS("setCookies($cookies);getHtml('$returnurl');");
+			if ($e['raw']['returnurl'][0] == 'h') {
+				$url = strpos($e['raw']['returnurl'], '?') == FALSE ? ("{$e['raw']['returnurl']}?capid=" . $m->capid) : ("{$e['raw']['returnurl']}&capid=" . $m->capid);
+				$html = "<script>document.location.href = '{$url}';</script>";
+			} else {
+				$html = "<script>setCookies($cookies);getHtml('{$e['raw']['returnurl']}');</script>";
+			}
+
+			return $html;
 		}
 	}

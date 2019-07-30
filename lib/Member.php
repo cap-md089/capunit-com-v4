@@ -6,7 +6,7 @@
 	require_once (BASE_DIR . "lib/OldMember.php");
 
 	class Member {
-		private const DEFAULT_ITERATION_COUNT = 343506;
+		private const DEFAULT_ITERATION_COUNT = 80000;
 		private const PASSWORD_MAX_AGE_SECONDS = 6 * 30 * 24 * 60 * 60;
 		private const PASSWORD_MIN_AGE_SECONDS =      7 * 24 * 60 * 60;
 
@@ -17,11 +17,20 @@
 		public const PASSWORD_ERROR_ACCOUNT_NOT_FOUND = 'The account credentials could not be verified';
 
 		private static function HashPassword($password, $salt, $iterations) {
-			$hash = $password . $salt;
-			for ($i = 0; $i < $iterations; $i++) {
-				$hash = hash('sha512', $hash . $salt, true);
-			}
-			return $hash;
+			return hash_pbkdf2('sha512', $password, $salt, $iterations, 32);
+		}
+
+		private static function IsValidPassword($password, $username) {
+			return (
+				preg_match("/[ \^!@#$%&*(){}_+-=<>,.?\/[\]\\\|;'\"]/", $password) == 1 &&
+				preg_match("/[a-z]/", $password) == 1 &&
+				preg_match("/[A-Z]/", $password) == 1 &&
+				preg_match("/[0-9]/", $password) == 1
+			) && (
+				$username != $password
+			) && (
+				strlen($password) > 10
+			);
 		}
 
 		public static function StageUserCreation($capid, $email) {
@@ -47,12 +56,18 @@
 			}
 
 			if (!(
-				(count($m->contact['CADETPARENTEMAIL']['PRIMARY']) > 0 && $m->contact['CADETPARENTEMAIL']['PRIMARY'][0] == $email) ||
-				(count($m->contact['CADETPARENTEMAIL']['SECONDARY']) > 0 && $m->contact['CADETPARENTEMAIL']['SECONDARY'][0] == $email) ||
-				(count($m->contact['CADETPARENTEMAIL']['EMERGENCY']) > 0 && $m->contact['CADETPARENTEMAIL']['EMERGENCY'][0] == $email) ||
-				(count($m->contact['EMAIL']['PRIMARY']) > 0 && $m->contact['EMAIL']['PRIMARY'][0] == $email) ||
-				(count($m->contact['EMAIL']['SECONDARY']) > 0 && $m->contact['EMAIL']['SECONDARY'][0] == $email) ||
-				(count($m->contact['EMAIL']['EMERGENCY']) > 0 && $m->contact['EMAIL']['EMERGENCY'][0] == $email)
+				(count($m->contact['CADETPARENTEMAIL']['PRIMARY']) > 0 &&
+					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['PRIMARY'][0]), trim($email) == 0 )) ||
+				(count($m->contact['CADETPARENTEMAIL']['SECONDARY']) > 0 &&
+					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['SECONDARY'][0]), trim($email) == 0 )) ||
+				(count($m->contact['CADETPARENTEMAIL']['EMERGENCY']) > 0 &&
+					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['EMERGENCY'][0]), trim($email) == 0 )) ||
+				(count($m->contact['EMAIL']['PRIMARY']) > 0 &&
+					strcasecmp(trim($m->contact['EMAIL']['PRIMARY'][0]), trim($email) == 0 )) ||
+				(count($m->contact['EMAIL']['SECONDARY']) > 0 &&
+					strcasecmp(trim($m->contact['EMAIL']['SECONDARY'][0]), trim($email) == 0 )) ||
+				(count($m->contact['EMAIL']['EMERGENCY']) > 0 &&
+					strcasecmp(trim($m->contact['EMAIL']['EMERGENCY'][0]), trim($email) == 0 ))
 			)) {
 				return [
 					'success' => false,
@@ -88,6 +103,16 @@
 			return count($data) == 1;
 		}
 
+		public static function RemoveValidToken($token) {
+			$pdo = DBUtils::CreateConnection();
+
+			$stmt = $pdo->prepare('DELETE FROM UserAccountToken WHERE Token = :token;');
+			$stmt->bindValue(':token', $token);
+			$stmt->execute();
+
+                        return 1;
+		}
+
 		public static function AddUser($token, $username, $password) {
 			$pdo = DBUtils::CreateConnection();
 
@@ -99,10 +124,6 @@
 			$stmt->bindValue(':token', $token);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 
-			print_r($data);
-
-			echo "\n\n";
-
 			if (count($data) != 1) {
 				return [
 					'success' => false,
@@ -110,13 +131,21 @@
 				];
 			}
 
-			$stmt = $pdo->prepare('SELECT COUNT(*) as MemberCount FROM UserAccountInfo where UserID = :userid;');
+			$stmt = $pdo->prepare('SELECT COUNT(*) as MemberCount FROM UserAccountInfo WHERE UserID = :userid OR CAPID = :capid;');
 			$stmt->bindValue(':userid', $username);
+			$stmt->bindValue(':capid', $data[0]['CAPID']);
 			$values = DBUtils::ExecutePDOStatement($stmt);
 			if ($values[0]['MemberCount'] != 0) {
 				return [
 					'success' => false,
-					'reason' => 'Username already taken'
+					'reason' => 'Username already taken, or account already created for CAPID'
+				];
+			}
+
+			if (!self::IsValidPassword($password, $username)) {
+				return [
+					'success' => false,
+					'reason' => 'Password does not meet complexity requirements'
 				];
 			}
 
@@ -129,7 +158,12 @@
 			}
 
 			$mem = self::Get($username);
-			$mem->setPassword($password);
+			$result = $mem->setPassword($password);
+			UtilCollection::AccountLog($data[0]['CAPID'], $username, '', $token, 'member', 'remove token from database');
+			self::RemoveValidToken($token);
+			if (!$result['success']) {
+				return $result;
+			}
 
 			return [
 				'success' => true,
@@ -137,13 +171,13 @@
 			];
 		}
 
-		public static function Create($username, $password) { return self::Signin($username, $password); }
-		public static function Signin($username, $password) {
+		public static function Create($username, $password, $account) { return self::Signin($username, $password, $account); }
+		public static function Signin($username, $password, $account) {
 			$pdo = DBUtils::CreateConnection();
 
 			$stmt = $pdo->prepare('SELECT CAPID, PasswordHash, PasswordSalt, PasswordIterationCount, AddTime FROM AccountPasswords WHERE HistoryIndex = 0 AND UserID = :username;');
 			$stmt->bindValue(':username', $username);
-			
+
 			$data = DBUtils::ExecutePDOStatement($stmt);
 
 			if (count($data) != 1) {
@@ -154,9 +188,9 @@
 					];
 				};
 			}
-			
+
 			$hashed_password = self::HashPassword($password, $data[0]['PasswordSalt'], $data[0]['PasswordIterationCount']);
-			
+
 			if ($hashed_password != $data[0]['PasswordHash']) {
 				return new class {
 					public $success = false;
@@ -180,12 +214,63 @@
 				$username,
 				$data[0]['CAPID']
 			);
-			
+
 			$m->setSessionID();
 			$m->perms = $m->getAccessLevels();
 			$m->capid = $m->uname;
 
+			self::UpdateSigninStats($m, $account);
 			return $m;
+		}
+
+		private static function UpdateSigninStats ($m, $a) {
+			$newTime = time();
+
+			$pdo = DBUtils::CreateConnection();
+
+			$sqlstmt = "SELECT CAPID, AccessCount FROM ".DB_TABLES['SignInData']." WHERE CAPID=:cid AND AccountID=:aid;";
+			$stmt = $pdo->prepare($sqlstmt);
+			$stmt->bindValue(":cid", $m->capid);
+			$stmt->bindValue(":aid", $a->id);
+			$data = DBUtils::ExecutePDOStatement($stmt);
+
+			if(count($data) == 0) {
+				$sqlstmt = "INSERT INTO ".DB_TABLES['SignInData'];
+				$sqlstmt .= " VALUES (:cid, :aid, :time, :count, :mname, :last, :first, :mrank, :sqn);";
+				$stmt = $pdo->prepare($sqlstmt);
+				$stmt->bindValue(':cid', $m->capid);
+				$stmt->bindValue(':aid', $a->id);
+				$stmt->bindValue(':time', $newTime);
+				$stmt->bindValue(':count', 1);
+				$stmt->bindValue(':mname', $m->memberName);
+				$stmt->bindValue(':last', $m->lastName);
+				$stmt->bindValue(':first', $m->firstName);
+				$stmt->bindValue(':mrank', $m->memberRank);
+				$stmt->bindValue(':sqn', $m->Squadron);
+				if (!$stmt->execute()) {
+					trigger_error($stmt->errorInfo()[2], E_USER_WARNING);
+				}
+			} else {
+				$newcount = $data[0]['AccessCount'];
+				$newcount++;
+				$sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
+				$sql .= "MemberName=:mname, MemberNameLast=:last, MemberNameFirst=:first, MemberRank=:mrank, ";
+				$sql .= "Squadron=:sqn ";
+				$sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
+				$stmt = $pdo->prepare($sql);
+				$stmt->bindValue(':cid', $m->capid);
+				$stmt->bindValue(':aid', $a->id);
+				$stmt->bindValue(':time', $newTime);
+				$stmt->bindValue(':count', $newcount);
+				$stmt->bindValue(':mname', $m->memberName);
+				$stmt->bindValue(':last', $m->lastName);
+				$stmt->bindValue(':first', $m->firstName);
+				$stmt->bindValue(':mrank', $m->memberRank);
+				$stmt->bindValue(':sqn', $m->Squadron);
+				if (!$stmt->execute()) {
+					trigger_error($stmt->errorInfo()[2], E_USER_WARNING);
+				}
+			}
 		}
 
 		public static function Check($cookies) {
@@ -212,7 +297,12 @@
                 $stmt->bindValue(':sid', $cookies['sid']);
 				DB_Utils::ExecutePDOStatement($stmt);
 
-                $m = self::Estimate($cookies['uname']);
+				$m = self::Estimate($cookies['uname']);
+				if ($m == false) {
+					return [
+						'valid' => false
+					];
+				}
                 $m->sid = $cookies['sid'];
                 $m->cookieData = $ret[0]['cdata'];
 
@@ -259,8 +349,8 @@
 				return false;
 			}
 
-			if (OldMember::Estimate($data[0]['CAPID'], $global, $account) != false) {
-				return new self($username, $data[0]['CAPID'], $global, $account);
+			if (OldMember::Estimate($capid, $global, $account) != false) {
+				return new self($data[0]['UserID'], $capid, $global, $account);
 			} else {
 				return false;
 			}
@@ -275,7 +365,7 @@
             $stmt->bindValue(":dp", $dpts);
             $stmt->bindValue(":cdp", $dpts);
             $data = DBUtils::ExecutePDOStatement($stmt);
-            
+
             foreach ($data as $datum) {
                 yield self::Estimate($datum['CAPID']);
             }
@@ -299,12 +389,7 @@
 		}
 
 		public function setPassword($password) {
-			if (!(
-				preg_match("/[ \^!@#$%&*(){}_+-=<>,.?\/[\]\\\|;'\"]/", $password) == 1 &&
-				preg_match("/[a-z]/", $password) == 1 &&
-				preg_match("/[A-Z]/", $password) == 1 &&
-				preg_match("/[0-9]/", $password) == 1
-			)) {
+			if (!self::IsValidPassword($password, $this->username)) {
 				return [
 					'success' => false,
 					'reason' => 'Password does not meet complexity requirements'
@@ -334,11 +419,11 @@
 				if($c >= 2) { $pdo->exec("UDPATE UserPasswordData SET HistoryIndex = 2 WHERE HistoryIndex = 1;"); }
 				if($c >= 1) { $pdo->exec("UDPATE UserPasswordData SET HistoryIndex = 1 WHERE HistoryIndex = 0;"); }
 			}
-			
+
 			$iterations = self::DEFAULT_ITERATION_COUNT;
 			$salt = bin2hex(random_bytes(128));
 			$hash = self::HashPassword($password, $salt, $iterations);
-	
+
 			$stmt = $pdo->prepare("INSERT INTO UserPasswordData (UserID, PasswordHash, PasswordSalt, PasswordIterationCount, HistoryIndex, AddTime) VALUES (:userid, :phash, :psalt, :piter, 0, :addtime);");
 			$stmt->bindValue(':userid', $this->username);
 			$stmt->bindValue(':phash', $hash);
@@ -363,4 +448,5 @@
 		public function __set($name, $value) {
 			$this->member->$name = $value;
 		}
+
 	}

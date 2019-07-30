@@ -18,7 +18,7 @@ We are sorry, the page <?php echo ltrim(explode("?", $_SERVER['REQUEST_URI'])[0]
 			$stmt = $pdo->prepare("select id, timestamp, context, enumber, errname, message, badfile, badline, remarks, requestpath as reqpath from ".DB_TABLES['ErrorMessages']." where id in (select min(id) from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline);");
 			$data = DB_Utils::ExecutePDOStatement($stmt, true);
 			$html = '';
-	
+
 			$stmt = $pdo->prepare("select min(id) as id, count(*) as c from ".DB_TABLES['ErrorMessages']." where resolved = 0 group by message, badfile, badline;");
 			$counts = DBUtils::ExecutePDOStatement($stmt, true);
 

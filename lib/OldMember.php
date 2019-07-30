@@ -520,9 +520,9 @@
                     $newCount = $data['AccessCount'];
                     $newCount++;
                     $sql = "UPDATE ".DB_TABLES["SignInData"]." SET LastAccessTime=:time, AccessCount=:count, ";
-                    $sql .= "MemberName=:mname, MemberNameLast=:last, MemberNameFirst=:first, MemberRank=:mrank, Contacts=:contacts, RawContact=:raw, ";
+                    $sql .= "MemberName=:mname, MemberNameLast=:last, MemberNameFirst=:first, MemberRank=:mrank, ";
 //                    $sql .= "Squadron=:sqn, ChainOfCommand=:coc WHERE CAPID=:cid AND AccountID=:aid;";
-                    $sql .= "Squadron=:sqn, ChainOfCommand=:coc, NameSuffix=:sfx, Gender=:gender, Type=:mtype, RankDate=:rdte, Expiration=:exp ";
+                    $sql .= "Squadron=:sqn ";
                     $sql .= "WHERE CAPID=:cid AND AccountID=:aid;";
                     $stmt = $pdo->prepare($sql);
                     $stmt->bindValue(':cid', $m->capid);
@@ -533,18 +533,7 @@
                     $stmt->bindValue(':last', $m->lastName);
                     $stmt->bindValue(':first', $m->firstName);
                     $stmt->bindValue(':mrank', $m->memberRank);
-                    $stmt->bindValue(':contacts', json_encode($m->contact));
-                    $stmt->bindValue(':raw', $m->rawContact);
                     $stmt->bindValue(':sqn', $m->Squadron);
-                    $stmt->bindValue(':coc', "[".$ci."]".var_export($coc,true));
-                    $stmt->bindValue(':sfx', $s->getAttribute("value"));
-                    $stmt->bindValue(':gender', $gender->getAttribute("value"));
-                    $stmt->bindValue(':mtype', $memberType->getAttribute("value"));
-                    $rdval = strtotime($rankDate->getAttribute("value"));
-                    $exval = strtotime($expiration->getAttribute("value"));
-                    $stmt->bindValue(':rdte', $rdval);
-                    $stmt->bindValue(':exp', $exval);
-                    // $logger->Log("$m->uname updating with SQL `$stmt->queryString`, values ($m->capid, $newTime, $m->memberName, ".json_encode($m->contact).")", 8);
                     try {
                         if (!$stmt->execute()) {
                             $logger->Warn("$m->uname couldn't execute update SignInData, ". var_export($stmt->errorInfo(), true), 3);
@@ -711,7 +700,6 @@
             $sqlin .= 'AND CAPID NOT IN (SELECT CAPID FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid) ';
             $sqlin .= 'ORDER BY LastAccessTime DESC Limit 1;';
             $stmt = $pdo->prepare($sqlin);
-//            $stmt = $pdo->prepare('SELECT * FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY LastAccessTime DESC Limit 1;');
             $stmt->bindValue(':cid', $capid);
             $data = DB_Utils::ExecutePDOStatement($stmt);
             if (count($data) == 1) {
@@ -828,7 +816,7 @@
          * Gets contact info from sign-in table or CAPWATCH files, as available
          */
         public function getContact () {
-            $pdo = DB_Utils::CreateConnection();
+/*            $pdo = DB_Utils::CreateConnection();
             $stmt = $pdo->prepare('SELECT `Contacts` FROM '.DB_TABLES['SignInData'].' WHERE CAPID = :cid ORDER BY `LastAccessTime` DESC;');
             $stmt->bindValue(':cid', $this->uname);
             $data = DB_Utils::ExecutePDOStatement($stmt);
@@ -837,7 +825,7 @@
                 //we have a recent sign-in
                 $this->contact = json_decode($data[0]['Contacts'], true);
             } else {
-                //no recent sign-in so pull from CAPWATCH file data
+*/                //no recent sign-in so pull from CAPWATCH file data
                 $this->contact = array (
                     "ALPHAPAGER" => [],
                     "ASSISTANT" => [],
@@ -873,7 +861,7 @@
                 foreach ($data as $datum) {
                     $this->contact[str_replace(' ', '', $datum['Type'])][$datum['Priority']][] = $datum['Contact'];
                 }
-            }
+//            }
         }
 
         /**

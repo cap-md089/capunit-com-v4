@@ -263,7 +263,13 @@ window.loaded.push(function() {
                     "2": "ScanAdd Session ID not present in database"
                 },
                 "1": {
-                    "1": "Invalid input"
+                    "1": "Invalid input",
+                    "2": "The CAPID and email address provided could not be validated. Please contact support@capunit.com for assistance.",
+                    "3": "There is already an account for this CAPID. Please contact support@capunit.com for assistance.",
+                    "4": "The CAPID and email address provided could not be validated. Please contact support@capunit.com for assistance.",
+                    "5": "The token provided is invalid. Please request another email link via the Create Account page.",
+                    "6": "The CAPID and email address provided could not be validated. Please contact support@capunit.com for assistance.",
+                    "7": "An undefined error occurred. Please contact support@capunit.com for assistance and provide the CAPID and email address used in the account creation process."
                 }
             },
             "2": { // Network errors

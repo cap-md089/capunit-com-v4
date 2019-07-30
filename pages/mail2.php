@@ -25,8 +25,8 @@ $mail->setFrom('events@capunit.com', 'CAPUnit Mailer');
 // Also note that you can include several addAddress() lines to send
 // email to multiple recipients.
 //$mail->addAddress('bounce@simulator.amazonses.com', 'bounce');
-$mail->addAddress('grioux@gmail.com', 'GlennR');
-//$mail->addAddress('arioux.cap@gmail.com', 'AndrewR');
+//$mail->addAddress('grioux@gmail.com', 'GlennR');
+$mail->addAddress('arioux.cap@gmail.com', 'AndrewR');
 
 // Replace smtp_username with your Amazon SES SMTP user name.
 $mail->Username = 'AKIAJISJSEECD36BIMXQ';
