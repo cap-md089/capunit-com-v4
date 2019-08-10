@@ -159,7 +159,6 @@
 
 			$mem = self::Get($username);
 			$result = $mem->setPassword($password);
-			UtilCollection::AccountLog($data[0]['CAPID'], $username, '', $token, 'member', 'remove token from database');
 			self::RemoveValidToken($token);
 			if (!$result['success']) {
 				return $result;
