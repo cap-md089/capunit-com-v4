@@ -55,8 +55,10 @@
 					}
                 }
 				foreach ($team->Members as $mem => $role) {
-                    $mem = Member::Estimate($mem);
-                    $str .= "$role: {$mem->RankName}<br />";
+					$mem = Member::Estimate($mem);
+					if ($mem != false) {
+						$str .= "$role: {$mem->RankName}<br />";
+					}
                 }
                 $html .= $str;
 

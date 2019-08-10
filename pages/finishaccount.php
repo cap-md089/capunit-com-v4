@@ -8,7 +8,7 @@
 			$logger = New Logger ("CreateAccount");
 
 			if (!isset($e['uri'][$e['uribase-index']])) {
-				$logger->Log($nowtime." finishaccount: failure: empty token passed token passed", 8);
+				$logger->Log($nowtime." finishaccount: failure: empty token passed", 8);
 				return [
 					'error' => 311
 				];

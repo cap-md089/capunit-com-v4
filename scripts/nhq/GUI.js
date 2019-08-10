@@ -269,7 +269,8 @@ window.loaded.push(function() {
                     "4": "The CAPID and email address provided could not be validated. Please contact support@capunit.com for assistance.",
                     "5": "The token provided is invalid. Please request another email link via the Create Account page.",
                     "6": "The CAPID and email address provided could not be validated. Please contact support@capunit.com for assistance.",
-                    "7": "An undefined error occurred. Please contact support@capunit.com for assistance and provide the CAPID and email address used in the account creation process."
+                    "7": "An undefined error occurred. Please contact support@capunit.com for assistance and provide the CAPID and email address used in the account creation process.",
+                    "8": "Invalid CAPID"
                 }
             },
             "2": { // Network errors

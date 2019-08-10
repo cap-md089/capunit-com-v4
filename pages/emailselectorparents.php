@@ -56,7 +56,7 @@
 
 			$emails = '';
 			foreach ($nc as $n) {
-				$mem = Member::Estimate($n);
+				$mem = OldMember::Estimate($n);
 				if ($mem && $mem->uname != 0) {
 					$memails = $mem->getParentEmailAddresses();
 					$emails .= $memails;

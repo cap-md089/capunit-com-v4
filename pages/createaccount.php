@@ -45,6 +45,12 @@
 
 //sample link https://docs.google.com/forms/d/e/1FAIpQLSd4nLxwz-00SvAEC-6TTbbIylLI-VnhM6qMXC_pIpxamNt4uw/formResponse?usp=pp_url&entry.279664546=546319&entry.1923260016=grioux@gmail.com&entry.586826806=https://md089.capunit.com/account/1234567890&submit=Submit
 
+
+			if($e['raw']['cid'] < 100000 || $e['raw']['cid'] > 999999) {
+				$logger->Log($nowtime." CAPID: ".$e['raw']['cid']." email: ".$e['raw']['email']." createaccount: message: failure: invalid CAPID", 8);
+				return ['error' => 318];
+			}
+
 			//get registration link to pass to form
 			$tokenReturn = Member::StageUserCreation($e['raw']['cid'], $e['raw']['email']);
 			print_r($tokenReturn);
@@ -72,7 +78,7 @@
 			$inlink .= '&entry.1923260016=';
 			$inlink .= $e['raw']['email'];
 			$inlink .= '&entry.586826806=';
-			$inlink .= "https://mdx89.capunit.com/finishaccount/" . $tokenReturn['token'];
+			$inlink .= "https://".$a->id.".capunit.com/finishaccount/" . $tokenReturn['token'];
 			$inlink .= '&submit=Submit';
 
 			//submit link

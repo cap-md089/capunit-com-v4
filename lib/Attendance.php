@@ -42,7 +42,7 @@
 			// $sqlin .= " COLLATE utf16_general_ci=t2.EventNumber));";
 		}
 
-		public function has (\Member $member) {
+		public function has ($member) {
 			$ret = false;
 			foreach ($this->EventAttendance as $row) {
 				$ret = $ret || ((int)$row['CAPID'] == $member->uname);
@@ -51,7 +51,7 @@
 			return false;
 		}
 
-		public function add (\Member $member, $plantouse=false, $comments='', $account=Null) {
+		public function add ($member, $plantouse=false, $comments='', $account=Null) {
 			if (!isset($account)) {
 				global $_ACCOUNT;
 				$account = $_ACCOUNT;
@@ -91,7 +91,7 @@
 			return true;
 		}
 
-		public function remove (\Member $member) {
+		public function remove ($member) {
 			global $_ACCOUNT;
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('DELETE FROM '.DB_TABLES['Attendance'].' WHERE CAPID = :cid AND EventID = :eid AND AccountID = :aid;');
@@ -110,7 +110,7 @@
 			return true;
 		}
 
-		public function modify (\Member $member, $plantouse=Null, $comments=Null, $status=Null, $confirmed=Null) {
+		public function modify ($member, $plantouse=Null, $comments=Null, $status=Null, $confirmed=Null) {
 			global $_ACCOUNT;
 			for ($i = 0; $i < count($this->EventAttendance); $i++) {
 				if ($this->EventAttendance[$i]["CAPID"] == $member->capid) {

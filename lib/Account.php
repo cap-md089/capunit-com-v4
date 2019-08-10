@@ -199,7 +199,7 @@
 			$stmt->bindValue(':nowt', $nowtime);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
-				$ret[] = Member::Estimate($datum['CAPID']);
+				$ret[] = OldMember::Estimate($datum['CAPID']);
 			}
 			return $ret;
 		}
@@ -213,7 +213,7 @@
 			$stmt->bindValue(':nowt', $nowtime);
 			$data = DBUtils::ExecutePDOStatement($stmt);
 			foreach ($data as $datum) {
-				yield Member::Estimate($datum['CAPID']);
+				yield OldMember::Estimate($datum['CAPID']);
 			}
 		}
 
