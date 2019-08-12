@@ -89,7 +89,6 @@
 			$regions_raw = DBUtils::ExecutePDOStatement($stmt);
 			$stmt = $pdo->prepare("SELECT DISTINCT Wing FROM ".DB_TABLES['Organization'].";");
 			$wings_raw = DBUtils::ExecutePDOStatement($stmt);
-			
 			$stmt = $pdo->prepare("SELECT DISTINCT Unit FROM ".DB_TABLES['Organization'].";");
 			$unitnums_raw = DBUtils::ExecutePDOStatement($stmt);
 
@@ -113,7 +112,7 @@
 			$uniqueuid = [];
 			foreach ($e['form-data']['units'] as $uid) {
 					if(!in_array($uid, $uniqueuid) && (strlen($uid) >= 10) ) 
-							{ array_push($uniqueuid, $uid); }
+							{ array_push($uniqueuid, strtoupper($uid)); }
 			}
 			$stmt = $pdo->prepare("DELETE FROM ".DB_TABLES['CAPWATCHUnits']." WHERE CAPID=:cid;");
 			$stmt->bindValue(':cid', $m->uname);
