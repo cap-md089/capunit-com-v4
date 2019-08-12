@@ -499,6 +499,17 @@ function removeTeamUserMultiAdd_prepush(a, data) {
     return false;
 }
 
+function addUnit_prepush(a) {
+		$clone = $(a).parent().parent().prev().clone();
+		$clone.attr("id", "");
+		$clone.value = "";
+		$clone.insertBefore($(a).parent().parent());
+}
+
+function removeUnit_prepush(a) {
+		$(a).parent().parent().parent().remove();
+}
+
 function alertReload (data) {
     customDialog(null, data);
     getHtml();

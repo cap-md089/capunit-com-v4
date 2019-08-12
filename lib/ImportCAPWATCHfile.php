@@ -1,5 +1,7 @@
 <?php
 require_once (BASE_DIR . "lib/logger.php");
+require_once (BASE_DIR . "lib/MyCURL.php");
+
 	class VN {
 		static $vals = [];
 		static $header = [];
@@ -11,16 +13,55 @@ require_once (BASE_DIR . "lib/logger.php");
 		}
 	}
 
-	function ImportCAPWATCH ($member, $id, $importOrgs) {
+	function ImportCAPWATCH ($member, $id, $pw, $importOrgs) {
 $logger = New Logger ("ImportCAPWATCH");
 
 		if (!function_exists("flog")) {
 			function flog ($a) {}
 		}
 
-		//Retrieve zip file
 		flog ("Retrieving CAPWATCH zip file");
-		$fname = $member->getCAPWATCHFile($id, tempnam(sys_get_temp_dir(), 'capwatch'));
+
+		$url = "https://www.capnhq.gov/CAP.CapWatchAPI.Web/api/cw";
+		$payload = array (
+				"unitOnly" => "0",
+				"ORGID" => $id
+		);
+		$enc = base64_encode($member->uname.":".$pw);
+
+		$fields_string = '';
+		foreach ($payload as $key=>$value) {
+				$fields_string .= urlencode($key)."=". urlencode($value) . "&";
+		}
+		$fields_string = rtrim($fields_string, "&");
+
+		$ch = new MyCURL();
+		$ch-> setOpts (array (
+				CURLOPT_HTTPHEADER => [
+						'Content-Type: application/json',
+						'Authorization: Basic '.$enc
+				],
+		), false);
+
+		$data = $ch->download("$url?$fields_string");
+		$_ = $data["body"];
+		$fname = BASE_DIR . "temp/CAPWATCH-".$member->uname."-".$id."-".date('Ymd').".zip";
+		if (file_exists($fname)) { unlink($fname); }
+
+		file_put_contents($fname, $_);
+
+		if(filesize($fname) == 0) {
+				return " CAPWATCH file download failed. Check password: should be eServices password";
+		}
+
+//NEW import
+		//base 64 encode CAPID:password
+		//add header "Authorization" with value "Basic " + base64
+		// submit to:  https://www.capnhq.gov/CAP.CapWatchAPI.Web/api/cw?ORGID=916&unitOnly=0
+		//save file and process
+
+		//Retrieve zip file
+//		$fname = $member->getCAPWATCHFile($id, tempnam(sys_get_temp_dir(), 'capwatch'));
 		//$fname = "/tmp/capwatchaPZo6g";
 		// file_exists: Checks whether a file or directory exists
 		if (!file_exists(sys_get_temp_dir()."/capwatch_unpack")){
@@ -760,6 +801,7 @@ $logger = New Logger ("ImportCAPWATCH");
 
 			}
 			unlink("$dir/$id-$member->capid-Commanders.txt");
+			//return " Import Orgs";
 		}
 
 		//Run member update procedure
@@ -807,7 +849,7 @@ $logger = New Logger ("ImportCAPWATCH");
 		// }
 
 		//clean up
-		unlink("$fname");
+		unlink($fname);
 
 		return 0;
 	}

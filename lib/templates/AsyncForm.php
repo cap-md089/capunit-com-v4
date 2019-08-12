@@ -291,6 +291,14 @@
 					$html = "<textarea ".(isset($default)?"value=\"".str_replace('"', '&quot;', $default)."\" ":"")."name=\"$name\" cols=\"".(isset($data[0])?$data[0]:32)."\" rows=\"".(isset($default)?$default:"").(isset($data[1])?$data[1]:4)."\" class=\"$class\">".(isset($data['value'])?$data['value']:'')."</textarea>";
 				break;
 
+				case "password" :
+					if (isset($default)) {
+						if (!isset($data)) $data = [];
+						$data['value'] = $default;
+					}
+					$html = "<input type=\"password\" name=\"$name\" cols=\"".(isset($data[0])?$data[0]:32)."\" rows=\"".(isset($default)?$default:"").(isset($data[1])?$data[1]:4)."\" class=\"$class\">".(isset($data['value'])?$data['value']:'')."</input>";
+				break;
+
 				case "file" :
 					$html = "<label class=\"file\" for=\"{$name}[]\">Upload</label><input id=\"{$name}[]\" type=\"file\" name=\"{$name}[]\" class=\"$class\" multiple=\"multiple\" /> or ".
 					(new AsyncButton(Null, 'select files.', 'asyncFormSelectFilesInsteadOfUpload'))->getHtml($name).
