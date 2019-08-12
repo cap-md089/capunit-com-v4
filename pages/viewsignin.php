@@ -22,7 +22,6 @@
             $columns[3] = "CAPID";
             $columns[4] = "Squadron";
             $columns[5] = "Member\t\t";
-            $columns[6] = "Photo";
             for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
             $line = substr($line, 0, strlen($line) - 1)."";
             $signinData .= $line."\r\n";
@@ -34,7 +33,6 @@
                 $columns[3] = $datum['CAPID'];
                 $columns[4] = $datum['Squadron'];
                 $columns[5] = $datum['MemberRank']." ".$datum['MemberName'];
-                if(substr(!$datum['ChainOfCommand'],1,1)=="]") {$columns[6]='N';} else {$columns[6]='Y';}
 
                 for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
                 $line = substr($line, 0, strlen($line) - 1)."";

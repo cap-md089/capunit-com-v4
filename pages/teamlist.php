@@ -66,11 +66,13 @@
                     $flightmembers = [];
                     foreach ($team->Members as $id => $role) {
                         if (!isset($flightmembers[$id])) {
-                            $mem = Member::Estimate($id);
+								$mem = Member::Estimate($id);
+								if($mem != false) {
                             $flightmembers[$id] = [
                                 'RankName' => $mem->RankName,
                                 'Contact' => []
-                            ];
+						];
+								}
                         }
                     }
                     $stmt = $pdo->prepare("SELECT MbrContact.CAPID, MbrContact.Contact, MbrContact.Type, MbrContact.Priority, MbrContact.DoNotContact FROM ".DB_TABLES['MemberContact']." AS MbrContact INNER JOIN ".DB_TABLES['TeamMembers']." AS TeamMembers ON MbrContact.CAPID = TeamMembers.CAPID WHERE (MbrContact.`Type` LIKE '%PHONE%' OR MbrContact.`Type` LIKE '%EMAIL') AND MbrContact.DoNotContact = 0 AND TeamMembers.TeamID = :teamid;");
