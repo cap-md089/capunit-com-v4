@@ -22,7 +22,7 @@
             $columns[3] = "CAPID";
             $columns[4] = "Squadron";
             $columns[5] = "Member\t\t";
-            for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
+            for ($line = "", $i = 0 ; $i < 6 ; $i++) { $line .= $columns[$i]."\t"; }
             $line = substr($line, 0, strlen($line) - 1)."";
             $signinData .= $line."\r\n";
 
@@ -34,7 +34,7 @@
                 $columns[4] = $datum['Squadron'];
                 $columns[5] = $datum['MemberRank']." ".$datum['MemberName'];
 
-                for ($line = "", $i = 0 ; $i < 7 ; $i++) { $line .= $columns[$i]."\t"; }
+                for ($line = "", $i = 0 ; $i < 6 ; $i++) { $line .= $columns[$i]."\t"; }
                 $line = substr($line, 0, strlen($line) - 1)."";
                 $signinData .= $line."\r\n";
 
