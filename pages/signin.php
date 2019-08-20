@@ -20,7 +20,7 @@
 
 				$html = $form . $createlink;
 			} else {
-				if ($e['raw']['returnurl'][0] == 'h') {
+				if (isset($e['raw']['returnurl']) && $e['raw']['returnurl'][0] == 'h') {
 					$url = strpos($e['raw']['returnurl'], '?') == FALSE ? ("{$e['raw']['returnurl']}?capid=" . $m->capid) : ("{$e['raw']['returnurl']}&capid=" . $m->capid);
 					$html = "<script>document.location.href = '{$url}';</script>";
 				} else {
