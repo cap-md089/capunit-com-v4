@@ -57,17 +57,17 @@
 
 			if (!(
 				(count($m->contact['CADETPARENTEMAIL']['PRIMARY']) > 0 &&
-					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['PRIMARY'][0]), trim($email) == 0 )) ||
+					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['PRIMARY'][0]), trim($email)) == 0 ) ||
 				(count($m->contact['CADETPARENTEMAIL']['SECONDARY']) > 0 &&
-					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['SECONDARY'][0]), trim($email) == 0 )) ||
+					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['SECONDARY'][0]), trim($email)) == 0 ) ||
 				(count($m->contact['CADETPARENTEMAIL']['EMERGENCY']) > 0 &&
-					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['EMERGENCY'][0]), trim($email) == 0 )) ||
+					strcasecmp(trim($m->contact['CADETPARENTEMAIL']['EMERGENCY'][0]), trim($email)) == 0 ) ||
 				(count($m->contact['EMAIL']['PRIMARY']) > 0 &&
-					strcasecmp(trim($m->contact['EMAIL']['PRIMARY'][0]), trim($email) == 0 )) ||
+					strcasecmp(trim($m->contact['EMAIL']['PRIMARY'][0]), trim($email)) == 0 ) ||
 				(count($m->contact['EMAIL']['SECONDARY']) > 0 &&
-					strcasecmp(trim($m->contact['EMAIL']['SECONDARY'][0]), trim($email) == 0 )) ||
+					strcasecmp(trim($m->contact['EMAIL']['SECONDARY'][0]), trim($email)) == 0 ) ||
 				(count($m->contact['EMAIL']['EMERGENCY']) > 0 &&
-					strcasecmp(trim($m->contact['EMAIL']['EMERGENCY'][0]), trim($email) == 0 ))
+					strcasecmp(trim($m->contact['EMAIL']['EMERGENCY'][0]), trim($email)) == 0 )
 			)) {
 				return [
 					'success' => false,

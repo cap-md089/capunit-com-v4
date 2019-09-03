@@ -1405,7 +1405,11 @@
 
 			$quals = [];
 
-			$allDivs = $h->getElementByID('divCardMbrAchvs')->getElementsByTagName('div');
+			$allDivs = [];
+			$cardMbrAchvs = $h->getElementByID('divCardMbrAchvs');
+			if (isset($cardMbrAchvs) && $cardMbrAchvs != null) {
+				$allDivs = $cardMbrAchvs->getElementsByTagName('div');
+			}
 
 			foreach ($allDivs as $div) {
 				if (
