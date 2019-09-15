@@ -100,7 +100,7 @@
 			$pdf->Cell(0,$lineHeight,$textString,0,1,"L");
 
 			$pdf->SetFont('Arial','B',10);
-			$textString = "Unit Charter Nuber: ";
+			$textString = "Unit Charter Number: ";
 			$strlen = $pdf->GetStringWidth($textString);
 			$pdf->Cell($strlen,$lineHeight,$textString,0,0,"L");
 			$pdf->SetFont('Arial','',10);
