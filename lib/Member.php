@@ -412,11 +412,30 @@
 					}
 				}
 
-				if($c == 5) { $pdo->exec("DELETE FROM UserPasswordData WHERE HistoryIndex = 4;"); }
-				if($c >= 4) { $pdo->exec("UDPATE UserPasswordData SET HistoryIndex = 4 WHERE HistoryIndex = 3;"); }
-				if($c >= 3) { $pdo->exec("UDPATE UserPasswordData SET HistoryIndex = 3 WHERE HistoryIndex = 2;"); }
-				if($c >= 2) { $pdo->exec("UDPATE UserPasswordData SET HistoryIndex = 2 WHERE HistoryIndex = 1;"); }
-				if($c >= 1) { $pdo->exec("UDPATE UserPasswordData SET HistoryIndex = 1 WHERE HistoryIndex = 0;"); }
+				function updateIndex($i, $username) {
+					$pdo = DBUtils::CreateConnection();
+					$stmt = $pdo->prepare('UPDATE UserPasswordData SET HistoryIndex = :i1 WHERE HistoryIndex = :i AND UserID = :userid;');
+					$stmt->bindValue(':i1', $i + 1);
+					$stmt->bindValue(':i', $i);
+					$stmt->bindValue(':userid', $username);
+
+					if (!$stmt->execute()) {
+						trigger_error($stmt->errorInfo()[2], E_USER_WARNING);
+					}
+				}
+
+				if($c == 5) {
+					$stmt = $pdo->prepare('DELETE FROM UserPasswordData WHERE HistoryIndex = 4 AND UserID = :userid;');
+					$stmt->bindValue(':userid', $this->username);
+
+					if (!$stmt->execute()) {
+						trigger_error($stmt->errorInfo()[2], E_USER_WARNING);
+					}
+				}
+				if($c >= 4) { updateIndex(3, $this->username); }
+				if($c >= 3) { updateIndex(2, $this->username); }
+				if($c >= 2) { updateIndex(1, $this->username); }
+				if($c >= 1) { updateIndex(0, $this->username); }
 			}
 
 			$iterations = self::DEFAULT_ITERATION_COUNT;
@@ -429,7 +448,9 @@
 			$stmt->bindValue(':psalt', $salt);
 			$stmt->bindValue(':piter', $iterations);
 			$stmt->bindValue(':addtime', time());
-			$stmt->execute();
+			if (!$stmt->execute()) {
+				trigger_error($stmt->errorInfo()[2], E_USER_WARNING);
+			}
 
 			return [
 				'success' => true

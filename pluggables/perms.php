@@ -17,6 +17,9 @@ EOD;
 			$l1 = new Link("emailselectorparents", "Selected Parent Email addresses");
 			$html .= "$l1<br />";
 
+			$l1 = new Link("changepassword", "Change password");
+			$html .= "$l1<br />";
+
 			if ($m->hasPermission('PermissionsManagement')) {
 				$t++;
 				$l1 = new Link("permmgmt", "Manage permissions");
