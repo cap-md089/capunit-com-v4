@@ -14,7 +14,7 @@
 			$messageText.= "text field. To download data for additional units, ";
 			$messageText .= "click <u>Add unit</u> to display an additional text field. Unit ";
 			$messageText .= "identifiers must be in the format <nobr>RRR-WW-UUU</nobr> or ";
-			$messageText .= "<nobr>RRR-WW-UUU,</nobr> to include the dashes between elements and ";
+			$messageText .= "<nobr>RRR-WWW-UUU,</nobr> to include the dashes between elements and ";
 			$messageText .= "leading zeros on the unit number. Duplicate unit identifiers ";
 			$messageText .= "will be removed during processing.</div>";
 			$form->addField('description', $messageText, 'textread');
