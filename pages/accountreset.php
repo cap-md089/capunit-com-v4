@@ -7,6 +7,35 @@
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) {return ['error' => 411];}
 
+			if (isset($e['uri'][$e['uribase-index']]) &&
+				( ($m->hasPermission('PermissionManagement') && $a->hasMember($m)) || $m->IsRioux )
+			) {
+				$pdo = DBUtils::CreateConnection();
+				$data = $e['uri'][$e['uribase-index']];
+				$mem = Member::Estimate($data, true);
+				if(!!$mem) {
+						$html = "<br/>Selected member {$mem->RankName} would be deleted<br/><br/>".(new Link("accountreset", "Refresh List"));
+				} else {
+						$html = "<br/>No valid CAPID<br/><br/>".(new Link("accountreset", "Refresh List"));
+				}
+
+				return [
+					'body' => [
+						'MainBody' => $html,
+						'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
+							[
+								'Target' => '/',
+								'Text' => 'Home'
+							],
+							[
+								'Target' => '/accountreset',
+								'Text' => 'Account Reset'
+							]
+						])
+					]
+				];
+			}
+				
 			if (! (($m->hasPermission('PermissionsManagement') && $a->hasMember($m)) || $m->IsRioux )
 			)
 			{
@@ -76,51 +105,6 @@
 			}
 
 
-			if (isset($e['uri'][$e['uribase-index']]) &&
-				( ($m->hasPermission('PermissionManagement') && $a->hasMember($m)) || $m->IsRioux )
-			) {
-				$pdo = DBUtils::CreateConnection();
-				$data = $e['uri'][$e['uribase-index']];
-				$mem = Member::Estimate($data, true);
-				if(!!$mem) {
-						$html = "<br/>Selected member {$mem->RankName} would be deleted<br/><br/>".(new Link("accountreset", "Refresh List"));
-				} else {
-						$html = "<br/>No valid CAPID<br/><br/>".(new Link("accountreset", "Refresh List"));
-				}
-
-				return [
-					'body' => [
-						'MainBody' => $html,
-						'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
-							[
-								'Target' => '/',
-								'Text' => 'Home'
-							],
-							[
-								'Target' => '/accountreset',
-								'Text' => 'Account Reset'
-							]
-						])
-					]
-				];
-			} else {
-				$html = "<br/>Invalid Permissions<br/><br/>".(new Link("accountreset", "Refresh List"));
-				return [
-					'body' => [
-						'MainBody' => $html,
-						'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
-							[
-								'Target' => '/',
-								'Text' => 'Home'
-							],
-							[
-								'Target' => '/accountreset',
-								'Text' => 'Account Reset'
-							]
-						])
-					]
-				];
-			}
 
 		}
 	}
