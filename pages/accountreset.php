@@ -71,13 +71,13 @@
 								{ $color = 'color:red'; }
 								$title = "<span style=\"$color\">{$ma['NameLast']}, {$ma['NameFirst']} {$ma['Rank']}</span>";
 								$exp = 'CAP Membership Expires on '.date('n/j/Y', $ma['Membership Expiration']);
-								if(!!$ma['Last SignIn']) {
+								if($ma['CAPUnit Account'] == "Yes") {
 										$exp = 'Last SignIn: '.(date("n/j/Y", $ma['Last SignIn']))."<br/>".$exp;
 								}
 								if($ma['CAPUnit Account'] == "Yes") {
 									$delacct = new Link("accountreset", "Remove CAPUnit Account", [$ma['CAPID']]);
 								} else {
-										$delacct = "No CAPUnit Account";
+										$delacct = Null;
 								}
 							$html->addElement($title, $exp , $delacct);
 						}
