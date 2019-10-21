@@ -74,7 +74,7 @@
 								if(!!$ma['Last SignIn']) {
 										$exp = 'Last SignIn: '.(date("n/j/Y", $ma['Last SignIn']))."<br/>".$exp;
 								}
-								if(!!$ma['CAPUnit Account']) {
+								if($ma['CAPUnit Account'] == "Yes") {
 									$delacct = new Link("accountreset", "Remove CAPUnit Account", [$ma['CAPID']]);
 								} else {
 										$delacct = "No CAPUnit Account";
