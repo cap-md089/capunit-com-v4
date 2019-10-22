@@ -14,6 +14,10 @@
 				$data = $e['uri'][$e['uribase-index']];
 				$mem = Member::Estimate($data, true);
 				if(!!$mem) {
+					
+
+
+
 						$html = "<br/>Selected member {$mem->RankName} would be deleted<br/><br/>".(new Link("accountreset", "Refresh List"));
 				} else {
 						$html = "<br/>No valid CAPID<br/><br/>".(new Link("accountreset", "Refresh List"));
@@ -60,7 +64,7 @@
 					$targetexpiring = time()+(60*60*24*30); //one month from now
 					$targetexpired = time(); //now
 					if (count($madata) > 0) {
-						$html = new DetailedListPlus("CAPUnit.com Member Accounts for ".$a->id."<br/>Target date: ".date('n/j/Y',$targetexpired));
+						$html = new DetailedListPlus("CAPUnit.com Member Accounts for ".$a->id);
 						foreach ($madata as $ma) {
 								$color = '';
 								if(
@@ -87,9 +91,23 @@
 						$html = "There are no members for this account.";
 					}
 
+					$desc = "<br/><h4>On this page each member assigned to the units associated with the unit account $a->id ";
+					$desc .= "is listed, according to the latest CAPWATCH Import execution.  Members who are within ";
+					$desc .= "30 days of their CAP membership expiring appear in orange text, while members whose CAP ";
+					$desc .= "membership has already expired appear in red text.  Expired member information will ";
+					$desc .= "continue to populate CAPWATCH downloads for 90 days beyond the membership expiration date.<br/><br/>";
+					$desc .= "Also on this page, CAPUnit.com accounts for unit members may be reset by clicking on ";
+					$desc .= "the \"Remove CAPUnit Account\" link to the right of the member name.  Removing the ";
+					$desc .= "CAPUnit account is equivalent to a password reset.  In order to reestablish their login ";
+					$desc .= "credentials, the member must follow the 'Create new account' process.  Removing the ";
+					$desc .= "CAPUnit account does not delete any personnel data, it only removes the login and password, ";
+					$desc .= "allowing the member to establish a new login and password via the create account interface.  Clicking on the ";
+					$desc .= "triangle icon to the left of the name expands the view to display last CAPUnit.com login ";
+					$desc .= "date (if an account is present) and the member's CAP membership expiration date.</h4><br/>";
+
 					return [
 						'body' => [
-							'MainBody' => $html,
+							'MainBody' => $desc.$html,
 							'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
 								[
 									'Target' => '/',
