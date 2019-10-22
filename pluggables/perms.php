@@ -25,6 +25,11 @@ EOD;
 				$l1 = new Link("permmgmt", "Manage permissions");
 				$html .= "$l1<br />";
 			}
+			if ($m->hasPermission('PermissionsManagement')) {
+				$t++;
+				$l1 = new Link("accountreset", "Reset CAPUnit Accounts");
+				$html .= "$l1<br />";
+			}
 			if ($m->hasPermission('RegistryEdit') || $m->hasPermission('Developer')) {
 				$t++;
 				$l1 = new Link ("regedit", "Site Configuration");

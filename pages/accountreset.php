@@ -14,11 +14,22 @@
 				$data = $e['uri'][$e['uribase-index']];
 				$mem = Member::Estimate($data, true);
 				if(!!$mem) {
-					
-
-
-
-						$html = "<br/>Selected member {$mem->RankName} would be deleted<br/><br/>".(new Link("accountreset", "Refresh List"));
+					$sqlstmt = "SELECT UserID FROM UserAccountInfo WHERE CAPID=:cid";
+					$stmt = $pdo->prepare($sqlstmt);
+					$stmt->bindValue(':cid', $mem->uname);
+					$madata = DBUtils::ExecutePDOStatement($stmt);
+					if (count($madata) > 0) {
+							$pwsql = "DELETE FROM UserPasswordData WHERE UserID=:uid";
+							$stmt = $pdo->prepare($pwsql);
+							$stmt->bindValue(':uid', $madata[0]['UserID']);
+							$stmt->execute();
+							$uasql = "DELETE FROM UserAccountInfo WHERE UserID=:uid";
+							$stmt = $pdo->prepare($uasql);
+							$stmt->bindValue(':uid', $madata[0]['UserID']);
+							$stmt->execute();
+					}
+					$html = "<br/>Selected member {$mem->RankName} account has been deleted<br/><br/>";
+					$html .= (new Link("accountreset", "Refresh Member Account List"));
 				} else {
 						$html = "<br/>No valid CAPID<br/><br/>".(new Link("accountreset", "Refresh List"));
 				}
@@ -51,12 +62,12 @@
 							Data_Member.Expiration as "Membership Expiration",
 							IF(UserAccountInfo.Status, "Yes", "No") as "CAPUnit Account",
 							SignInData.LastAccessTime as "Last SignIn"
-						FROM EventManagement.Data_Member
-						LEFT JOIN EventManagement.UserAccountInfo ON Data_Member.CAPID=UserAccountInfo.CAPID
-						LEFT JOIN EventManagement.SignInData ON Data_Member.CAPID=SignInData.CAPID
+						FROM Data_Member
+						LEFT JOIN UserAccountInfo ON Data_Member.CAPID=UserAccountInfo.CAPID
+						LEFT JOIN SignInData ON Data_Member.CAPID=SignInData.CAPID
 						WHERE Data_Member.ORGID IN (SELECT UnitId FROM Accounts WHERE AccountID = :aid)
 						AND SignInData.AccountID = :aid
-						ORDER BY Data_Member.NameLast;';
+						ORDER BY Data_Member.NameLast, Data_Member.NameFirst;';
 
 					$stmt = $pdo->prepare($sqlstmt);
 					$stmt->bindValue(':aid', $a->id);
