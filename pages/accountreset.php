@@ -74,7 +74,11 @@
 								} else if ( $ma['Membership Expiration'] < $targetexpired ) 
 								{ $color = 'color:red'; }
 								$title = "<span style=\"$color\">{$ma['NameLast']}, {$ma['NameFirst']} {$ma['Rank']}</span>";
-								$exp = 'CAP Membership Expires on '.date('n/j/Y', $ma['Membership Expiration']);
+								if($color == 'color:red') {
+										$exp = 'CAP Membership Expired on '.date('n/j/Y', $ma['Membership Expiration']);
+								} else {
+										$exp = 'CAP Membership Expires on '.date('n/j/Y', $ma['Membership Expiration']);
+								}
 								if($ma['CAPUnit Account'] == "Yes") {
 										$exp = 'Last SignIn: '.(date("n/j/Y", $ma['Last SignIn']))."<br/>".$exp;
 								}
