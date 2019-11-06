@@ -51,11 +51,12 @@
 			return false;
 		}
 
-		public function add ($member, $plantouse=false, $comments='', $account=Null) {
+		public function add ($member, $status='Committed/Attended', $plantouse=false, $comments='', $account=Null) {
 			if (!isset($account)) {
 				global $_ACCOUNT;
 				$account = $_ACCOUNT;
 			}
+			$inStatus = !($status == 'Committed/Attended') ? 'Not planning to attend' : $status;
 			$pdo = DB_Utils::CreateConnection();
 			$stmt = $pdo->prepare('INSERT INTO '.DB_TABLES['Attendance'].' VALUES (:time, :eid, :cid, :crank, :comments, :status, :plantouse, :accountid, :reqs, :sent, :confirmed);');
 			$time = time();
@@ -65,7 +66,7 @@
 			$stmt->bindValue(':cid', $member->uname);
 			$stmt->bindValue(':crank', $member->memberRank . ' ' . $member->memberName);
 			$stmt->bindValue(':comments', $comments);
-			$stmt->bindValue(':status', 'Committed/Attended');
+			$stmt->bindValue(':status', $inStatus);
 			$stmt->bindValue(':accountid', $account->id);
 			$stmt->bindValue(':reqs', '');
 			$stmt->bindValue(':sent', 0);
@@ -77,7 +78,7 @@
 				'CAPID' => $member->uname,
 				'MemberRankName' => $member->memberRank . ' ' . $member->memberName,
 				'Comments' => $comments,
-				'Status' => 'Commited/Attended',
+				'Status' => $inStatus,
 				'Requirements' => '',
 				'SummaryEmailSent' => 0,
 				'Confirmed' => 0

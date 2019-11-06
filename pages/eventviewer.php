@@ -293,8 +293,13 @@
 						$html .= "Your home unit has one or more events linked to this one.  Please sign up ";
 						$html .= "using your $eventLinked";
 					} else { //event is not linked to home squadron
-						$form = new AsyncForm (Null, 'Sign up');
+						$form = new AsyncForm (Null, 'Register');
+								$form->setSubmitInfo('Register');
 						$form->addField('comments', 'Comments', 'textarea')->
+							addField("status", "Status", "radio", Null, [
+									'I will attend',
+									'I will NOT attend',
+							], 'I will attend' )->
 							addField('capTransport', 'Are you using CAP transportation?', 'checkbox')->
 							addHiddenField('eid', $ev)->
 							addHiddenField('func', 'signup');
@@ -337,7 +342,7 @@
 					$member = Member::Estimate($capid);
 					if ($member) {
 						if (($event->isPOC($m) || $m->hasPermission('SignUpEdit')) || $capid == $m->uname) {
-							$form = new AsyncForm(Null, Null, "nopadtop");
+								$form = new AsyncForm(Null, Null, "nopadtop");
 
 							$form->reload = true;
 							$form->addField("comments", "Comments", "textarea", Null, ['value' => $data['Comments']], $data['Comments']);
@@ -351,7 +356,8 @@
 							}
 
 							$form->addField("status", "Status", "radio", Null, [
-								'Committed/Attended',
+									'Committed/Attended',
+									'Not planning to attend',
 								'Rescinded commitment to attend',
 								'No show'
 							], $data['Status']);
@@ -383,6 +389,8 @@
 								$memberinfo = "<font color=\"#FFA500\">$capid: $member->memberRank $member->memberName</font>";
 							} else if($data['Confirmed'] == 1) {
 								$memberinfo = "<font color=\"green\">$capid: $member->memberRank $member->memberName</font>";
+							} else if($data['Status'] == 'Not planning to attend') {
+								$memberinfo = "$capid: <font color=\"fuchsia\">$member->memberRank $member->memberName</font>";
 							} else {
 								$memberinfo = "$capid: $member->memberRank $member->memberName";
 							}
@@ -592,8 +600,9 @@
 						$e['form-data']['uniform'], $a) ?
 							"You're signed up!" : "Something went wrong!";
 				} else {
-					return $attendance->add($m,
-						$e['form-data']['capTransport'] == 'true',
+						return $attendance->add($m,
+						$e['form-data']['status'] == 'I will attend' ? 'Committed/Attended' : 'Not planning to attend',
+						(($e['form-data']['capTransport'] == 'true') && ($e['form-data']['status'] == 'I will attend' )) ? true : false,
 						$e['form-data']['comments'], $a) ?
 							"You're signed up!" : "Something went wrong!";
 				}
