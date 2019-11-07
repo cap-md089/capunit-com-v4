@@ -8,7 +8,7 @@
 			if (!$l) {return ['error' => 411];}
 
 			if (isset($e['uri'][$e['uribase-index']]) &&
-				( ($m->hasPermission('PermissionManagement') && $a->hasMember($m)) || $m->IsRioux )
+				( ($m->hasPermission('PermissionsManagement') && $a->hasMember($m)) || $m->IsRioux )
 			) {
 				$pdo = DBUtils::CreateConnection();
 				$data = $e['uri'][$e['uribase-index']];

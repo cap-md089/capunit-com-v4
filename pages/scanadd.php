@@ -147,7 +147,7 @@
 			if ($e['raw']['func'] == 'addCAPID') {
 				$mem = Member::Estimate(trim($e['form-data']['capid']));
 				if ($mem && $mem->uname != 0) {
-					$attend->add($mem, false, "Scan-Add by ".$data['mrankname']." (".$data['mid'].") on ".date('d M Y'));
+					$attend->add($mem, 'Committed/Attended', false, "Scan-Add by ".$data['mrankname']." (".$data['mid'].") on ".date('d M Y'));
 					$added = 'add';
 					$sqlstring = "UPDATE ScanAddSessions SET Lastcid=:cid WHERE sessionid=:sid;";
 					$stmt = $pdo->prepare($sqlstring);
