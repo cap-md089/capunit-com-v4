@@ -3,7 +3,7 @@
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
 			
-			if (!$a->hasMember($m) && !$m->IsRioux()) return ['error' => 431];
+			if (!$a->hasMember($m) && !$m->IsRioux) return ['error' => 431];
 			$targetexpiring = time()+(60*60*24*30); //one month from now
 			$targetexpired = time(); //now
 			$color = '';
