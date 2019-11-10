@@ -7,8 +7,6 @@
 			$targetexpiring = time()+(60*60*24*30); //one month from now
 			$targetexpired = time(); //now
 			$color = '';
-			$prefix = '';
-			$suffix = '</span>';
 
 			$pdo = DB_Utils::CreateConnection();
 
