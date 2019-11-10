@@ -156,7 +156,7 @@
 		 *
 		 * @return self Useful for chaining, e.g. $form->addField ()->addField ()->addField()...->getHtml();
 		 */
-		public function addField ($name, $label, $type=Null, $class=Null, $data=Null, $default=Null, $rowid=Null) {
+		public function addField ($name, $label, $type=Null, $class=Null, $data=Null, $default=Null, $rowid=Null, $color=Null) {
             $type = isset($type) ? $type : "text";
 			$data = isset($data) ? $data : [];
 			$class = isset($class) ? $class : 'forminput';
@@ -186,6 +186,9 @@
 							}
 						}
 					}
+					if(!isset($color)){
+							$color = array_fill(0, count($data), '');
+					}
 					$html = "<section class=\"$class\">";
 					for ($i = 0; $i < count($data); $i++) {
 						$fname = $data[$i];
@@ -200,7 +203,7 @@
 								$checked = true;
 							}
 						}
-						$html .= "<div class=\"checkboxDiv checkboxDivMult\" class=\"forminput\"><input ".($checked?"checked ":"")."type=\"checkbox\" value=\"$fname\" name=\"{$name}[]\" id=\"{$random}{$name}{$fname}{$i}\" /><label for=\"{$random}{$name}{$fname}{$i}\"></label><label for=\"{$random}{$name}{$fname}{$i}\">$ftext</label></div>";
+						$html .= "<span style=\"{$color[$i]}\"><div class=\"checkboxDiv checkboxDivMult\" class=\"forminput\"><input ".($checked?"checked ":"")."type=\"checkbox\" value=\"$fname\" name=\"{$name}[]\" id=\"{$random}{$name}{$fname}{$i}\" /><label for=\"{$random}{$name}{$fname}{$i}\"></label><label for=\"{$random}{$name}{$fname}{$i}\">$ftext</label></div></span>";
 					}
 					$html .= "</section>";
 				break;

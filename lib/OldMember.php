@@ -126,6 +126,11 @@
          */
         public $AccessLevel = '';
 
+		/**
+         * @var string Level of access determining permissions for user
+         */
+        public $Expiration = 0;
+
         /**
          * @var string Name of unit to which assigned
          */
@@ -702,7 +707,7 @@
             $stmt = $pdo->prepare($sqlin);
             $stmt->bindValue(':cid', $capid);
             $data = DB_Utils::ExecutePDOStatement($stmt);
-            if (count($data) == 1) {
+/*            if (count($data) == 1) {
                 $mname = $data[0]['MemberName'];
                 $mnamelast = $data[0]['MemberNameLast'];
                 $mnamefirst = $data[0]['MemberNameFirst'];
@@ -713,8 +718,8 @@
 
                 // $logger->Log("S ".$capid." ".$mrank." ".$mname, 2);
             } else {
-//                if ($global) {
-                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
+*///                if ($global) {
+                    $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type, Expiration FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid;');
   //              } else {
     //                $stmt = $pdo->prepare('SELECT NameLast, NameFirst, NameMiddle, NameSuffix, Rank, Type FROM '.DB_TABLES['Member'].' WHERE CAPID = :cid AND ORGID in '.$account->orgSQL.';');
       //          }
@@ -725,7 +730,8 @@
 
                     $mname = $data['NameFirst'] . ' ' . substr($data['NameMiddle'], 0, 1) . ' ' . $data['NameLast'] . ' ' . $data['NameSuffix'];
                     $mnamelast = $data['NameLast'];
-                    $mnamefirst = $data['NameFirst'];
+					$mnamefirst = $data['NameFirst'];
+					$mxp = $data['Expiration'];
                     $mrank = $data['Rank'];
                     if ($mrank == 'CADET') { $msenior = false; } else {
                         if (substr($mrank, 0, 2) == "C/") { $msenior = false; } else { $msenior = true; }
@@ -734,7 +740,7 @@
                 } else {
 					return false;
                 }
-            }
+  //          }
 
 
             // Preparing data
@@ -744,7 +750,8 @@
                 'lastName' => $mnamelast,
                 'firstName' => $mnamefirst,
                 'memberRank' => $mrank,
-                'seniorMember' => $msenior,
+				'seniorMember' => $msenior,
+				'Expiration' => $mxp,
                 'success' => true
             ];
 

@@ -194,7 +194,7 @@
 			$ret = [];
 			$nowtime = time();
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE Expiration>:nowt AND ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
 //			$stmt->bindValue(":id", $this->id);
 			$stmt->bindValue(':nowt', $nowtime);
 			$data = DBUtils::ExecutePDOStatement($stmt);
@@ -208,7 +208,7 @@
 			$ret = [];
 			$nowtime = time();
 			$pdo = DBUtils::CreateConnection();
-			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE Expiration>:nowt AND ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
+			$stmt = $pdo->prepare("SELECT CAPID FROM ".DB_TABLES['Member']." WHERE ORGID in $this->orgSQL ORDER BY NameLast, NameFirst;");
 //			$stmt->bindValue(':id', $this->id);
 			$stmt->bindValue(':nowt', $nowtime);
 			$data = DBUtils::ExecutePDOStatement($stmt);

@@ -2,27 +2,47 @@
 	class Output {
 		public static function doGet ($e, $c, $l, $m, $a) {
 			if (!$l) return ['error' => 411];
-			// if (!$a->paid) return ['error' => 501];
-			if (!$a->hasMember($m)) return ['error' => 431];
+			
+			if (!$a->hasMember($m) && !$m->IsRioux()) return ['error' => 431];
+			$targetexpiring = time()+(60*60*24*30); //one month from now
+			$targetexpired = time(); //now
+			$color = '';
+			$prefix = '';
+			$suffix = '</span>';
 
 			$pdo = DB_Utils::CreateConnection();
 
 			$cadets = []; $seniorm = [];
 			foreach ($a->genMembers() as $mem) {
-				($mem->seniorMember ? $seniorm[] = "$mem->uname: $mem->RankName" : $cadets[] = "$mem->uname: $mem->RankName");
+					if($mem->Expiration < $targetexpiring && $mem->Expiration >= $targetexpired) {
+							$color = 'color:orange';
+					} else if ($mem->Expiration < $targetexpired) {
+							$color = 'color:red';
+					} else {
+							$color = '';
+					}
+					$prefix = "\" style=\"$color";
+					if($mem->seniorMember) { 
+							$seniorm[] = "$mem->uname: $mem->RankName";
+							$seniorcolor[] = $color;
+					} else {
+							$cadets[] = "$mem->uname: $mem->RankName";
+							$cadetcolor[] = $color;
+					}
 			}
 
+			$legend = 'Members colored orange are within 30 days of their membership expiring.  Members colored red are those whose membership has already expired.  Expired memberships continue to appear in CAPWATCH downloads for a period of 90 days following expiration.';
 			$form = new AsyncForm (Null, "Select members to include in email address listing", Null, "MultiAdd");
 			$form
-				->addField("cadets", 'Cadets (and parents)', 'multcheckbox', Null, $cadets)
-				->addField('seniorm', 'Senior Members', 'multcheckbox', Null, $seniorm)
+				->addField("cadets", 'Cadets (and parents)', 'multcheckbox', Null, $cadets, Null, Null, $cadetcolor)
+				->addField('seniorm', 'Senior Members', 'multcheckbox', Null, $seniorm, Null, Null, $seniorcolor)
 				->setOption('reload', false);
 
 			$form->setSubmitInfo('Submit', null, null, null, false);
 
 			return [
 				'body' => [
-					'MainBody' => $form.'',
+					'MainBody' => $form.'</br><h3>'.$legend.'</h3>',
 					'BreadCrumbs' => UtilCollection::GenerateBreadCrumbs([
 						[
 							'Target' => '/',
