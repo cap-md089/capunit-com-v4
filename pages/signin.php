@@ -8,7 +8,7 @@
 
 				$message = "<div style=\"line-height: 1.6em\">Enter your CAPUnit.com login information below to sign in to the site. ";
 				$message .= "By logging into this site you agree to the terms and conditions ";
-				$message .= "located <a href='https://mdx89.capunit.com/tandc'>here</a>.  Our Privacy Policy may be accessed at <a href='https://mdx89.capunit.com/privacy'>this page</a>.";
+				$message .= "located <a href='https://{$a->id}.capunit.com/tandc'>here</a>.  Our Privacy Policy may be accessed at <a href='https://{$a->id}.capunit.com/privacy'>this page</a>.";
 				$message .= "</div>";
 				$form->addField('eula',$message,'textread');
 				$form->addField('name', 'User Name')->addField('password', 'Password', 'password')->setSubmitInfo('Sign In');
