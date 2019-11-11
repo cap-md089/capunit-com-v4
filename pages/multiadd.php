@@ -95,10 +95,10 @@
 					$mem = Member::Estimate($n);
 					if ($mem && $mem->uname != 0) {
 						if($event->IsSpecial) {
-							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
+							$attend->add($mem, 'Committed/Attended', false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
 								'', '', $mem->getBestEmail(), $mem->getBestPhone(), '', $a);
 						} else {
-							$attend->add($mem, false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), $a);
+							$attend->add($mem, 'Committed/Attended', false, "Multi-Add by $m->memberName ($m->uname) on ".date('d M Y'), $a);
 						}
 						$added = true;
 					}
@@ -108,10 +108,10 @@
 				$mem = Member::Estimate(trim($e['form-data']['capid']));
 				if ($mem && $mem->uname != 0) {
 					if($event->IsSpecial) {
-						$attend->add($mem, false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
+						$attend->add($mem, 'Committed/Attended', false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'), 
 							'', '', $mem->getBestEmail(), $mem->getBestPhone(), '');
 					} else {
-						$attend->add($mem, false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'));
+						$attend->add($mem, 'Committed/Attended', false, "CAPID-Add by $m->memberName ($m->uname) on ".date('d M Y'));
 					}
 					$added = true;
 				}

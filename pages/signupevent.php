@@ -142,6 +142,7 @@
 
 			$seniorCount=0;
 			$cadetCount=0;
+			$notattendingCount=0;
 
 			function compareLastFirst($a, $b) {
 				return strcmp($a['NameLast'].$a['NameFirst'], $b['NameLast'].$b['NameFirst']);
@@ -149,9 +150,15 @@
 			usort($memberData, 'compareLastFirst');
 
 			foreach($memberData as $datum) {
-				if(substr($datum['MemberRankName'],0,2) == "C/") {$cadetCount++;
-				} elseif (substr($datum['MemberRankName'],0,5) == "CADET") {$cadetCount++;
-				} else {$seniorCount++;}
+					if(substr($datum['MemberRankName'],0,2) == "C/" && $datum['Status'] == 'Committed/Attended' ) {
+							$cadetCount++;
+					} elseif (substr($datum['MemberRankName'],0,5) == "CADET" && $datum['Status'] == 'Committed/Attended' ) {
+							$cadetCount++;
+					} elseif ($datum['Status'] == 'Committed/Attended') {
+							$seniorCount++;
+					} else {
+							$notattendingCount++;
+					}
 			}
 
 
@@ -178,7 +185,7 @@
 				$alternator=0;
 				foreach($memberData as $datum) {
 					$member = Member::Estimate($datum['CAPID']);
-					if($member->seniorMember) {
+					if($member->seniorMember && $datum['Status'] == 'Committed/Attended' ) {
 						if(!$alternator) {
 							$fillState = false;
 							$alternator = 1;
@@ -230,7 +237,7 @@
 				$alternator=0;
 				foreach($memberData as $datum) {
 					$member = Member::Estimate($datum['CAPID']);
-					if(!$member->seniorMember) {
+					if(!$member->seniorMember && $datum['Status'] == 'Committed/Attended' ) {
 						if(!$alternator) {
 							$fillState = false;
 							$alternator = 1;
@@ -258,6 +265,57 @@
 
 			}  //end of print cadet data section
 
+			$titleFontSize = 10;  $textFontSize = 9;
+			//insert not attending member information
+			if($seniorCount>0) {
+				$s = "";  if($notattendingCount>1) {$s = "s";}
+				$pdf->SetFont('Arial','B',$titleFontSize);
+				$pdf->Cell(0,.3,"[".$notattendingCount."] Member".$s." not attending",0,1,"C");
+				$pdf->SetFont('Arial','B',$textFontSize);
+				$wGradeName = 1.7;  $wCAPID = 0.55;  $wUnit = 0.8;
+				$wExpiration = 0.7;  $wFlight = 0.5;  $wCell = 0.9;  $wEmail = 1.5;
+				$wGeo = 0.9;  $wDuty = 1.4;
+				$cellHeight = 0.18;  $border = 0;  $fillState = false;
+				$pdf->Cell($wGradeName,$cellHeight,"Member Grade & Name",$border,0,"L",$fillState);
+				$pdf->Cell($wCAPID,$cellHeight,"CAPID",$border,0,"C",$fillState);
+				$pdf->Cell($wUnit,$cellHeight,"Unit",$border,0,"C",$fillState);
+				$pdf->Cell($wCell,$cellHeight,"Best Phone",$border,0,"L",$fillState);
+				$pdf->Cell($wEmail,$cellHeight,"Email",$border,1,"L",$fillState);
+
+				$pdf->SetFont('Arial','',$textFontSize);
+				$pdf->SetFillColor(210);
+				$cellHeight = 0.18;  $border = 0;  $fillState = false;
+				$alternator=0;
+				foreach($memberData as $datum) {
+					$member = Member::Estimate($datum['CAPID']);
+					if(!($datum['Status'] == 'Committed/Attended' )) {
+						if(!$alternator) {
+							$fillState = false;
+							$alternator = 1;
+						} else {
+							$fillState = true;
+							$alternator = 0;
+						}
+
+						$pdf->Cell($wGradeName,$cellHeight,$datum['MemberRankName'],$border,0,"L",$fillState);
+						$pdf->Cell($wCAPID,$cellHeight,$datum['CAPID'],$border,0,"C",$fillState);
+						$bolder = 'B';
+						foreach($orgs as $org) {
+							if($member->Squadron==$org) {$bolder = '';}
+						}
+						$pdf->SetFont('Arial',$bolder,$textFontSize);
+						$pdf->Cell($wUnit,$cellHeight,$member->Squadron,$border,0,"C",$fillState);
+						$pdf->SetFont('Arial','',$textFontSize);
+						$pdf->Cell($wCell,$cellHeight,$member->getBestPhone(),$border,0,"L",$fillState);
+						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-1);}
+						if($pdf->getStringWidth($member->getBestEmail())>$wEmail) {$pdf->SetFont('Arial','',$textFontSize-2);}
+						$pdf->Cell($wEmail,$cellHeight,$member->getBestEmail(),$border,1,"L",$fillState);
+						$pdf->SetFont('Arial','',$textFontSize);
+					}
+				}
+
+			}  //end of print not attending data section
+			
 			$pdf->Cell($spacer,$linespace,"",0,1);
 
 			$pdf->SetFont('Arial','B',10);
