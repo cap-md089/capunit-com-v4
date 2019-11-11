@@ -61,12 +61,13 @@
 					$sqlstmt = 'SELECT Data_Member.CAPID, Data_Member.Rank, Data_Member.NameLast, Data_Member.NameFirst,
 							Data_Member.Expiration as "Membership Expiration",
 							IF(UserAccountInfo.Status, "Yes", "No") as "CAPUnit Account",
-							SignInData.LastAccessTime as "Last SignIn"
+							UnitSignInData.LastAccessTime as "Last SignIn"
 						FROM Data_Member
 						LEFT JOIN UserAccountInfo ON Data_Member.CAPID=UserAccountInfo.CAPID
-						LEFT JOIN SignInData ON Data_Member.CAPID=SignInData.CAPID
+						LEFT JOIN 
+(SELECT * FROM SignInData WHERE AccountID=:aid ) AS UnitSignInData
+ON Data_Member.CAPID=UnitSignInData.CAPID
 						WHERE Data_Member.ORGID IN (SELECT UnitId FROM Accounts WHERE AccountID = :aid)
-						AND SignInData.AccountID = :aid
 						ORDER BY Data_Member.NameLast, Data_Member.NameFirst;';
 
 					$stmt = $pdo->prepare($sqlstmt);
