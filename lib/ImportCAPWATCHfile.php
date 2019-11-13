@@ -360,6 +360,64 @@ $logger = New Logger ("ImportCAPWATCH");
 		}
 		unlink("$dir/$id-$member->capid-DutyPosition.txt");
 
+		//Import CadetActivities.txt file
+		flog ("Processing CadetActivities");
+		$last_line=system("unzip -op $fname CadetActivities.txt > $dir/$id-$member->capid-CadetActivities.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("CadetActivities unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "CadetActivities unzip error.  Please contact helpdesk@capunit.com";
+		}
+		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-CadetActivities.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$colIDs = array();
+		foreach ($titleRow as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','Type','Location','Completed'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("CadetActivities.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the CadetActivities.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing CadetActivities.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
+
+			$stmt = $pdo->prepare("DELETE FROM Data_CadetActivities WHERE CAPID=:cid;");
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			if (!$stmt->execute()) {
+				ErrorMSG::Log("CadetActivities Delete Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "CadetActivities Delete Member error: ".$stmt->errorInfo()[2];
+			}
+		}
+		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-CadetActivities.txt"));
+		$titleRow = str_getcsv($members[0]);
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
+
+			$stmt = $pdo->prepare("INSERT INTO Data_CadetActivities VALUES (:cid, :type, :loc, :comp, :usrid, 
+			:moddte);");
+
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':type', VN::g('Type'));
+			$stmt->bindValue(':loc', VN::g('Location'));
+			$stmt->bindValue(':comp', UtilCollection::GetTimestamp(VN::g('Completed')));
+			$stmt->bindValue(':usrid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+
+			if (!$stmt->execute()) {
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+				return "CadetActivities Insert error: ".$stmt->errorInfo()[2];
+			}
+		}
+		unlink("$dir/$id-$member->capid-CadetActivities.txt");
+
 		//Import MbrAchievements.txt file
 		flog ("Processing Member Achievements");
 		$last_line=system("unzip -op $fname MbrAchievements.txt > $dir/$id-$member->capid-MbrAchievements.txt",$retval);
