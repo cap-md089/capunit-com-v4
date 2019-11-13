@@ -360,6 +360,76 @@ $logger = New Logger ("ImportCAPWATCH");
 		}
 		unlink("$dir/$id-$member->capid-DutyPosition.txt");
 
+		//Import MbrAchievements.txt file
+		flog ("Processing Member Achievements");
+		$last_line=system("unzip -op $fname MbrAchievements.txt > $dir/$id-$member->capid-MbrAchievements.txt",$retval);
+		if($retval > 0) {
+			ErrorMSG::Log("MbrAchievements unzip: ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.", retval: ".$retval,"ImportCAPWATCHfile.php");
+			return "MbrAchievements unzip error.  Please contact helpdesk@capunit.com";
+		}
+		$members = explode("\n", file_get_contents("$dir/$id-$member->capid-MbrAchievements.txt"));
+		$titleRow = str_getcsv($members[0]);
+		$colIDs = array();
+		foreach ($titleRow as $k => $v) {
+			$colIDs[$v] = $k;
+		}
+		foreach (['CAPID','AchvID','Status','OriginallyAccomplished','Completed','Expiration','ORGID'] as $value) {
+			if (!isset($colIDs[$value])) {
+				ErrorMSG::Log("MbrAchievements.txt missing column header:  ".$value.", ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				$message = "A required column identifier, ".$value.", was not identified as present ";
+				$message .= "in the MbrAchievements.txt file.  The CAPWATCH import cannot continue and will halt.";
+				errorMailer($member, $message);
+				return "Error parsing MbrAchievements.txt.  Please contact helpdesk@capunit.com";
+			}
+		}
+		VN::$header = $colIDs;
+		$stmt = $pdo->prepare("DELETE FROM Data_MbrAchievements WHERE ORGID=:orgid;");
+		$stmt->bindValue(':orgid', $id);
+		if (!$stmt->execute()) {
+			ErrorMSG::Log("MbrAchievements Delete ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+			return "MbrAchievements Delete ORGID error: ".$stmt->errorInfo()[2];
+		}
+		for ($i = 1, $m = str_getcsv($members[$i]); $i < count($members)-1; $i++, $m = str_getcsv($members[$i])) {
+			VN::$vals = $m; 
+
+			$stmt = $pdo->prepare("DELETE FROM Data_MbrAchievements WHERE CAPID=:cid AND NOT(ORGID=:orgid);");
+			$stmt->bindValue(':cid', $m[0]);
+			$stmt->bindValue(':orgid', $id);
+			if (!$stmt->execute()) {
+				ErrorMSG::Log("DutyPositions Delete NOT ORGID: ".$id.", Member: ".$member->capid.", ".$member->RankName.", fname: ".$fname.": ".$stmt->errorInfo()[2],"ImportCAPWATCHfile.php");
+				return "DutyPositions Delete NOT ORGID error: ".$stmt->errorInfo()[2];
+			}
+
+			$stmt = $pdo->prepare("INSERT INTO Data_MbrAchievements VALUES (:cid, :aid, :status, :oa, :comp, :exp, :ABC, :AR, :AD, :source, :rid, :fu, :dc, :uid, 
+			:moddte, :orgid);");
+
+			$stmt->bindValue(':cid', VN::g('CAPID'));
+			$stmt->bindValue(':aid', VN::g('AchvID'));
+			$stmt->bindValue(':status', VN::g('Status'));
+			$stmt->bindValue(':oa', UtilCollection::GetTimestamp(VN::g('OriginallyAccomplished')));
+			$stmt->bindValue(':comp', UtilCollection::GetTimestamp(VN::g('Completed')));
+			$stmt->bindValue(':exp', UtilCollection::GetTimestamp(VN::g('Expiration')));
+			$stmt->bindValue(':ABC', VN::g('AuthByCAPID'));
+			$stmt->bindValue(':AR', VN::g('AuthReason'));
+			$stmt->bindValue(':AD', UtilCollection::GetTimestamp(VN::g('AuthDate')));
+			$stmt->bindValue(':source', VN::g('Source'));
+			$stmt->bindValue(':rid', VN::g('RecID'));
+			$stmt->bindValue(':fu', VN::g('FirstUsr'));
+			$stmt->bindValue(':dc', UtilCollection::GetTimestamp(VN::g('DateCreated')));
+			$stmt->bindValue(':uid', VN::g('UsrID'));
+			$stmt->bindValue(':moddte', UtilCollection::GetTimestamp(VN::g('DateMod')));
+			$stmt->bindValue(':orgid', VN::g('ORGID'));
+
+			if (!$stmt->execute()) {
+				$message = "Member Insert ORGID: ".$id." CAPID ".$m[0]." ".$id.", Member: ".$member->capid.", ";
+				$message .= $member->RankName.", fname: ".$fname.":  ".$stmt->errorInfo()[2]." CAPID: ";
+				$message .= VN::g('CAPID')." row: ".$i;
+				ErrorMSG::Log($message,"ImportCAPWATCHfile.php");
+				return "MbrAchievements Insert error: ".$stmt->errorInfo()[2];
+			}
+		}
+		unlink("$dir/$id-$member->capid-MbrAchievements.txt");
+
 		//Import CadetAchv.txt file
 		flog ("Processing CadetAchv");
 		$last_line=system("unzip -op $fname CadetAchv.txt > $dir/$id-$member->capid-CadetAchv.txt",$retval);
